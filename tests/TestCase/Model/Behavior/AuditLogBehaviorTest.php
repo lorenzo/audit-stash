@@ -111,10 +111,37 @@ class AuditLogBehaviorTest extends TestCase
             'author_id' => 1
         ];
         $entity = new Entity($data, ['markNew' => false, 'markClean' => true]);
-        $entity->author_id = 'Another Title';
+        $entity->author_id = 50;
         $event = new Event('Model.afterSaveCommit');
 
         $this->behavior->onSave($event, $entity, []);
         $this->assertNull($this->persister->event);
+    }
+
+    public function testSaveWithFieldsFromSchema()
+    {
+        $this->table->schema([
+            'id' => ['type' => 'integer'],
+            'title' => ['type' => 'string'],
+            'body' => ['type' => 'text']
+        ]);
+        $this->behavior->config('whitelist', false);
+        $data = [
+            'id' => 13,
+            'title' => 'The Title',
+            'body' => 'The Body',
+            'author_id' => 1,
+            'something_extra' => true,
+        ];
+        $entity = new Entity($data, ['markNew' => true]);
+        $event = new Event('Model.afterSaveCommit');
+
+        $this->behavior->onSave($event, $entity, []);
+        $result = $this->persister->event;
+        unset($data['something_extra'], $data['author_id']);
+        $this->assertEquals($data, $result->getChanged());
+        $this->assertEquals(13, $result->getId());
+        $this->assertEquals('articles', $result->getSourceName());
+        $this->assertInstanceOf(AuditCreateEvent::class, $result);
     }
 }
