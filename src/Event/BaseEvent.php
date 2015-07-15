@@ -6,7 +6,7 @@ use AuditStash\EventInterface;
 
 abstract class BaseEvent implements EventInterface
 {
-    protected $transctionId;
+    protected $transactionId;
 
     protected $id;
 

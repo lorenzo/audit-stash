@@ -155,4 +155,35 @@ class AuditIntegrationTest extends TestCase
 
         $this->table->save($entity);
     }
+
+    public function testCreateArticleWithNewBelongsTo()
+    {
+        $this->table->Authors->addBehavior('AuditLog', [
+            'className' => AuditLogBehavior::class
+        ]);
+        $entity = $this->table->newEntity([
+            'title' => 'New Article',
+            'body' => 'new article body',
+            'author' => [
+                'name' => 'Jose'
+            ]
+        ]);
+        $this->persister
+            ->expects($this->once())
+            ->method('logEvents')
+            ->will($this->returnCallback(function (array $events)  use ($entity) {
+                $this->assertCount(2, $events);
+                $this->assertEquals('authors', $events[0]->getSourceName());
+                $this->assertEquals('articles', $events[1]->getSourceName());
+
+                $this->assertNotEmpty($events[0]->getTransactionId());
+                $this->assertSame($events[0]->getTransactionId(), $events[1]->getTransactionId());
+
+                $this->assertEquals(['id' => 5, 'name' => 'Jose'], $events[0]->getChanged());
+                $this->assertFalse(isset($events[1]->getChanged()['author']));
+                $this->assertEquals('new article body', $events[1]->getChanged()['body']);
+            }));
+
+        $this->table->save($entity);
+    }
 }
