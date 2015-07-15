@@ -49,12 +49,8 @@ class AuditLogBehavior extends Behavior
             $options['_auditTransaction'] = Text::uuid();
         }
 
-        if (!empty($options['_primary'])) {
-            $options['_auditQueue'] = new SplObjectStorage;
-        }
-
         if (!isset($options['_auditQueue'])) {
-            return;
+            $options['_auditQueue'] = new SplObjectStorage;
         }
     }
 
