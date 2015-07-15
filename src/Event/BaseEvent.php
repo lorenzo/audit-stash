@@ -6,6 +6,8 @@ use AuditStash\EventInterface;
 
 abstract class BaseEvent implements EventInterface
 {
+    protected $transctionId;
+
     protected $id;
 
     protected $source;
@@ -14,12 +16,18 @@ abstract class BaseEvent implements EventInterface
 
     protected $original;
 
-    public function __construct($id, $source, $changed, $original)
+    public function __construct($transactionId, $id, $source, $changed, $original)
     {
+        $this->transactionId = $transactionId;
         $this->id = $id;
         $this->source = $source;
         $this->changed = $changed;
         $this->original = $original;
+    }
+
+    public function getTransactionId()
+    {
+        return $this->transactionId;
     }
 
     public function getId()

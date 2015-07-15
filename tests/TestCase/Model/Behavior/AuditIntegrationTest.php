@@ -63,6 +63,7 @@ class AuditIntegrationTest extends TestCase
                 $this->assertEquals(4, $event->getId());
                 $this->assertEquals('articles', $event->getSourceName());
                 $this->assertEquals($event->getOriginal(), $event->getChanged());
+                $this->assertNotEmpty($event->getTransactionId());
 
                 $data = $entity->toArray();
                 $this->assertEquals($data, $event->getChanged());
@@ -92,6 +93,7 @@ class AuditIntegrationTest extends TestCase
                     'published' => 'Y'
                 ];
                 $this->assertEquals($expected, $event->getChanged());
+                $this->assertNotEmpty($event->getTransactionId());
             }));
 
         $this->table->save($entity);
@@ -118,6 +120,7 @@ class AuditIntegrationTest extends TestCase
                 $changed = $event->getChanged();
                 $this->assertEquals(1, $changed['author_id']);
                 $this->assertFalse(isset($changed['author']));
+                $this->assertNotEmpty($event->getTransactionId());
             }));
 
         $this->table->save($entity);
@@ -147,6 +150,7 @@ class AuditIntegrationTest extends TestCase
                 ];
                 $this->assertEquals($expected, $event->getChanged());
                 $this->assertFalse(isset($changed['author']));
+                $this->assertNotEmpty($event->getTransactionId());
             }));
 
         $this->table->save($entity);

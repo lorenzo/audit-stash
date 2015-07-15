@@ -10,6 +10,7 @@ use AuditStash\PersisterInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
+use Cake\Utility\Text;
 use SplObjectStorage;
 
 class AuditLogBehavior extends Behavior
@@ -44,6 +45,10 @@ class AuditLogBehavior extends Behavior
 
     public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options)
     {
+        if (!isset($options['_auditTransaction'])) {
+            $options['_auditTransaction'] = Text::uuid();
+        }
+
         if (!empty($options['_primary'])) {
             $options['_auditQueue'] = new SplObjectStorage;
         }
@@ -87,7 +92,8 @@ class AuditLogBehavior extends Behavior
         $primary = $entity->extract((array)$this->_table->primaryKey());
         $auditEvent = $entity->isNew() ? AuditCreateEvent::class : AuditUpdateEvent::class;
 
-        $auditEvent = new $auditEvent($primary, $this->_table->table(), $changed, $original);
+        $transaction = $options['_auditTransaction'];
+        $auditEvent = new $auditEvent($transaction, $primary, $this->_table->table(), $changed, $original);
         $options['_auditQueue'][$entity] = $auditEvent;
     }
 
