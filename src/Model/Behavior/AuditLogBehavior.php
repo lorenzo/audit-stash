@@ -81,8 +81,7 @@ class AuditLogBehavior extends Behavior
         }
 
         $original = $entity->extractOriginal(array_keys($changed));
-        $whitelist = $config['whitelist'];
-        $options['_auditQueue']->attach($entity, compact('changed', 'original', 'whitelist'));
+        $options['_auditQueue']->attach($entity, compact('changed', 'original'));
 
         $properties = $this->getAssociationProperties(array_keys($options['associated']));
         foreach ($properties as $property) {
