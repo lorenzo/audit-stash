@@ -14,11 +14,11 @@ use Cake\TestSuite\TestCase;
 
 class MockPersister implements PersisterInterface
 {
-    public $event;
+    public $events;
 
-    public function logAudit(EventInterface $auditEvent)
+    public function logEvents(array $events)
     {
-        $this->event = $auditEvent;
+        $this->events = $events;
     }
 }
 
