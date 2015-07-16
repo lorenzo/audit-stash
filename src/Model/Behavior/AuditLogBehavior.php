@@ -77,11 +77,13 @@ class AuditLogBehavior extends Behavior
         }
 
         $original = $entity->extractOriginal(array_keys($changed));
-        $options['_auditQueue']->attach($entity, compact('changed', 'original'));
-
         $properties = $this->getAssociationProperties(array_keys($options['associated']));
         foreach ($properties as $property) {
             unset($changed[$property], $original[$property]);
+        }
+
+        if (!$changed) {
+            return;
         }
 
         $primary = $entity->extract((array)$this->_table->primaryKey());
@@ -89,7 +91,7 @@ class AuditLogBehavior extends Behavior
 
         $transaction = $options['_auditTransaction'];
         $auditEvent = new $auditEvent($transaction, $primary, $this->_table->table(), $changed, $original);
-        $options['_auditQueue'][$entity] = $auditEvent;
+        $options['_auditQueue']->attach($entity, $auditEvent);
     }
 
     public function afterCommit(Event $event, EntityInterface $entity, $options)

@@ -176,12 +176,60 @@ class AuditIntegrationTest extends TestCase
                 $this->assertEquals('authors', $events[0]->getSourceName());
                 $this->assertEquals('articles', $events[1]->getSourceName());
 
+                $this->assertInstanceOf(AuditCreateEvent::class, $events[0]);
                 $this->assertNotEmpty($events[0]->getTransactionId());
                 $this->assertSame($events[0]->getTransactionId(), $events[1]->getTransactionId());
 
                 $this->assertEquals(['id' => 5, 'name' => 'Jose'], $events[0]->getChanged());
                 $this->assertFalse(isset($events[1]->getChanged()['author']));
                 $this->assertEquals('new article body', $events[1]->getChanged()['body']);
+            }));
+
+        $this->table->save($entity);
+    }
+
+    public function testUpdateArticleWithHasMany()
+    {
+        $this->table->Comments->addBehavior('AuditLog', [
+            'className' => AuditLogBehavior::class
+        ]);
+
+        $entity = $this->table->get(1, [
+            'contain' => ['Comments']
+        ]);
+        $entity->comments[] = $this->table->Comments->newEntity([
+            'user_id' => 1,
+            'comment' => 'This is a comment'
+        ]);
+        $entity->comments[] = $this->table->Comments->newEntity([
+            'user_id' => 1,
+            'comment' => 'This is another comment'
+        ]);
+        $entity->dirty('comments', true);
+
+        $this->persister
+            ->expects($this->once())
+            ->method('logEvents')
+            ->will($this->returnCallback(function (array $events)  use ($entity) {
+                $this->assertCount(2, $events);
+                $this->assertEquals('comments', $events[0]->getSourceName());
+                $this->assertEquals('comments', $events[1]->getSourceName());
+
+                $expected = [
+                    'id' => 7,
+                    'article_id' => 1,
+                    'user_id' => 1,
+                    'comment' => 'This is a comment'
+                ];
+                $this->assertEquals($expected, $events[0]->getChanged());
+
+                $expected = [
+                    'id' => 8,
+                    'article_id' => 1,
+                    'user_id' => 1,
+                    'comment' => 'This is another comment'
+                ];
+                $this->assertEquals($expected, $events[1]->getChanged());
             }));
 
         $this->table->save($entity);
