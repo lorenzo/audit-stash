@@ -294,8 +294,11 @@ class AuditIntegrationTest extends TestCase
             ->will($this->returnCallback(function (array $events)  use ($entity) {
                 $this->assertCount(3, $events);
                 $this->assertEquals('tags', $events[0]->getSourceName());
+                $this->assertEquals('articles', $events[0]->getParentSourceName());
                 $this->assertEquals('articles_tags', $events[1]->getSourceName());
+                $this->assertEquals('articles', $events[1]->getParentSourceName());
                 $this->assertEquals('articles_tags', $events[2]->getSourceName());
+                $this->assertEquals('articles', $events[2]->getParentSourceName());
 
                 $this->assertNotEmpty($events[0]->getTransactionId());
                 $this->assertSame($events[0]->getTransactionId(), $events[1]->getTransactionId());

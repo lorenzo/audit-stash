@@ -12,6 +12,8 @@ abstract class BaseEvent implements EventInterface
 
     protected $source;
 
+    protected $parentSource;
+
     protected $changed;
 
     protected $original;
@@ -53,5 +55,14 @@ abstract class BaseEvent implements EventInterface
         return $this->changed;
     }
 
+    public function getParentSourceName()
+    {
+        return $this->parentSource;
+    }
+
     abstract public function getEventType();
+
+    public function setParentSourceName($name) {
+        $this->parentSource = $name;
+    }
 }

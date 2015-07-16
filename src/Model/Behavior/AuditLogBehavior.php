@@ -91,6 +91,11 @@ class AuditLogBehavior extends Behavior
 
         $transaction = $options['_auditTransaction'];
         $auditEvent = new $auditEvent($transaction, $primary, $this->_table->table(), $changed, $original);
+
+        if (!empty($options['_sourceTable'])) {
+            $auditEvent->setParentSourceName($options['_sourceTable']->table());
+        }
+
         $options['_auditQueue']->attach($entity, $auditEvent);
     }
 
