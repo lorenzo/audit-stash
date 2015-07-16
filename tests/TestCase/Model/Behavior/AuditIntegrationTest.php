@@ -5,6 +5,7 @@ namespace AuditStash\Test\Model\Behavior;
 use AuditStash\Model\Behavior\AuditLogBehavior;
 use AuditStash\Event\AuditCreateEvent;
 use AuditStash\Event\AuditUpdateEvent;
+use AuditStash\Event\AuditDeleteEvent;
 use AuditStash\PersisterInterface;
 use Cake\Event\Event;
 use Cake\ORM\Entity;
@@ -350,5 +351,77 @@ class AuditIntegrationTest extends TestCase
             }));
 
         $this->table->save($entity);
+    }
+
+    /**
+     * Tests that deleting an entity logs a single event
+     *
+     * @return void
+     */
+    public function testDelete()
+    {
+        $entity = $this->table->get(1);
+        $this->persister
+            ->expects($this->once())
+            ->method('logEvents')
+            ->will($this->returnCallback(function (array $events)  use ($entity) {
+                $this->assertCount(1, $events);
+                $this->assertinstanceOf(AuditDeleteEvent::class, $events[0]);
+                $this->assertEquals(1, $events[0]->getId());
+                $this->assertEquals('articles', $events[0]->getSourceName());
+                $this->assertNotEmpty($events[0]->getTransactionId());
+            }));
+
+        $this->table->delete($entity);
+    }
+
+    /**
+     * Tests that deleting an entity with cascading delete
+     *
+     * @return void
+     */
+    public function testDeleteCascade()
+    {
+        $this->table->Tags->addBehavior('AuditLog', [
+            'className' => AuditLogBehavior::class
+        ]);
+        $this->table->Tags->junction()->addBehavior('AuditLog', [
+            'className' => AuditLogBehavior::class
+        ]);
+        $this->table->Comments->addBehavior('AuditLog', [
+            'className' => AuditLogBehavior::class
+        ]);
+        $entity = $this->table->get(1, [
+            'contain' => ['Comments', 'Tags']
+        ]);
+
+        $this->table->Comments->dependent(true);
+        $this->table->Comments->cascadeCallbacks(true);
+
+        $this->table->Tags->dependent(true);
+        $this->table->Tags->cascadeCallbacks(true);
+
+        $this->persister
+            ->expects($this->once())
+            ->method('logEvents')
+            ->will($this->returnCallback(function (array $events)  use ($entity) {
+                $this->assertCount(7, $events);
+                $id = $events[0]->getTransactionId();
+                foreach ($events as $event) {
+                    $this->assertinstanceOf(AuditDeleteEvent::class, $event);
+                    $this->assertNotEmpty($event->getTransactionId());
+                    $this->assertEquals($id, $event->getTransactionId());
+                }
+
+                $this->assertEquals('comments', $events[0]->getSourceName());
+                $this->assertEquals('comments', $events[1]->getSourceName());
+                $this->assertEquals('comments', $events[2]->getSourceName());
+                $this->assertEquals('comments', $events[3]->getSourceName());
+                $this->assertEquals('articles_tags', $events[4]->getSourceName());
+                $this->assertEquals('articles_tags', $events[5]->getSourceName());
+                $this->assertEquals('articles', $events[6]->getSourceName());
+            }));
+
+        $this->table->delete($entity);
     }
 }

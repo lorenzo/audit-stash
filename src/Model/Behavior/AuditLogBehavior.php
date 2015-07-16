@@ -29,10 +29,12 @@ class AuditLogBehavior extends Behavior
     public function implementedEvents()
     {
         return [
-            'Model.beforeSave' => 'beforeSave',
+            'Model.beforeSave' => 'injectTracking',
+            'Model.beforeDelete' => 'injectTracking',
             'Model.afterSave' => 'afterSave',
+            'Model.afterDelete' => 'afterDelete',
             'Model.afterSaveCommit' => 'afterCommit',
-            'Model.afterDeleteCommit' => 'onDelete'
+            'Model.afterDeleteCommit' => 'afterCommit'
         ];
     }
 
@@ -43,7 +45,7 @@ class AuditLogBehavior extends Behavior
      */
     protected $persister;
 
-    public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options)
+    public function injectTracking(Event $event, EntityInterface $entity, ArrayObject $options)
     {
         if (!isset($options['_auditTransaction'])) {
             $options['_auditTransaction'] = Text::uuid();
@@ -112,8 +114,16 @@ class AuditLogBehavior extends Behavior
         $persister = $this->persister()->logEvents($events->toList());
     }
 
-    public function onDelete(Event $event, EntityInterface $entity, $options)
+    public function afterDelete(Event $event, EntityInterface $entity, $options)
     {
+        if (!isset($options['_auditQueue'])) {
+            return;
+        }
+        $transaction = $options['_auditTransaction'];
+        $parent = isset($options['_sourceTable']) ? $options['_sourceTable']->table() : null;
+        $primary = $entity->extract((array)$this->_table->primaryKey());
+        $auditEvent = new AuditDeleteEvent($transaction, $primary, $this->_table->table(), $parent);
+        $options['_auditQueue']->attach($entity, $auditEvent);
     }
 
     public function persister(PersisterInterface $persister = null)
