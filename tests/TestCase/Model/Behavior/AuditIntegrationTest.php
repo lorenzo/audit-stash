@@ -44,6 +44,11 @@ class AuditIntegrationTest extends TestCase
         $this->table->behaviors()->get('AuditLog')->persister($this->persister);
     }
 
+    /**
+     * Tests that creating an article means having one audit log create event
+     *
+     * @return void
+     */
     public function testCreateArticle()
     {
         $entity = $this->table->newEntity([
@@ -72,6 +77,11 @@ class AuditIntegrationTest extends TestCase
         $this->table->save($entity);
     }
 
+    /**
+     * Tests that updating an article means having one audit log update event
+     *
+     * @return void
+     */
     public function testUpdateArticle()
     {
         $entity = $this->table->get(1);
@@ -99,6 +109,12 @@ class AuditIntegrationTest extends TestCase
         $this->table->save($entity);
     }
 
+    /**
+     * Tests that adding a belongsTo association means having one update
+     * log event for the main entity
+     *
+     * @return void
+     */
     public function testCreateArticleWithExisitingBelongsTo()
     {
         $entity = $this->table->newEntity([
@@ -126,6 +142,12 @@ class AuditIntegrationTest extends TestCase
         $this->table->save($entity);
     }
 
+    /**
+     * Tests that adding a belongsTo association means having one update
+     * log event for the main entity
+     *
+     * @return void
+     */
     public function testUpdateArticleWithExistingBelongsTo()
     {
         $entity = $this->table->get(1, [
@@ -156,6 +178,12 @@ class AuditIntegrationTest extends TestCase
         $this->table->save($entity);
     }
 
+    /**
+     * Tests that adding a new belongsTo entity means having one update
+     * log event for the main entity and one of the new belongsto entity
+     *
+     * @return void
+     */
     public function testCreateArticleWithNewBelongsTo()
     {
         $this->table->Authors->addBehavior('AuditLog', [
@@ -188,6 +216,12 @@ class AuditIntegrationTest extends TestCase
         $this->table->save($entity);
     }
 
+    /**
+     * Tests that adding has many entities means one event for each of the updated
+     * associated entities
+     *
+     * @return void
+     */
     public function testUpdateArticleWithHasMany()
     {
         $this->table->Comments->addBehavior('AuditLog', [
@@ -238,6 +272,12 @@ class AuditIntegrationTest extends TestCase
         $this->table->save($entity);
     }
 
+    /**
+     * Tests that adding has many entities means one event for each of the updated
+     * associated entities and finally and event for the main entity if it is new
+     *
+     * @return void
+     */
     public function testCreateArticleWithHasMany()
     {
         $this->table->Comments->addBehavior('AuditLog', [
@@ -270,6 +310,13 @@ class AuditIntegrationTest extends TestCase
         $this->table->save($entity);
     }
 
+    /**
+     * Tests that adding belongsToMany entities means log events for each new
+     * entity in the target table and events for as many entities got saved in the
+     * junction table
+     *
+     * @return void
+     */
     public function testUpdateWithBelongsToMany()
     {
         $this->table->Tags->addBehavior('AuditLog', [
