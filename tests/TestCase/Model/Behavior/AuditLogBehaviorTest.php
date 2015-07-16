@@ -12,16 +12,6 @@ use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 
-class MockPersister implements PersisterInterface
-{
-    public $events;
-
-    public function logEvents(array $events)
-    {
-        $this->events = $events;
-    }
-}
-
 class AuditLogBehaviorTest extends TestCase
 {
 
@@ -33,8 +23,6 @@ class AuditLogBehaviorTest extends TestCase
         $this->behavior = new AuditLogBehavior($this->table, [
             'whitelist' => ['id', 'title', 'body', 'author_id']
         ]);
-        $this->persister = new MockPersister;
-        $this->behavior->persister($this->persister);
     }
 
     public function testOnSaveCreateWithWithelist()
@@ -47,10 +35,15 @@ class AuditLogBehaviorTest extends TestCase
             'something_extra' => true,
         ];
         $entity = new Entity($data, ['markNew' => true]);
-        $event = new Event('Model.afterSaveCommit');
 
-        $this->behavior->onSave($event, $entity, []);
-        $result = $this->persister->event;
+        $event = new Event('Model.afterSave');
+        $queue = new \SplObjectStorage;
+        $this->behavior->afterSave($event, $entity, [
+            '_auditQueue' => $queue,
+            '_auditTransaction' => 1,
+            'associated' => []
+        ]);
+        $result = $queue[$entity];
         $this->assertEquals($result->getOriginal(), $result->getChanged());
         unset($data['something_extra']);
         $this->assertEquals($data, $result->getChanged());
@@ -70,10 +63,15 @@ class AuditLogBehaviorTest extends TestCase
         ];
         $entity = new Entity($data, ['markNew' => false, 'markClean' => true]);
         $entity->title = 'Another Title';
-        $event = new Event('Model.afterSaveCommit');
 
-        $this->behavior->onSave($event, $entity, []);
-        $result = $this->persister->event;
+        $event = new Event('Model.afterSave');
+        $queue = new \SplObjectStorage;
+        $this->behavior->afterSave($event, $entity, [
+            '_auditQueue' => $queue,
+            '_auditTransaction' => 1,
+            'associated' => []
+        ]);
+        $result = $queue[$entity];
         $this->assertEquals(['title' => 'Another Title'], $result->getChanged());
         $this->assertEquals(['title' => 'The Title'], $result->getOriginal());
         $this->assertEquals(13, $result->getId());
@@ -92,10 +90,15 @@ class AuditLogBehaviorTest extends TestCase
             'something_extra' => true,
         ];
         $entity = new Entity($data, ['markNew' => true]);
-        $event = new Event('Model.afterSaveCommit');
 
-        $this->behavior->onSave($event, $entity, []);
-        $result = $this->persister->event;
+        $event = new Event('Model.afterSave');
+        $queue = new \SplObjectStorage;
+        $this->behavior->afterSave($event, $entity, [
+            '_auditQueue' => $queue,
+            '_auditTransaction' => 1,
+            'associated' => []
+        ]);
+        $result = $queue[$entity];
         $this->assertEquals($result->getOriginal(), $result->getChanged());
         unset($data['something_extra'], $data['author_id']);
         $this->assertEquals($data, $result->getChanged());
@@ -112,10 +115,16 @@ class AuditLogBehaviorTest extends TestCase
         ];
         $entity = new Entity($data, ['markNew' => false, 'markClean' => true]);
         $entity->author_id = 50;
-        $event = new Event('Model.afterSaveCommit');
 
-        $this->behavior->onSave($event, $entity, []);
-        $this->assertNull($this->persister->event);
+        $event = new Event('Model.afterSave');
+        $queue = new \SplObjectStorage;
+        $this->behavior->afterSave($event, $entity, [
+            '_auditQueue' => $queue,
+            '_auditTransaction' => 1,
+            'associated' => []
+        ]);
+
+        $this->assertFalse(isset($queue[$entity]));
     }
 
     public function testSaveWithFieldsFromSchema()
@@ -134,10 +143,14 @@ class AuditLogBehaviorTest extends TestCase
             'something_extra' => true,
         ];
         $entity = new Entity($data, ['markNew' => true]);
-        $event = new Event('Model.afterSaveCommit');
-
-        $this->behavior->onSave($event, $entity, []);
-        $result = $this->persister->event;
+        $event = new Event('Model.afterSave');
+        $queue = new \SplObjectStorage;
+        $this->behavior->afterSave($event, $entity, [
+            '_auditQueue' => $queue,
+            '_auditTransaction' => 1,
+            'associated' => []
+        ]);
+        $result = $queue[$entity];
         unset($data['something_extra'], $data['author_id']);
         $this->assertEquals($data, $result->getChanged());
         $this->assertEquals(13, $result->getId());
