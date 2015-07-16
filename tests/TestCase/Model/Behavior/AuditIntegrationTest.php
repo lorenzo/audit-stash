@@ -269,4 +269,38 @@ class AuditIntegrationTest extends TestCase
 
         $this->table->save($entity);
     }
+
+    public function testUpdateWithBelongsToMany()
+    {
+        $this->table->Tags->addBehavior('AuditLog', [
+            'className' => AuditLogBehavior::class
+        ]);
+        $this->table->Tags->junction()->addBehavior('AuditLog', [
+            'className' => AuditLogBehavior::class
+        ]);
+
+        $entity = $this->table->get(1, [
+            'contain' => ['Tags']
+        ]);
+        $entity->tags[] = $this->table->Tags->newEntity([
+            'name' => 'This is a Tag'
+        ]);
+        $entity->tags[] = $this->table->Tags->get(3);
+        $entity->dirty('tags', true);
+
+        $this->persister
+            ->expects($this->once())
+            ->method('logEvents')
+            ->will($this->returnCallback(function (array $events)  use ($entity) {
+                $this->assertCount(3, $events);
+                $this->assertEquals('tags', $events[0]->getSourceName());
+                $this->assertEquals('articles_tags', $events[1]->getSourceName());
+                $this->assertEquals('articles_tags', $events[2]->getSourceName());
+
+                $this->assertNotEmpty($events[0]->getTransactionId());
+                $this->assertSame($events[0]->getTransactionId(), $events[1]->getTransactionId());
+            }));
+
+        $this->table->save($entity);
+    }
 }
