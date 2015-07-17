@@ -1,6 +1,6 @@
 {
-    "name": "your-name-here/AuditStash",
-    "description": "AuditStash plugin for CakePHP",
+    "name": "lorenzo/audit-stash",
+    "description": "Flexible and rock solid audit log tracking plugin for cakephp",
     "type": "cakephp-plugin",
     "require": {
         "php": ">=5.5.0"
