@@ -3,11 +3,12 @@
     "description": "AuditStash plugin for CakePHP",
     "type": "cakephp-plugin",
     "require": {
-        "php": ">=5.4.16",
-        "cakephp/cakephp": "dev-dirty-on-aftersave"
+        "php": ">=5.5.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "*"
+        "phpunit/phpunit": "*",
+        "cakephp/elastic-search": "dev-master",
+        "cakephp/cakephp": "dev-master"
     },
     "autoload": {
         "psr-4": {
