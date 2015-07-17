@@ -7,6 +7,8 @@ use AuditStash\Event\AuditCreateEvent;
 use AuditStash\Event\AuditDeleteEvent;
 use AuditStash\Event\AuditUpdateEvent;
 use AuditStash\PersisterInterface;
+use AuditStash\Persister\ElasticSearchPersister;
+use Cake\Core\Configure;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
@@ -128,10 +130,15 @@ class AuditLogBehavior extends Behavior
 
     public function persister(PersisterInterface $persister = null)
     {
+        if ($persister === null && $this->persister === null) {
+            $class = Configure::read('AuditStash.persister') ?: ElasticSearchPersister::class;
+            $persister = new $class;
+        }
+
         if ($persister === null) {
             return $this->persister;
         }
-        $this->persister = $persister;
+        return $this->persister = $persister;
     }
 
     protected function getAssociationProperties($associated)

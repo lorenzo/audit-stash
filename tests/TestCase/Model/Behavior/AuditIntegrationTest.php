@@ -23,6 +23,11 @@ class DebugPersister implements PersisterInterface
 class AuditIntegrationTest extends TestCase
 {
 
+    /**
+     * Fixtures to use
+     *
+     * @var array
+     */
     public $fixtures = [
         'core.articles',
         'core.comments',
@@ -31,6 +36,11 @@ class AuditIntegrationTest extends TestCase
         'core.articles_tags',
     ];
 
+    /**
+     * tests setup
+     *
+     * @return void
+     */
     public function setUp()
     {
         $this->table = TableRegistry::get('Articles');
