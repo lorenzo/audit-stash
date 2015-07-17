@@ -28,6 +28,18 @@ class AuditLogBehavior extends Behavior
         'whitelist' => []
     ];
 
+    /**
+     * The persiter object
+     *
+     * @var PersisterInterface
+     */
+    protected $persister;
+
+    /**
+     * Returns the list of implemented events
+     *
+     * @return array
+     */
     public function implementedEvents()
     {
         return [
@@ -39,13 +51,6 @@ class AuditLogBehavior extends Behavior
             'Model.afterDeleteCommit' => 'afterCommit'
         ];
     }
-
-    /**
-     * The persiter object
-     *
-     * @var PersisterInterface
-     */
-    protected $persister;
 
     public function injectTracking(Event $event, EntityInterface $entity, ArrayObject $options)
     {
