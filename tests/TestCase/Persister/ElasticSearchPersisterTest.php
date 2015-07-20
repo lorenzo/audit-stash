@@ -8,8 +8,9 @@ use AuditStash\Event\AuditUpdateEvent;
 use AuditStash\Persister\ElasticSearchPersister;
 use Cake\Datasource\ConnectionManager;
 use Cake\ElasticSearch\TypeRegistry;
-use Cake\TestSuite\TestCase;
 use Cake\I18n\Time;
+use Cake\TestSuite\TestCase;
+use DateTime;
 
 class ElasticSearchPersisterTest extends TestCase
 {
@@ -24,12 +25,6 @@ class ElasticSearchPersisterTest extends TestCase
         'plugin.audit_stash.elastic_authors',
         'plugin.audit_stash.elastic_tags',
     ];
-
-    public function setUp()
-    {
-        parent::setUp();
-        Time::setTestNow(new Time('2015-07-20T13:50:27Z'));
-    }
 
     /**
      * Tests that create events are correctly stored
@@ -47,6 +42,7 @@ class ElasticSearchPersisterTest extends TestCase
             'author_id' => 1,
             'published' => 'Y'
         ];
+
         $events[] = new AuditCreateEvent('1234', 50, 'articles', $data, $data);
         $persister->logEvents($events);
         $client->getIndex()->refresh();
@@ -54,8 +50,12 @@ class ElasticSearchPersisterTest extends TestCase
         $articles = TypeRegistry::get('Articles')->find()->toArray();
         $this->assertCount(1, $articles);
 
+        $this->assertEquals(
+            new DateTime($events[0]->getTimestamp()),
+            new DateTime($articles[0]->get('@timestamp'))
+        );
+
         $expected = [
-            '@timestamp' => '2015-07-20T13:50:27Z',
             'transaction' => '1234',
             'type' => 'create',
             'primary_key' => 50,
@@ -74,7 +74,7 @@ class ElasticSearchPersisterTest extends TestCase
                 'published' => 'Y'
             ]
         ];
-        unset($articles[0]->id);
+        unset($articles[0]['id'], $articles[0]['@timestamp']);
         $this->assertEquals($expected, $articles[0]->toArray());
     }
 
@@ -96,6 +96,7 @@ class ElasticSearchPersisterTest extends TestCase
             'title' => 'A new article',
             'published' => 'Y'
         ];
+
         $events[] = new AuditUpdateEvent('1234', 50, 'articles', $changed, $original);
         $events[0]->setParentSourceName('authors');
         $persister->logEvents($events);
@@ -104,8 +105,11 @@ class ElasticSearchPersisterTest extends TestCase
         $articles = TypeRegistry::get('Articles')->find()->toArray();
         $this->assertCount(1, $articles);
 
+        $this->assertEquals(
+            new DateTime($events[0]->getTimestamp()),
+            new DateTime($articles[0]->get('@timestamp'))
+        );
         $expected = [
-            '@timestamp' => '2015-07-20T13:50:27Z',
             'transaction' => '1234',
             'type' => 'update',
             'primary_key' => 50,
@@ -114,7 +118,7 @@ class ElasticSearchPersisterTest extends TestCase
             'original' => $original,
             'changed' => $changed
         ];
-        unset($articles[0]->id);
+        unset($articles[0]['id'], $articles[0]['@timestamp']);
         $this->assertEquals($expected, $articles[0]->toArray());
     }
 
@@ -128,6 +132,7 @@ class ElasticSearchPersisterTest extends TestCase
         $client = ConnectionManager::get('test_elastic');
         $persister = new ElasticSearchPersister();
         $persister->connection($client);
+
         $events[] = new AuditDeleteEvent('1234', 50, 'articles', 'authors');
         $persister->logEvents($events);
         $client->getIndex()->refresh();
@@ -135,8 +140,12 @@ class ElasticSearchPersisterTest extends TestCase
         $articles = TypeRegistry::get('Articles')->find()->toArray();
         $this->assertCount(1, $articles);
 
+        $this->assertEquals(
+            new DateTime($events[0]->getTimestamp()),
+            new DateTime($articles[0]->get('@timestamp'))
+        );
+
         $expected = [
-            '@timestamp' => '2015-07-20T13:50:27Z',
             'transaction' => '1234',
             'type' => 'delete',
             'primary_key' => 50,
@@ -145,7 +154,7 @@ class ElasticSearchPersisterTest extends TestCase
             'original' => null,
             'changed' => null
         ];
-        unset($articles[0]->id);
+        unset($articles[0]['id'], $articles[0]['@timestamp']);
         $this->assertEquals($expected, $articles[0]->toArray());
     }
 
@@ -185,8 +194,12 @@ class ElasticSearchPersisterTest extends TestCase
         $tags = TypeRegistry::get('Tags')->find()->all();
         $this->assertCount(1, $tags);
         $tag = $tags->first();
+        $this->assertEquals(
+            new DateTime($events[0]->getTimestamp()),
+            new DateTime($tag->get('@timestamp'))
+        );
+
         $expected = [
-            '@timestamp' => '2015-07-20T13:50:27Z',
             'transaction' => '1234',
             'type' => 'create',
             'primary_key' => 4,
@@ -201,15 +214,20 @@ class ElasticSearchPersisterTest extends TestCase
                 'tag' => 'cakephp'
             ]
         ];
-        unset($tag->id);
+        unset($tag['@timestamp'], $tag['id']);
         $this->assertEquals($expected, $tag->toArray());
 
 
         $authors = TypeRegistry::get('Authors')->find()->all();
         $this->assertCount(1, $authors);
         $author = $authors->first();
+
+        $this->assertEquals(
+            new DateTime($events[0]->getTimestamp()),
+            new DateTime($author->get('@timestamp'))
+        );
+
         $expected = [
-            '@timestamp' => '2015-07-20T13:50:27Z',
             'transaction' => '1234',
             'type' => 'update',
             'primary_key' => 2,
@@ -224,7 +242,7 @@ class ElasticSearchPersisterTest extends TestCase
                 'published' => 'Y'
             ]
         ];
-        unset($author->id);
+        unset($author['id'], $author['@timestamp']);
         $this->assertEquals($expected, $author->toArray());
 
         $articles = TypeRegistry::get('Articles')->find()->all();
@@ -253,6 +271,7 @@ class ElasticSearchPersisterTest extends TestCase
             'title' => 'A new article',
             'published_date' => new Time('2015-04-13 20:20:21')
         ];
+
         $events[] = new AuditUpdateEvent('1234', 50, 'articles', $changed, $original);
         $persister->logEvents($events);
         $client->getIndex()->refresh();
@@ -260,8 +279,12 @@ class ElasticSearchPersisterTest extends TestCase
         $articles = TypeRegistry::get('Articles')->find()->toArray();
         $this->assertCount(1, $articles);
 
+        $this->assertEquals(
+            new DateTime($events[0]->getTimestamp()),
+            new DateTime($articles[0]->get('@timestamp'))
+        );
+
         $expected = [
-            '@timestamp' => '2015-07-20T13:50:27Z',
             'transaction' => '1234',
             'type' => 'update',
             'primary_key' => 50,
@@ -276,7 +299,7 @@ class ElasticSearchPersisterTest extends TestCase
                 'published_date' => '2015-04-13T20:20:21+0000'
             ]
         ];
-        unset($articles[0]->id);
+        unset($articles[0]['id'], $articles[0]['@timestamp']);
         $this->assertEquals($expected, $articles[0]->toArray());
     }
 }
