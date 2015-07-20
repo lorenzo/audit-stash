@@ -3,7 +3,7 @@
 namespace AuditStash\Event;
 
 use AuditStash\EventInterface;
-use Cake\I18n\Time;
+use Datetime;
 
 class AuditDeleteEvent implements EventInterface
 {
@@ -24,7 +24,7 @@ class AuditDeleteEvent implements EventInterface
         $this->source = $source;
         $this->parentSource = $parentSource;
         $this->timestamp = gmdate('Y-m-d\TH:i:s.u\Z');
-        $this->timestamp = Time::now()->format('Y-m-d\TH:i:s\Z');
+        $this->timestamp = Datetime::createFromFormat('U.u', microtime(true))->format('Y-m-d\TH:i:s.u\Z');
     }
 
     public function getEventType()
