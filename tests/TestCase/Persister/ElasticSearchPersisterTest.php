@@ -25,6 +25,12 @@ class ElasticSearchPersisterTest extends TestCase
         'plugin.audit_stash.elastic_tags',
     ];
 
+    public function setUp()
+    {
+        parent::setUp();
+        Time::setTestNow(new Time('2015-07-20T13:50:27Z'));
+    }
+
     /**
      * Tests that create events are correctly stored
      *
@@ -49,7 +55,8 @@ class ElasticSearchPersisterTest extends TestCase
         $this->assertCount(1, $articles);
 
         $expected = [
-            'trasaction' => '1234',
+            '@timestamp' => '2015-07-20T13:50:27Z',
+            'transaction' => '1234',
             'type' => 'create',
             'primary_key' => 50,
             'source' => 'articles',
@@ -98,7 +105,8 @@ class ElasticSearchPersisterTest extends TestCase
         $this->assertCount(1, $articles);
 
         $expected = [
-            'trasaction' => '1234',
+            '@timestamp' => '2015-07-20T13:50:27Z',
+            'transaction' => '1234',
             'type' => 'update',
             'primary_key' => 50,
             'source' => 'articles',
@@ -128,7 +136,8 @@ class ElasticSearchPersisterTest extends TestCase
         $this->assertCount(1, $articles);
 
         $expected = [
-            'trasaction' => '1234',
+            '@timestamp' => '2015-07-20T13:50:27Z',
+            'transaction' => '1234',
             'type' => 'delete',
             'primary_key' => 50,
             'source' => 'articles',
@@ -177,7 +186,8 @@ class ElasticSearchPersisterTest extends TestCase
         $this->assertCount(1, $tags);
         $tag = $tags->first();
         $expected = [
-            'trasaction' => '1234',
+            '@timestamp' => '2015-07-20T13:50:27Z',
+            'transaction' => '1234',
             'type' => 'create',
             'primary_key' => 4,
             'source' => 'tags',
@@ -199,7 +209,8 @@ class ElasticSearchPersisterTest extends TestCase
         $this->assertCount(1, $authors);
         $author = $authors->first();
         $expected = [
-            'trasaction' => '1234',
+            '@timestamp' => '2015-07-20T13:50:27Z',
+            'transaction' => '1234',
             'type' => 'update',
             'primary_key' => 2,
             'source' => 'authors',
@@ -250,7 +261,8 @@ class ElasticSearchPersisterTest extends TestCase
         $this->assertCount(1, $articles);
 
         $expected = [
-            'trasaction' => '1234',
+            '@timestamp' => '2015-07-20T13:50:27Z',
+            'transaction' => '1234',
             'type' => 'update',
             'primary_key' => 50,
             'source' => 'articles',

@@ -3,10 +3,13 @@
 namespace AuditStash\Event;
 
 use AuditStash\EventInterface;
+use Cake\I18n\Time;
 
 abstract class BaseEvent implements EventInterface
 {
     protected $transactionId;
+
+    protected $timestamp;
 
     protected $id;
 
@@ -25,11 +28,17 @@ abstract class BaseEvent implements EventInterface
         $this->source = $source;
         $this->changed = $changed;
         $this->original = $original;
+        $this->timestamp = Time::now()->format('Y-m-d\TH:i:s\Z');
     }
 
     public function getTransactionId()
     {
         return $this->transactionId;
+    }
+
+    public function getTimestamp()
+    {
+        return $this->timestamp;
     }
 
     public function getId()
@@ -60,9 +69,9 @@ abstract class BaseEvent implements EventInterface
         return $this->parentSource;
     }
 
-    abstract public function getEventType();
-
     public function setParentSourceName($name) {
         $this->parentSource = $name;
     }
+
+    abstract public function getEventType();
 }

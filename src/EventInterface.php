@@ -11,4 +11,6 @@ interface EventInterface
     public function getId();
 
     public function getSourceName();
+
+    public function getTimestamp();
 }

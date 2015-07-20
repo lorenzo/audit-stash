@@ -3,6 +3,7 @@
 namespace AuditStash\Event;
 
 use AuditStash\EventInterface;
+use Cake\I18n\Time;
 
 class AuditDeleteEvent implements EventInterface
 {
@@ -14,12 +15,16 @@ class AuditDeleteEvent implements EventInterface
 
     protected $parentSource;
 
+    protected $timestamp;
+
     public function __construct($transactionId, $id, $source, $parentSource = null)
     {
         $this->transactionId = $transactionId;
         $this->id = $id;
         $this->source = $source;
         $this->parentSource = $parentSource;
+        $this->timestamp = gmdate('Y-m-d\TH:i:s.u\Z');
+        $this->timestamp = Time::now()->format('Y-m-d\TH:i:s\Z');
     }
 
     public function getEventType()
@@ -48,5 +53,10 @@ class AuditDeleteEvent implements EventInterface
     public function getParentSourceName()
     {
         return $this->parentSource;
+    }
+
+    public function getTimestamp()
+    {
+        return $this->timestamp;
     }
 }

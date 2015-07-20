@@ -48,7 +48,8 @@ class ElasticSearchPersister implements PersisterInterface
         foreach ($auditLogs as $log) {
             $eventType = $log->getEventType();
             $data = [
-                'trasaction' => $log->getTransactionId(),
+                '@timestamp' => $log->getTimestamp(),
+                'transaction' => $log->getTransactionId(),
                 'type' => $log->getEventType(),
                 'primary_key' => $log->getId(),
                 'source' => $log->getSourceName(),
