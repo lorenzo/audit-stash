@@ -21,6 +21,8 @@ abstract class BaseEvent implements EventInterface
 
     protected $original;
 
+    protected $meta = [];
+
     public function __construct($transactionId, $id, $source, $changed, $original)
     {
         $this->transactionId = $transactionId;
@@ -67,6 +69,16 @@ abstract class BaseEvent implements EventInterface
     public function getParentSourceName()
     {
         return $this->parentSource;
+    }
+
+    public function getMetaInfo()
+    {
+        return $this->meta;
+    }
+
+    public function setMetaInfo($meta)
+    {
+        $this->meta = $meta;
     }
 
     public function setParentSourceName($name) {

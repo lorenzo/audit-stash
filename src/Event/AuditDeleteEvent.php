@@ -17,6 +17,8 @@ class AuditDeleteEvent implements EventInterface
 
     protected $timestamp;
 
+    protected $meta = [];
+
     public function __construct($transactionId, $id, $source, $parentSource = null)
     {
         $this->transactionId = $transactionId;
@@ -57,5 +59,15 @@ class AuditDeleteEvent implements EventInterface
     public function getTimestamp()
     {
         return $this->timestamp;
+    }
+
+    public function getMetaInfo()
+    {
+        return $this->meta;
+    }
+
+    public function setMetaInfo($meta)
+    {
+        $this->meta = $meta;
     }
 }

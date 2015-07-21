@@ -13,4 +13,8 @@ interface EventInterface
     public function getSourceName();
 
     public function getTimestamp();
+
+    public function getMetaInfo();
+
+    public function setMetaInfo($meta);
 }

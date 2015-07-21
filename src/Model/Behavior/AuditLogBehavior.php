@@ -117,8 +117,15 @@ class AuditLogBehavior extends Behavior
         $events = collection($options['_auditQueue'])
             ->map(function ($entity, $pos, $it) {
                 return $it->getInfo();
-            });
-        $persister = $this->persister()->logEvents($events->toList());
+            })
+            ->toList();
+
+        if (empty($events)) {
+            return;
+        }
+
+        $data = $this->_table->dispatchEvent('AuditStash.beforeLog', ['logs' => $events]);
+        $this->persister()->logEvents($data->data['logs']);
     }
 
     public function afterDelete(Event $event, EntityInterface $entity, $options)

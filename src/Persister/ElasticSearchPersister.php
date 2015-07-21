@@ -55,7 +55,8 @@ class ElasticSearchPersister implements PersisterInterface
                 'source' => $log->getSourceName(),
                 'parent_source' => $log->getParentSourceName(),
                 'original' => $eventType === 'delete' ? null : $log->getOriginal(),
-                'changed' => $eventType === 'delete' ? null : $log->getChanged()
+                'changed' => $eventType === 'delete' ? null : $log->getChanged(),
+                'meta' => $log->getMetaInfo()
             ];
             $documents[] = new Document('', $data, $log->getSourceName(), $index);
         }

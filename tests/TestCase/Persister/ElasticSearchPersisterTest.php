@@ -72,7 +72,8 @@ class ElasticSearchPersisterTest extends TestCase
                 'body' => 'article body',
                 'author_id' => 1,
                 'published' => 'Y'
-            ]
+            ],
+            'meta' => []
         ];
         unset($articles[0]['id'], $articles[0]['@timestamp']);
         $this->assertEquals($expected, $articles[0]->toArray());
@@ -116,7 +117,8 @@ class ElasticSearchPersisterTest extends TestCase
             'source' => 'articles',
             'parent_source' => 'authors',
             'original' => $original,
-            'changed' => $changed
+            'changed' => $changed,
+            'meta' => []
         ];
         unset($articles[0]['id'], $articles[0]['@timestamp']);
         $this->assertEquals($expected, $articles[0]->toArray());
@@ -152,7 +154,8 @@ class ElasticSearchPersisterTest extends TestCase
             'source' => 'articles',
             'parent_source' => 'authors',
             'original' => null,
-            'changed' => null
+            'changed' => null,
+            'meta' => []
         ];
         unset($articles[0]['id'], $articles[0]['@timestamp']);
         $this->assertEquals($expected, $articles[0]->toArray());
@@ -212,7 +215,8 @@ class ElasticSearchPersisterTest extends TestCase
             'changed' => [
                 'id' => 3,
                 'tag' => 'cakephp'
-            ]
+            ],
+            'meta' => []
         ];
         unset($tag['@timestamp'], $tag['id']);
         $this->assertEquals($expected, $tag->toArray());
@@ -240,7 +244,8 @@ class ElasticSearchPersisterTest extends TestCase
             'changed' => [
                 'title' => 'A new article',
                 'published' => 'Y'
-            ]
+            ],
+            'meta' => []
         ];
         unset($author['id'], $author['@timestamp']);
         $this->assertEquals($expected, $author->toArray());
@@ -297,9 +302,31 @@ class ElasticSearchPersisterTest extends TestCase
             'changed' => [
                 'title' => 'A new article',
                 'published_date' => '2015-04-13T20:20:21+0000'
-            ]
+            ],
+            'meta' => []
         ];
         unset($articles[0]['id'], $articles[0]['@timestamp']);
         $this->assertEquals($expected, $articles[0]->toArray());
+    }
+
+    /**
+     * Tests that metadata is correctly stored
+     *
+     * @return void
+     */
+    public function testLogEventWithMetadata()
+    {
+        $client = ConnectionManager::get('test_elastic');
+        $persister = new ElasticSearchPersister();
+        $persister->connection($client);
+
+        $events[] = new AuditDeleteEvent('1234', 50, 'articles', 'authors');
+        $events[0]->setMetaInfo(['a' => 'b', 'c' => 'd']);
+        $persister->logEvents($events);
+        $client->getIndex()->refresh();
+
+        $articles = TypeRegistry::get('Articles')->find()->toArray();
+        $this->assertCount(1, $articles);
+        $this->assertEquals(['a' => 'b', 'c' => 'd'], $articles[0]->meta);
     }
 }
