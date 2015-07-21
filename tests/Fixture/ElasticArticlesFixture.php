@@ -26,6 +26,7 @@ class ElasticArticlesFixture extends TestFixture
      */
     public $schema = [
         'id' => ['type' => 'integer'],
+        '@timestamp' => ['type' => 'date'],
         'transaction' => ['type' => 'string', 'index' => 'not_analyzed'],
         'type' => ['type' => 'string', 'index' => 'not_analyzed'],
         'primary_key' => ['type' => 'integer'],
