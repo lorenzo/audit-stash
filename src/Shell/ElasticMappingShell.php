@@ -56,6 +56,13 @@ class ElasticMappingShell extends Shell
             ],
             'changed' => [
                 'properties' => []
+            ],
+            'meta' => [
+                'properties' => [
+                    'ip' => ['type' => 'ip'],
+                    'url' => ['type' => 'string', 'index' => 'not_analyzed'],
+                    'user' => ['type' => 'string', 'index' => 'not_analyzed']
+                ]
             ]
         ];
 
