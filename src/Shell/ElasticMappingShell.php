@@ -118,7 +118,7 @@ class ElasticMappingShell extends Shell
         case 'decimal':
             return ['type' => 'float'];
         case 'boolean':
-            return ['type' => 'bool'];
+            return ['type' => 'boolean'];
         default:
             return [
                 'type' => 'multi_field',
