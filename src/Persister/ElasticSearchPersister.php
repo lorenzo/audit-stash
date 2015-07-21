@@ -30,9 +30,10 @@ class ElasticSearchPersister implements PersisterInterface
      */
     public function logEvents(array $auditLogs)
     {
-        $index = $this->connection()->getIndex()->getName();
+        $client = $this->connection();
+        $index = sprintf($client->getConfig('index'), '-' . gmdate('Y.m.d'));
         $documents = $this->transformToDocuments($auditLogs, $index);
-        $this->connection()->addDocuments($documents);
+        $client->addDocuments($documents);
     }
 
     /**

@@ -6,6 +6,7 @@ use Cake\Console\Shell;
 use Cake\ORM\TableRegistry;
 use Cake\Datasource\ConnectionManager;
 use Elastica\Type\Mapping as ElasticaMapping;
+use Elastica\Request;
 
 /**
  * Exposes a shell command to create the required Elastic Search mappings
@@ -25,6 +26,11 @@ class ElasticMappingShell extends Shell
                 'short' => 't',
                 'help' => 'The name of the database table to inspect and create a mapping for',
                 'required' => true
+            ])
+            ->addOption('use-templates', [
+                'short' => 'u',
+                'help' => 'Creates mapping templates instead of creating the mapping directly',
+                'boolean' => true
             ])
             ->addOption('dry-run', [
                 'short' => 'd',
@@ -79,7 +85,8 @@ class ElasticMappingShell extends Shell
         }
 
         $mapping['original']['properties'] = $mapping['changed']['properties'] = $properties;
-        $index = ConnectionManager::get('auditlog_elastic')->getIndex();
+        $client = ConnectionManager::get('auditlog_elastic');
+        $index = $client->getIndex(sprintf($client->getConfig('index'), '-' . gmdate('Y.m.d')));
         $type = $index->getType($table->table());
         $elasticMapping = new ElasticaMapping();
         $elasticMapping->setType($type);
@@ -88,6 +95,16 @@ class ElasticMappingShell extends Shell
         if ($this->params['dry-run']) {
             $this->out(json_encode($elasticMapping->toArray(), JSON_PRETTY_PRINT));
             return true;
+        }
+
+        if ($this->params['use-templates']) {
+            $template = [
+                'template' => sprintf($client->getConfig('index'), '*'),
+                'mappings' => $elasticMapping->toArray()
+            ];
+            $response = $client->request('_template/template_' . $type->getName(), Request::PUT, $template);
+            $this->out('<success>Successfully created the mapping template</success>');
+            return $response->isOk();
         }
 
         if (!$index->exists()) {
