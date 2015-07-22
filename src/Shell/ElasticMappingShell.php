@@ -51,10 +51,10 @@ class ElasticMappingShell extends Shell
         $table = TableRegistry::get($table);
         $schema = $table->schema();
         $mapping = [
-            '@timestamp' => ['type' => 'date'],
+            '@timestamp' => ['type' => 'date', 'format' => 'basic_date_time||ordinal_date_time_no_millis||yyyy-MM-dd HH:mm:ss'],
             'transaction' => ['type' => 'string', 'index' => 'not_analyzed'],
             'type' => ['type' => 'string', 'index' => 'not_analyzed'],
-            'primary_key' => ['type' => 'integer'],
+            'primary_key' => ['type' => 'string', 'index' => 'not_analyzed'],
             'source' => ['type' => 'string', 'index' => 'not_analyzed'],
             'parent_source' => ['type' => 'string', 'index' => 'not_analyzed'],
             'original' => [
@@ -65,7 +65,7 @@ class ElasticMappingShell extends Shell
             ],
             'meta' => [
                 'properties' => [
-                    'ip' => ['type' => 'ip'],
+                    'ip' => ['type' => 'string', 'index' => 'not_analyzed'],
                     'url' => ['type' => 'string', 'index' => 'not_analyzed'],
                     'user' => ['type' => 'string', 'index' => 'not_analyzed']
                 ]
@@ -134,7 +134,7 @@ class ElasticMappingShell extends Shell
         case 'date':
         case 'datetime':
         case 'timestamp':
-            return ['type' => 'date'];
+            return ['type' => 'date', 'format' => 'basic_date_time||ordinal_date_time_no_millis||yyyy-MM-dd HH:mm:ss'];
         case 'float':
         case 'decimal':
             return ['type' => 'float'];

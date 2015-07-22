@@ -99,6 +99,7 @@ class ElasticImportTask extends Shell
                 if (!empty($this->params['exclude-models'])) {
                     return $exp->notIn('Audits.model', explode(',', $this->params['exclude-models']));
                 }
+                return $exp;
             })
             ->matching('AuditDeltas')
             ->order(['Audits.created', 'AuditDeltas.audit_id'])
@@ -116,7 +117,7 @@ class ElasticImportTask extends Shell
             ->unfold(function ($audit) use ($queue) {
                 $queue->enqueue($audit);
 
-                if ($queue->count() >= 500) {
+                if ($queue->count() >= 50) {
                     yield collection($queue)->toList();
                 }
             });
