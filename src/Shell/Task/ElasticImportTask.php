@@ -32,10 +32,17 @@ class ElasticImportTask extends Shell
                 'short' => 'u',
                 'help' => 'The date in which to stop importing audit logs',
                 'default' => 'now'
+            ])->addOption('models', [
+                'short' => 'm',
+                'help' => 'A comma separated list of model names to import'
             ])
             ->addOption('exclude-models', [
                 'short' => 'e',
                 'help' => 'A comma separated list of model names to skip importing'
+            ])
+            ->addOption('type-map', [
+                'short' => 't',
+                'help' => 'A comma separated list of model:type pairs (for example ParentCategory:categories)'
             ]);
     }
 
@@ -49,6 +56,16 @@ class ElasticImportTask extends Shell
         $table = $this->loadModel('Audits');
         $table->hasMany('AuditDeltas');
         $table->schema()->columnType('created', 'string');
+        $map = [];
+
+        if (!empty($this->params['type-map'])) {
+            $map = explode(',', $this->params['type-map']);
+            $map = collection($map)->unfold(function ($element) {
+                list($model, $type) = explode(':', $element);
+                yield $model => $type;
+            })
+            ->toArray();
+        }
 
         $from = (new Time($this->params['from']))->modify('midnight');
         $until = (new Time($this->params['until']))->modify('23:59:59');
@@ -113,7 +130,8 @@ class ElasticImportTask extends Shell
             ];
 
             $index = sprintf($index, \DateTime::createFromFormat('Y-m-d H:i:s', $audit['created'])->format('-Y.m.d'));
-            return new Document($audit['id'], $data, Inflector::tableize($audit['model']), $index);
+            $type = isset($map[$audit['model']]) ? $map[$audit['model']] : Inflector::tableize($audit['model']);
+            return new Document($audit['id'], $data, $type, $index);
         };
 
         $query = $table->find()
@@ -122,7 +140,11 @@ class ElasticImportTask extends Shell
             })
             ->where(function ($exp) {
                 if (!empty($this->params['exclude-models'])) {
-                    return $exp->notIn('Audits.model', explode(',', $this->params['exclude-models']));
+                    $exp->notIn('Audits.model', explode(',', $this->params['exclude-models']));
+                }
+
+                if (!empty($this->params['models'])) {
+                    $exp->in('Audits.model', explode(',', $this->params['models']));
                 }
                 return $exp;
             })
