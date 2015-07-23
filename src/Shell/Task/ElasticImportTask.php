@@ -66,7 +66,14 @@ class ElasticImportTask extends Shell
             return array_map('intval', explode(',', $value));
         };
 
-        $changesExtractor = function ($audit) use ($habtmFormatter) {
+        $allBallsRemover = function ($value) {
+            if (is_string($value) && strpos($value, '0000-00-00') === 0) {
+                return null;
+            }
+            return $value;
+        };
+
+        $changesExtractor = function ($audit) use ($habtmFormatter, $allBallsRemover) {
             $changes = collection($audit)
                 ->extract('_matchingData.AuditDeltas')
                 ->indexBy('property_name')
@@ -78,10 +85,12 @@ class ElasticImportTask extends Shell
             $audit['original'] = collection($changes)
                 ->map(function ($c) { return $c['old_value']; })
                 ->map($habtmFormatter)
+                ->map($allBallsRemover)
                 ->toArray();
             $audit['changed'] = collection($changes)
                 ->map(function ($c) { return $c['new_value']; })
                 ->map($habtmFormatter)
+                ->map($allBallsRemover)
                 ->toArray();
 
             return $audit;
