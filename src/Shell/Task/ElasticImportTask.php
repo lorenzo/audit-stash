@@ -101,7 +101,7 @@ class ElasticImportTask extends Shell
             $data = [
                 '@timestamp' => $audit['created'],
                 'transaction' => $audit['id'],
-                'type' => strtolower($audit['event']),
+                'type' => $audit['event'] === 'EDIT' ? 'update' : strtolower($audit['event']),
                 'primary_key' => $audit['entity_id'],
                 'original' => $audit['original'],
                 'changed' => $audit['changed'],
