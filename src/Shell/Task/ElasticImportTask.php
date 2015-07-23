@@ -59,15 +59,31 @@ class ElasticImportTask extends Shell
         $queue = new \SplQueue;
         $queue->setIteratorMode(\SplDoublyLinkedList::IT_MODE_DELETE);
 
-        $changesExtractor = function ($audit) {
+        $habtmFormatter = function ($value, $key) {
+            if (!ctype_upper($key[0])) {
+                return $value;
+            }
+            return array_map('intval', explode(',', $value));
+        };
+
+        $changesExtractor = function ($audit) use ($habtmFormatter) {
             $changes = collection($audit)
                 ->extract('_matchingData.AuditDeltas')
                 ->indexBy('property_name')
                 ->toArray();
+
             $audit = $audit[0];
             unset($audit['_matchingData']);
-            $audit['original'] = collection($changes)->map(function ($c) { return $c['old_value']; })->toArray();
-            $audit['changed'] = collection($changes)->map(function ($c) { return $c['new_value']; })->toArray();
+
+            $audit['original'] = collection($changes)
+                ->map(function ($c) { return $c['old_value']; })
+                ->map($habtmFormatter)
+                ->toArray();
+            $audit['changed'] = collection($changes)
+                ->map(function ($c) { return $c['new_value']; })
+                ->map($habtmFormatter)
+                ->toArray();
+
             return $audit;
         };
 
