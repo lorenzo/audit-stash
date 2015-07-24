@@ -135,7 +135,7 @@ class ElasticMappingShell extends Shell
             return ['type' => 'date', 'format' => 'basic_date||yyy-MM-dd', 'null_value' => '0001-01-01'];
         case 'datetime':
         case 'timestamp':
-            return ['type' => 'date', 'format' => 'basic_date_time||ordinal_date_time_no_millis||yyyy-MM-dd HH:mm:ss||basic_date', 'null_value' => '0001-01-01'];
+            return ['type' => 'date', 'format' => 'basic_date_time||ordinal_date_time_no_millis||yyyy-MM-dd HH:mm:ss||basic_date', 'null_value' => '0001-01-01 00:00:00'];
         case 'float':
         case 'decimal':
             return ['type' => 'float', 'null_value' => ~PHP_INT_MAX];
