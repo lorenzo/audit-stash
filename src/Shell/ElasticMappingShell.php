@@ -74,7 +74,7 @@ class ElasticMappingShell extends Shell
 
         $properties = [];
         foreach ($schema->columns() as $column) {
-            $properties[$column] = $this->mapType($schema, $column);
+            $properties[$column] = $this->mapType($schema, $column) + ['null_value' => '_null_'];
         }
 
         if ($table->hasBehavior('AuditLog')) {
