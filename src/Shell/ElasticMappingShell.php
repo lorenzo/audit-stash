@@ -74,7 +74,7 @@ class ElasticMappingShell extends Shell
 
         $properties = [];
         foreach ($schema->columns() as $column) {
-            $properties[$column] = $this->mapType($schema, $column) + ['null_value' => '_null_'];
+            $properties[$column] = $this->mapType($schema, $column);
         }
 
         if ($table->hasBehavior('AuditLog')) {
@@ -128,28 +128,28 @@ class ElasticMappingShell extends Shell
         $baseType = $schema->baseColumnType($column);
         switch ($baseType) {
         case 'uuid':
-            return ['type' => 'string', 'index' => 'not_analyzed'];
+            return ['type' => 'string', 'index' => 'not_analyzed', 'null_value' => '_null_'];
         case 'integer':
-            return ['type' => 'integer'];
+            return ['type' => 'integer', 'null_value' => ~PHP_INT_MAX];
         case 'date':
-            return ['type' => 'date', 'format' => 'basic_date||yyy-MM-dd'];
+            return ['type' => 'date', 'format' => 'basic_date||yyy-MM-dd', 'null_value' => '0001-01-01'];
         case 'datetime':
         case 'timestamp':
-            return ['type' => 'date', 'format' => 'basic_date_time||ordinal_date_time_no_millis||yyyy-MM-dd HH:mm:ss||basic_date'];
+            return ['type' => 'date', 'format' => 'basic_date_time||ordinal_date_time_no_millis||yyyy-MM-dd HH:mm:ss||basic_date', 'null_value' => '0001-01-01'];
         case 'float':
         case 'decimal':
-            return ['type' => 'float'];
+            return ['type' => 'float', 'null_value' => ~PHP_INT_MAX];
         case 'float':
         case 'decimal':
-            return ['type' => 'float'];
+            return ['type' => 'float', 'null_value' => ~PHP_INT_MAX];
         case 'boolean':
             return ['type' => 'boolean'];
         default:
             return [
                 'type' => 'multi_field',
                 'fields' => [
-                    $column => ['type' => 'string'],
-                    'raw' => ['type' => 'string', 'index' => 'not_analyzed']
+                    $column => ['type' => 'string', 'null_value' => '_null_'],
+                    'raw' => ['type' => 'string', 'index' => 'not_analyzed', 'null_value' => '_null_']
                 ]
             ];
         }
