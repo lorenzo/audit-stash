@@ -43,6 +43,10 @@ class ElasticImportTask extends Shell
             ->addOption('type-map', [
                 'short' => 't',
                 'help' => 'A comma separated list of model:type pairs (for example ParentCategory:categories)'
+            ])
+            ->addOption('extra-meta', [
+                'short' => 'a',
+                'help' => 'A comma separated list of key:value pairs to store in meta (for example app_name:frontend)'
             ]);
     }
 
@@ -57,14 +61,21 @@ class ElasticImportTask extends Shell
         $table->hasMany('AuditDeltas');
         $table->schema()->columnType('created', 'string');
         $map = [];
+        $meta = [];
+
+        $featureList = function ($element) {
+            list($k, $v) = explode(':', $element);
+            yield $k => $v;
+        };
 
         if (!empty($this->params['type-map'])) {
             $map = explode(',', $this->params['type-map']);
-            $map = collection($map)->unfold(function ($element) {
-                list($model, $type) = explode(':', $element);
-                yield $model => $type;
-            })
-            ->toArray();
+            $map = collection($map)->unfold($featureList)->toArray();
+        }
+
+        if (!empty($this->params['type-map'])) {
+            $meta = explode(',', $this->params['extra-meta']);
+            $meta = collection($meta)->unfold($featureList)->toArray();
         }
 
         $from = (new Time($this->params['from']))->modify('midnight');
@@ -122,7 +133,7 @@ class ElasticImportTask extends Shell
                 'primary_key' => $audit['entity_id'],
                 'original' => $audit['original'],
                 'changed' => $audit['changed'],
-                'meta' => [
+                'meta' => $meta + [
                     'ip' => $audit['source_ip'],
                     'url' => $audit['source_url'],
                     'user' => $audit['source_id'],
