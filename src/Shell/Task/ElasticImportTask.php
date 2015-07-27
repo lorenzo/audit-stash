@@ -125,7 +125,7 @@ class ElasticImportTask extends Shell
         };
 
         $index = ConnectionManager::get('auditlog_elastic')->getConfig('index');
-        $eventsFormatter = function ($audit)  use ($index) {
+        $eventsFormatter = function ($audit)  use ($index, $meta) {
             $data = [
                 '@timestamp' => $audit['created'],
                 'transaction' => $audit['id'],
