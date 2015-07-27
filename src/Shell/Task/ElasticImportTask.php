@@ -73,7 +73,7 @@ class ElasticImportTask extends Shell
             $map = collection($map)->unfold($featureList)->toArray();
         }
 
-        if (!empty($this->params['type-map'])) {
+        if (!empty($this->params['extra-meta'])) {
             $meta = explode(',', $this->params['extra-meta']);
             $meta = collection($meta)->unfold($featureList)->toArray();
         }
