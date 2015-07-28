@@ -91,6 +91,7 @@ class ElasticImportTask extends Shell
         $eventsFormatter = function ($audit)  use ($index, $meta) {
             return $this->eventFormatter($audit, $index, $meta);
         };
+        $changesExtractor = [$this, 'changesExtractor'];
 
         $query = $table->find()
             ->where(function ($exp) use ($from, $until) {
@@ -117,7 +118,7 @@ class ElasticImportTask extends Shell
                 $currentId = $audit['id'];
                 $buffer->enqueue($audit);
             })
-            ->map([$this, 'changesExtractor'])
+            ->map($changesExtractor)
             ->map($eventsFormatter)
             ->unfold(function ($audit) use ($queue) {
                 $queue->enqueue($audit);
@@ -131,7 +132,7 @@ class ElasticImportTask extends Shell
 
         // There are probably some un-yielded results, let's flush them
         $rest = collection(count($buffer) ? [collection($buffer)->toList()] : [])
-            ->map([$this, 'changesExtractor'])
+            ->map($changesExtractor)
             ->map($eventsFormatter)
             ->append($queue);
 
