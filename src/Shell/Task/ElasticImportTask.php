@@ -179,12 +179,12 @@ class ElasticImportTask extends Shell
      */
     public function changesExtractor($audits)
     {
-        $changes = collection($audit)
+        $changes = collection($audits)
             ->extract('_matchingData.AuditDeltas')
             ->indexBy('property_name')
             ->toArray();
 
-        $audit = $audit[0];
+        $audit = $audits[0];
         unset($audit['_matchingData']);
 
         $audit['original'] = collection($changes)
