@@ -150,7 +150,7 @@ class ElasticMappingShell extends Shell
                 'type' => 'multi_field',
                 'fields' => [
                     $column => ['type' => 'string', 'null_value' => '_null_'],
-                    'raw' => ['type' => 'string', 'index' => 'not_analyzed', 'null_value' => '_null_']
+                    'raw' => ['type' => 'string', 'index' => 'not_analyzed', 'null_value' => '_null_', 'ignore_above' => 256]
                 ]
             ];
         }
