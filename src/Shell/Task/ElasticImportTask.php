@@ -204,12 +204,12 @@ class ElasticImportTask extends Shell
     /**
      * Converts the single audit log event array into a Elastica\Document so it can be stored
      *
-     * @param array $event The audit log information
+     * @param array $audit The audit log information
      * @param string $index The name of the index where the event should be stored
      * @param array $meta The meta information to append to the meta array
      * @return Elastica\Document
      */
-    public function eventFormatter($event, $index, $meta = [])
+    public function eventFormatter($audit, $index, $meta = [])
     {
         $data = [
             '@timestamp' => $audit['created'],
