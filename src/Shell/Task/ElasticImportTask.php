@@ -86,63 +86,10 @@ class ElasticImportTask extends Shell
         $buffer->setIteratorMode(\SplDoublyLinkedList::IT_MODE_DELETE);
         $queue = new \SplQueue;
         $queue->setIteratorMode(\SplDoublyLinkedList::IT_MODE_DELETE);
-
-        $habtmFormatter = function ($value, $key) {
-            if (!ctype_upper($key[0])) {
-                return $value;
-            }
-            return array_map('intval', explode(',', $value));
-        };
-
-        $allBallsRemover = function ($value) {
-            if (is_string($value) && strpos($value, '0000-00-00') === 0) {
-                return null;
-            }
-            return $value;
-        };
-
-        $changesExtractor = function ($audit) use ($habtmFormatter, $allBallsRemover) {
-            $changes = collection($audit)
-                ->extract('_matchingData.AuditDeltas')
-                ->indexBy('property_name')
-                ->toArray();
-
-            $audit = $audit[0];
-            unset($audit['_matchingData']);
-
-            $audit['original'] = collection($changes)
-                ->map(function ($c) { return $c['old_value']; })
-                ->map($habtmFormatter)
-                ->map($allBallsRemover)
-                ->toArray();
-            $audit['changed'] = collection($changes)
-                ->map(function ($c) { return $c['new_value']; })
-                ->map($habtmFormatter)
-                ->map($allBallsRemover)
-                ->toArray();
-
-            return $audit;
-        };
-
         $index = ConnectionManager::get('auditlog_elastic')->getConfig('index');
-        $eventsFormatter = function ($audit)  use ($index, $meta) {
-            $data = [
-                '@timestamp' => $audit['created'],
-                'transaction' => $audit['id'],
-                'type' => $audit['event'] === 'EDIT' ? 'update' : strtolower($audit['event']),
-                'primary_key' => $audit['entity_id'],
-                'original' => $audit['original'],
-                'changed' => $audit['changed'],
-                'meta' => $meta + [
-                    'ip' => $audit['source_ip'],
-                    'url' => $audit['source_url'],
-                    'user' => $audit['source_id'],
-                ]
-            ];
 
-            $index = sprintf($index, \DateTime::createFromFormat('Y-m-d H:i:s', $audit['created'])->format('-Y.m.d'));
-            $type = isset($map[$audit['model']]) ? $map[$audit['model']] : Inflector::tableize($audit['model']);
-            return new Document($audit['id'], $data, $type, $index);
+        $eventsFormatter = function ($audit)  use ($index, $meta) {
+            return $this->eventFormatter($audit, $index, $meta);
         };
 
         $query = $table->find()
@@ -170,7 +117,7 @@ class ElasticImportTask extends Shell
                 $currentId = $audit['id'];
                 $buffer->enqueue($audit);
             })
-            ->map($changesExtractor)
+            ->map([$this, 'changesExtractor'])
             ->map($eventsFormatter)
             ->unfold(function ($audit) use ($queue) {
                 $queue->enqueue($audit);
@@ -184,13 +131,102 @@ class ElasticImportTask extends Shell
 
         // There are probably some un-yielded results, let's flush them
         $rest = collection(count($buffer) ? [collection($buffer)->toList()] : [])
-            ->map($changesExtractor)
+            ->map([$this, 'changesExtractor'])
             ->map($eventsFormatter)
             ->append($queue);
 
         $this->persistBulk($rest->toList());
 
         return true;
+    }
+
+    /**
+     * Converts the string data from HABTM reference into an array of integers
+     *
+     * @param mixed $value The value to convert
+     * @param string $key The field name where the data was stored
+     * @return mixed
+     */
+    public function habtmFormatter($value, $key)
+    {
+        if (!ctype_upper($key[0])) {
+            return $value;
+        }
+        return array_map('intval', explode(',', $value));
+    }
+
+    /**
+     * Converts a bad mysql 0000-00-00 date to nul
+     *
+     * @param mixed $value The value to convert
+     * @return mixed
+     */
+    public function allBallsRemover($value)
+    {
+        if (is_string($value) && strpos($value, '0000-00-00') === 0) {
+            return null;
+        }
+        return $value;
+    }
+
+    /**
+     * Converts a group of related audit logs into a single one with the
+     * original and changed keys set
+     *
+     * @param array $audits The list of audit logs to compile into a single one
+     * @return array
+     */
+    public function changesExtractor($audits)
+    {
+        $changes = collection($audit)
+            ->extract('_matchingData.AuditDeltas')
+            ->indexBy('property_name')
+            ->toArray();
+
+        $audit = $audit[0];
+        unset($audit['_matchingData']);
+
+        $audit['original'] = collection($changes)
+            ->map(function ($c) { return $c['old_value']; })
+            ->map([$this, 'habtmFormatter'])
+            ->map([$this, 'allBallsRemover'])
+            ->toArray();
+        $audit['changed'] = collection($changes)
+            ->map(function ($c) { return $c['new_value']; })
+            ->map([$this, 'habtmFormatter'])
+            ->map([$this, 'allBallsRemover'])
+            ->toArray();
+
+        return $audit;
+    }
+
+    /**
+     * Converts the single audit log event array into a Elastica\Document so it can be stored
+     *
+     * @param array $event The audit log information
+     * @param string $index The name of the index where the event should be stored
+     * @param array $meta The meta information to append to the meta array
+     * @return Elastica\Document
+     */
+    public function eventFormatter($event, $index, $meta = [])
+    {
+        $data = [
+            '@timestamp' => $audit['created'],
+            'transaction' => $audit['id'],
+            'type' => $audit['event'] === 'EDIT' ? 'update' : strtolower($audit['event']),
+            'primary_key' => $audit['entity_id'],
+            'original' => $audit['original'],
+            'changed' => $audit['changed'],
+            'meta' => $meta + [
+                'ip' => $audit['source_ip'],
+                'url' => $audit['source_url'],
+                'user' => $audit['source_id'],
+            ]
+        ];
+
+        $index = sprintf($index, \DateTime::createFromFormat('Y-m-d H:i:s', $audit['created'])->format('-Y.m.d'));
+        $type = isset($map[$audit['model']]) ? $map[$audit['model']] : Inflector::tableize($audit['model']);
+        return new Document($audit['id'], $data, $type, $index);
     }
 
     /**
