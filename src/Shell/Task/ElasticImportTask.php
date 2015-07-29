@@ -179,8 +179,9 @@ class ElasticImportTask extends Shell
      */
     public function changesExtractor($audits)
     {
+        $suffix = isset($audits[0]['_matchingData']['AuditDeltas'][0]) ? '.{*}' : '';
         $changes = collection($audits)
-            ->extract('_matchingData.AuditDeltas')
+            ->extract('_matchingData.AuditDeltas' . $suffix)
             ->indexBy('property_name')
             ->toArray();
 

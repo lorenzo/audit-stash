@@ -23,6 +23,13 @@ class ElasticSearchPersister implements PersisterInterface
     protected $connection;
 
     /**
+     * Whether to use the transaction ids as document ids.
+     *
+     * @var bool
+     */
+    protected $useTransactionId = false;
+
+    /**
      * Persists all of the audit log event objects that are provided
      *
      * @param array $auditLogs An array of EventInterface objects
@@ -59,10 +66,23 @@ class ElasticSearchPersister implements PersisterInterface
                 'changed' => $eventType === 'delete' ? null : $log->getChanged(),
                 'meta' => $log->getMetaInfo()
             ];
-            $documents[] = new Document('', $data, $log->getSourceName(), $index);
+            $id = $this->useTransactionId ? $log->getTransactionId() : '';
+            $documents[] = new Document($id, $data, $log->getSourceName(), $index);
         }
 
         return $documents;
+    }
+
+    /**
+     * If true is passed, the transactionId from the event logs will be used as the document
+     * id in elastic search. Only enable this feature if you know that your transactions are
+     * only comprised of a single event log per commit.
+     *
+     * @param bool $use Whether or not to copy the transactionId as the document id
+     * @return void
+     */
+    public function reuseTransactionId($use = true) {
+        $this->useTransactionId = $use;
     }
 
     /**
