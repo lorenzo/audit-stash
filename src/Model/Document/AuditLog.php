@@ -10,14 +10,4 @@ use Cake\ElasticSearch\Document;
  */
 class AuditLog extends Document
 {
-
-    /**
-     * Returns the type (source) for the audit log
-     *
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->_result->getType();
-    }
 }
