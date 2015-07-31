@@ -2,13 +2,14 @@
     "name": "lorenzo/audit-stash",
     "description": "Flexible and rock solid audit log tracking plugin for cakephp",
     "type": "cakephp-plugin",
+    "license": "MIT",
     "require": {
-        "php": ">=5.5.0"
+        "php": ">=5.5.0",
+        "cakephp/cakephp": "~3.0"
     },
     "require-dev": {
         "phpunit/phpunit": "*",
-        "cakephp/elastic-search": "dev-master",
-        "cakephp/cakephp": "dev-master"
+        "cakephp/cakephp": "~3.0"
     },
     "suggest": {
         "cakephp/elastic-search": "The default persister engine for audit-stash is elastic search and requires this plugin",
