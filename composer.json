@@ -10,6 +10,10 @@
         "cakephp/elastic-search": "dev-master",
         "cakephp/cakephp": "dev-master"
     },
+    "suggest": {
+        "cakephp/elastic-search": "The default persister engine for audit-stash is elastic search and requires this plugin",
+        "friendsofcake/crud": "audit-stash provide Crud Action classes for displaying audit logs"
+    },
     "autoload": {
         "psr-4": {
             "AuditStash\\": "src"
