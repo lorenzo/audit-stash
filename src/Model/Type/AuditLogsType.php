@@ -6,7 +6,8 @@ use Cake\ElasticSearch\Type;
 use Elastica\Aggregation\Terms as TermsAggregation;
 
 /**
- * Represents
+ * Represents the rpository containing all the audit logs events
+ * of any kind and source.
  *
  */
 class AuditLogsType extends Type
@@ -50,5 +51,4 @@ class AuditLogsType extends Type
         $query->aggregate($facet);
         return $query->limit(1);
     }
-
 }

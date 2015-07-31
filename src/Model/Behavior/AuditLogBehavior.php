@@ -15,6 +15,11 @@ use Cake\ORM\Behavior;
 use Cake\Utility\Text;
 use SplObjectStorage;
 
+/**
+ * This behavior can be used to log all the creations, modifications and deletions
+ * done to a particular table.
+ *
+ */
 class AuditLogBehavior extends Behavior
 {
 
@@ -52,6 +57,15 @@ class AuditLogBehavior extends Behavior
         ];
     }
 
+    /**
+     * Conditionally adds the `_auditTransaction` and `_auditQueue` keys to $options. They are
+     * used to track all changes done inside the same transaction.
+     *
+     * @param Cake\Event\Event The Model event that is enclosed inside a transaction
+     * @param Cake\Datasource\EntityInterface $entity The entity that is to be saved
+     * @param ArrayObject $options The options to be passed to the save or delete operation
+     * @return void
+     */
     public function injectTracking(Event $event, EntityInterface $entity, ArrayObject $options)
     {
         if (!isset($options['_auditTransaction'])) {
@@ -63,6 +77,15 @@ class AuditLogBehavior extends Behavior
         }
     }
 
+    /**
+     * Calculates the changes done to the entity and stores the audit log event object into the
+     * log queue inside the `_auditQueue` key in $options.
+     *
+     * @param Cake\Event\Event The Model event that is enclosed inside a transaction
+     * @param Cake\Datasource\EntityInterface $entity The entity that is to be saved
+     * @param ArrayObject $options Options array containing the `_auditQueue` key
+     * @return void
+     */
     public function afterSave(Event $event, EntityInterface $entity, $options)
     {
         if (!isset($options['_auditQueue'])) {
@@ -108,6 +131,14 @@ class AuditLogBehavior extends Behavior
         $options['_auditQueue']->attach($entity, $auditEvent);
     }
 
+    /**
+     * Persists all audit log events stored in the `_eventQueue` key inside $options
+     *
+     * @param Cake\Event\Event The Model event that is enclosed inside a transaction
+     * @param Cake\Datasource\EntityInterface $entity The entity that is to be saved or deleted
+     * @param ArrayObject $options Options array containing the `_auditQueue` key
+     * @return void
+     */
     public function afterCommit(Event $event, EntityInterface $entity, $options)
     {
         if (!isset($options['_auditQueue'])) {
@@ -128,6 +159,14 @@ class AuditLogBehavior extends Behavior
         $this->persister()->logEvents($data->data['logs']);
     }
 
+    /**
+     * Persists all audit log events stored in the `_eventQueue` key inside $options
+     *
+     * @param Cake\Event\Event The Model event that is enclosed inside a transaction
+     * @param Cake\Datasource\EntityInterface $entity The entity that is to be saved or deleted
+     * @param ArrayObject $options Options array containing the `_auditQueue` key
+     * @return void
+     */
     public function afterDelete(Event $event, EntityInterface $entity, $options)
     {
         if (!isset($options['_auditQueue'])) {
@@ -140,6 +179,13 @@ class AuditLogBehavior extends Behavior
         $options['_auditQueue']->attach($entity, $auditEvent);
     }
 
+    /**
+     * Sets the persister object to use for logging al audit events.
+     * If called if no arguments, it will return the currently configured persister
+     *
+     * @param PersisterInterface $persister The persister object to use
+     * @return PersisterInterface The configured persister
+     */
     public function persister(PersisterInterface $persister = null)
     {
         if ($persister === null && $this->persister === null) {
@@ -153,6 +199,12 @@ class AuditLogBehavior extends Behavior
         return $this->persister = $persister;
     }
 
+    /**
+     * Helper method used to get the property names of associations for a table
+     *
+     * @param array $associated Whitelist of associations to look for
+     * @return array List of property names
+     */
     protected function getAssociationProperties($associated)
     {
         $associations = $this->_table->associations();

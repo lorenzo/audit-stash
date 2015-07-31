@@ -5,24 +5,37 @@ namespace AuditStash\Event;
 use AuditStash\EventInterface;
 use DateTime;
 
+/**
+ * Represents a change in the repository where the list of changes can be
+ * tracked as a list of properties and thier values.
+ */
 abstract class BaseEvent implements EventInterface
 {
-    protected $transactionId;
+    use BaseEventTrait;
 
-    protected $timestamp;
-
-    protected $id;
-
-    protected $source;
-
-    protected $parentSource;
-
+    /**
+     * The array of changed properties for the entity
+     *
+     * @var array
+     */
     protected $changed;
 
+    /**
+     * The array of original properties before they got changed
+     *
+     * @var array
+     */
     protected $original;
 
-    protected $meta = [];
-
+    /**
+     * Construnctor
+     *
+     * @param string $transationId The global transaction id
+     * @param mixed $id The primary key record that got deleted
+     * @param string $source The name of the source (table) where the record was deleted
+     * @param array $changed The array of changes that got detected for the entity
+     * @param array $original The original values the entity had before it got changed
+     */
     public function __construct($transactionId, $id, $source, $changed, $original)
     {
         $this->transactionId = $transactionId;
@@ -33,57 +46,30 @@ abstract class BaseEvent implements EventInterface
         $this->timestamp = Datetime::createFromFormat('U.u', microtime(true))->format('Y-m-d\TH:i:s.u\Z');
     }
 
-    public function getTransactionId()
-    {
-        return $this->transactionId;
-    }
-
-    public function getTimestamp()
-    {
-        return $this->timestamp;
-    }
-
-    public function getId()
-    {
-        if (is_array($this->id) && count($this->id) === 1) {
-            return current($this->id);
-        }
-        return $this->id;
-    }
-
-    public function getSourceName()
-    {
-        return $this->source;
-    }
-
+    /**
+     * Returns an array with the properties and their values before they got changed
+     *
+     * @return array
+     */
     public function getOriginal()
     {
         return $this->original;
     }
 
+    /**
+     * Returns an array with the properties and their values as they were changed
+     *
+     * @return array
+     */
     public function getChanged()
     {
         return $this->changed;
     }
 
-    public function getParentSourceName()
-    {
-        return $this->parentSource;
-    }
-
-    public function getMetaInfo()
-    {
-        return $this->meta;
-    }
-
-    public function setMetaInfo($meta)
-    {
-        $this->meta = $meta;
-    }
-
-    public function setParentSourceName($name) {
-        $this->parentSource = $name;
-    }
-
+    /**
+     * Returns the name of this event type
+     *
+     * @return string
+     */
     abstract public function getEventType();
 }
