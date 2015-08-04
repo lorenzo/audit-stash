@@ -153,6 +153,16 @@ class ElasticImportTask extends Shell
         if (!ctype_upper($key[0])) {
             return $value;
         }
+
+        if (isset($value[$key])) {
+            // $article[Tag][Tag]
+            $value = $value[$key];
+        }
+
+        if (!is_array($value) || !is_numeric(key($value))) {
+            return $value;
+        }
+
         return array_map('intval', explode(',', $value));
     }
 
