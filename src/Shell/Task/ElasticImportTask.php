@@ -159,7 +159,7 @@ class ElasticImportTask extends Shell
             $value = $value[$key];
         }
 
-        if (!is_array($value) || !is_numeric(key($value))) {
+        if (is_array($value)) {
             return $value;
         }
 
