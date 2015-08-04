@@ -163,7 +163,13 @@ class ElasticImportTask extends Shell
             return $value;
         }
 
-        return array_map('intval', explode(',', $value));
+        $list = explode(',', $value);
+
+        if (empty($list)) {
+            return [];
+        }
+
+        return array_map('intval', $list);
     }
 
     /**
