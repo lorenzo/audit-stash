@@ -102,13 +102,13 @@ class ElasticLogsIndexAction extends IndexAction
 
         if (!empty($from)) {
             $query->where(function ($builder) use ($from, $until) {
-                return $builder->between('@timestamp', $from->format('c'), $until->format('c'));
+                return $builder->between('@timestamp', $from->format('Y-m-d H:i:s'), $until->format('Y-m-d H:i:s'));
             });
             return;
         }
 
         if (!empty($until)) {
-            $query->where(['@timestamp <=' => $until->format('Y-m-d')]);
+            $query->where(['@timestamp <=' => $until->format('Y-m-d H:i:s')]);
         }
     }
 }
