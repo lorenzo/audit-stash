@@ -25,7 +25,7 @@ class ElasticLogsIndexAction extends IndexAction
         $query->searchOptions(['ignore_unavailable' => true]);
 
         if ($request->query('type')) {
-            $query->where(['_type' => $request->query('type')]);
+            $repository->name($request->query('type'));
         }
 
         if ($request->query('primary_key') && $request->query('type')) {
