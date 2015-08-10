@@ -58,6 +58,7 @@ class ElasticLogsIndexAction extends IndexAction
         try {
             $this->addTimeConstraints($request, $query);
         } catch (\Exception $e) {
+
         }
 
         $subject = $this->_subject(['success' => true, 'query' => $query]);
@@ -92,7 +93,7 @@ class ElasticLogsIndexAction extends IndexAction
     {
         if ($request->query('from')) {
             $from = new \DateTime($request->query('from'));
-            $until = new \DateTime;
+            $until = new \DateTime();
         }
 
         if ($request->query('until')) {
