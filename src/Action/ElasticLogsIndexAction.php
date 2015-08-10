@@ -28,7 +28,7 @@ class ElasticLogsIndexAction extends IndexAction
             $repository->name($request->query('type'));
         }
 
-        if ($request->query('primary_key') && $request->query('type')) {
+        if ($request->query('primary_key')) {
             $query->where(['primary_key' => $request->query('primary_key')]);
         }
 
