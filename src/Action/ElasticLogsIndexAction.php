@@ -22,11 +22,13 @@ class ElasticLogsIndexAction extends IndexAction
         $repository = $query->repository();
         $request = $this->_request();
 
+        $query->searchOptions(['ignore_unavailable' => true]);
+
         if ($request->query('type')) {
-            $query->where(['_type' => $request->query('type')]);
+            $repository->name($request->query('type'));
         }
 
-        if ($request->query('primary_key') && $request->query('type')) {
+        if ($request->query('primary_key')) {
             $query->where(['primary_key' => $request->query('primary_key')]);
         }
 
@@ -56,6 +58,7 @@ class ElasticLogsIndexAction extends IndexAction
         try {
             $this->addTimeConstraints($request, $query);
         } catch (\Exception $e) {
+
         }
 
         $subject = $this->_subject(['success' => true, 'query' => $query]);
@@ -90,7 +93,7 @@ class ElasticLogsIndexAction extends IndexAction
     {
         if ($request->query('from')) {
             $from = new \DateTime($request->query('from'));
-            $until = new \DateTime;
+            $until = new \DateTime();
         }
 
         if ($request->query('until')) {
@@ -99,13 +102,13 @@ class ElasticLogsIndexAction extends IndexAction
 
         if (!empty($from)) {
             $query->where(function ($builder) use ($from, $until) {
-                return $builder->between('@timestamp', $from->format('c'), $until->format('c'));
+                return $builder->between('@timestamp', $from->format('Y-m-d H:i:s'), $until->format('Y-m-d H:i:s'));
             });
             return;
         }
 
         if (!empty($until)) {
-            $query->where(['@timestamp <=' => $until->format('Y-m-d')]);
+            $query->where(['@timestamp <=' => $until->format('Y-m-d H:i:s')]);
         }
     }
 }
