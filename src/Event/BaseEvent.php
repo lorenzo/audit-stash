@@ -43,7 +43,7 @@ abstract class BaseEvent implements EventInterface
         $this->source = $source;
         $this->changed = $changed;
         $this->original = $original;
-        $this->timestamp = Datetime::createFromFormat('U.u', microtime(true))->format('Y-m-d\TH:i:s.u\Z');
+        $this->timestamp = (new DateTime)->format(DateTime::ISO8601);
     }
 
     /**
