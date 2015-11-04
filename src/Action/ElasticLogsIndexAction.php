@@ -11,6 +11,8 @@ use Crud\Action\IndexAction;
 class ElasticLogsIndexAction extends IndexAction
 {
 
+    use IndexConfigTrait;
+
     /**
      * Renders the index action by searching all documents matching the URL conditions
      *
@@ -18,9 +20,10 @@ class ElasticLogsIndexAction extends IndexAction
      */
     protected function _handle()
     {
+        $request = $this->_request();
+        $this->_configIndex($this->_table(), $request);
         $query = $this->_table()->find();
         $repository = $query->repository();
-        $request = $this->_request();
 
         $query->searchOptions(['ignore_unavailable' => true]);
 

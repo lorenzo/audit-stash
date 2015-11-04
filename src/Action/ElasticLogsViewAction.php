@@ -15,6 +15,8 @@ use Cake\Event\Event;
 class ElasticLogsViewAction extends ViewAction
 {
 
+    use IndexConfigTrait;
+
     /**
      * Returns the Repository object to use
      *
@@ -35,6 +37,7 @@ class ElasticLogsViewAction extends ViewAction
     protected function _findRecord($id, Subject $subject)
     {
         $repository = $this->_table();
+        $this->_configIndex($repository, $this->_request());
 
         if ($this->_request()->query('type')) {
             $repository->name($this->_request()->query('type'));
