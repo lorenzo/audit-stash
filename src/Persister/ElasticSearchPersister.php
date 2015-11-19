@@ -53,9 +53,9 @@ class ElasticSearchPersister implements PersisterInterface
     protected function transformToDocuments($auditLogs, $index)
     {
         $documents = [];
-        $primary = $log->getId();
-        $primary = is_array($primary) ? array_values($primary) : $primary;
         foreach ($auditLogs as $log) {
+            $primary = $log->getId();
+            $primary = is_array($primary) ? array_values($primary) : $primary;
             $eventType = $log->getEventType();
             $data = [
                 '@timestamp' => $log->getTimestamp(),
