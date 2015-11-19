@@ -51,7 +51,7 @@ class ElasticMappingShell extends Shell
         $table = TableRegistry::get($table);
         $schema = $table->schema();
         $mapping = [
-            '@timestamp' => ['type' => 'date', 'format' => 'dateOptionalTime||basic_date_time||ordinal_date_time_no_millis||yyyy-MM-dd HH:mm:ss'],
+            '@timestamp' => ['type' => 'date', 'format' => 'basic_t_time_no_millis||dateOptionalTime||basic_date_time||ordinal_date_time_no_millis||yyyy-MM-dd HH:mm:ss'],
             'transaction' => ['type' => 'string', 'index' => 'not_analyzed'],
             'type' => ['type' => 'string', 'index' => 'not_analyzed'],
             'primary_key' => ['type' => 'string', 'index' => 'not_analyzed'],
@@ -136,7 +136,7 @@ class ElasticMappingShell extends Shell
             return ['type' => 'date', 'format' => 'dateOptionalTime||basic_date||yyy-MM-dd', 'null_value' => '0001-01-01'];
         case 'datetime':
         case 'timestamp':
-            return ['type' => 'date', 'format' => 'dateOptionalTime||basic_date_time||ordinal_date_time_no_millis||yyyy-MM-dd HH:mm:ss||basic_date', 'null_value' => '0001-01-01 00:00:00'];
+            return ['type' => 'date', 'format' => 'basic_t_time_no_millis||dateOptionalTime||basic_date_time||ordinal_date_time_no_millis||yyyy-MM-dd HH:mm:ss||basic_date', 'null_value' => '0001-01-01 00:00:00'];
         case 'float':
         case 'decimal':
             return ['type' => 'float', 'null_value' => ~PHP_INT_MAX];
