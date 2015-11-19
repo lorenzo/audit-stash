@@ -9,7 +9,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "*",
-        "cakephp/cakephp": "~3.0"
+        "cakephp/cakephp": "~3.0",
+        "cakephp/elastic-search": "~0.1"
     },
     "suggest": {
         "cakephp/elastic-search": "The default persister engine for audit-stash is elastic search and requires this plugin",
