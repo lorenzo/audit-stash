@@ -43,7 +43,7 @@ abstract class BaseEvent implements EventInterface
         $this->source = $source;
         $this->changed = $changed;
         $this->original = $original;
-        $this->timestamp = (new DateTime)->format(DateTime::ATOM);
+        $this->timestamp = (new DateTime)->format(DateTime::ISO8601);
     }
 
     /**

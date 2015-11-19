@@ -27,7 +27,7 @@ class AuditDeleteEvent implements EventInterface
         $this->id = $id;
         $this->source = $source;
         $this->parentSource = $parentSource;
-        $this->timestamp = (new DateTime)->format(DateTime::ATOM);
+        $this->timestamp = (new DateTime)->format(DateTime::ISO8601);
     }
 
     /**
