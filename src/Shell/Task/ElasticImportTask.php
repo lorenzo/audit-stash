@@ -150,7 +150,7 @@ class ElasticImportTask extends Shell
      */
     public function habtmFormatter($value, $key)
     {
-        if (!ctype_upper($key[0])) {
+        if (empty($key) || !ctype_upper($key[0])) {
             return $value;
         }
 
