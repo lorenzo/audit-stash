@@ -1,10 +1,13 @@
 <?php
 namespace AuditStash;
 
+use JsonSerializable;
+use Serializable;
+
 /**
  * Represents an event in a particular entity in a repository
  */
-interface EventInterface
+interface EventInterface extends JsonSerializable, Serializable
 {
     /**
      * Returns the name of this event type

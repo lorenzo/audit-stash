@@ -46,6 +46,10 @@ class EventFactory
             );
         }
 
+        if (isset($data['parent_source'])) {
+            $event->setParentSourceName($data['parent_source']);
+        }
+
         $reflection = new ReflectionObject($event);
         $timestamp = $reflection->getProperty('timestamp');
         $timestamp->setAccessible(true);

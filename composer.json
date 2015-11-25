@@ -10,10 +10,12 @@
     "require-dev": {
         "phpunit/phpunit": "*",
         "cakephp/cakephp": "~3.0",
-        "cakephp/elastic-search": "~0.1"
+        "cakephp/elastic-search": "~0.1",
+        "friendsofcake/process-mq": "dev-master"
     },
     "suggest": {
         "cakephp/elastic-search": "The default persister engine for audit-stash is elastic search and requires this plugin",
+        "friendsofcake/process-mq": "Use this package if you prefer sending the audit events to RabbitMQ",
         "friendsofcake/crud": "audit-stash provide Crud Action classes for displaying audit logs"
     },
     "autoload": {

@@ -12,6 +12,7 @@ use DateTime;
 abstract class BaseEvent implements EventInterface
 {
     use BaseEventTrait;
+    use SerializableEventTrait;
 
     /**
      * The array of changed properties for the entity
@@ -72,4 +73,17 @@ abstract class BaseEvent implements EventInterface
      * @return string
      */
     abstract public function getEventType();
+
+    /**
+     * Returns he array to be used for encoding this object as json
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->basicSerialize() + [
+            'original' => $this->original,
+            'changed' => $this->changed
+        ];
+    }
 }

@@ -12,6 +12,9 @@ use Datetime;
 class AuditDeleteEvent implements EventInterface
 {
     use BaseEventTrait;
+    use SerializableEventTrait {
+        basicSerialize as public jsonSerialize;
+    }
 
     /**
      * Construnctor
