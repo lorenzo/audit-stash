@@ -37,7 +37,7 @@ class PersistTask extends Shell
             },
             $events
         );
-        $this->presister->logEvents($events);
+        $this->persister()->logEvents($events);
     }
 
     /**
