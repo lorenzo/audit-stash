@@ -20,7 +20,7 @@ class RabbitMQPersisterTest extends TestCase
     {
         $client = $this->getMockBuilder(RabbitMQConnection::class)
             ->disableOriginalConstructor()
-            ->setMethods(['sendBatch'])
+            ->setMethods(['send'])
             ->getMock();
 
         $persister = new RabbitMQPersister();
@@ -36,7 +36,7 @@ class RabbitMQPersisterTest extends TestCase
         $events[] = new AuditDeleteEvent('1234', 2, 'comments', 'articles');
 
         $client->expects($this->once())
-            ->method('sendBatch')
+            ->method('send')
             ->with('audits.persist', 'store', $events, ['delivery_mode' => 2]);
 
         $persister->logEvents($events);
@@ -51,7 +51,7 @@ class RabbitMQPersisterTest extends TestCase
     {
         $client = $this->getMockBuilder(RabbitMQConnection::class)
             ->disableOriginalConstructor()
-            ->setMethods(['sendBatch'])
+            ->setMethods(['send'])
             ->getMock();
 
         $persister = new RabbitMQPersister(['delivery_mode' => 1, 'routing' => 'foo', 'exchange' => 'bar']);
@@ -67,7 +67,7 @@ class RabbitMQPersisterTest extends TestCase
         $events[] = new AuditDeleteEvent('1234', 2, 'comments', 'articles');
 
         $client->expects($this->once())
-            ->method('sendBatch')
+            ->method('send')
             ->with('bar', 'foo', $events, ['delivery_mode' => 1]);
 
         $persister->logEvents($events);

@@ -55,7 +55,7 @@ class RabbitMQPersister implements PersisterInterface
      */
     public function logEvents(array $auditLogs)
     {
-        $this->connection()->sendBatch(
+        $this->connection()->send(
             $this->options['exchange'],
             $this->options['routing'],
             $auditLogs,
