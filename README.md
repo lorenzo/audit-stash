@@ -174,26 +174,25 @@ in your AppController.
 
 
 ```php
-
 use AuditStash\Meta\ApplicationMetadata;
 use Cake\Event\EventManager;
 
-    EventManager::instance()->on(new ApplicationMetadata('my_blog_app', [
-        'server' => $theServerID,
-        'extra' => $somExtraInformation,
-        'moon_phase' => $currentMoonPhase
-    ]));
+EventManager::instance()->on(new ApplicationMetadata('my_blog_app', [
+    'server' => $theServerID,
+    'extra' => $somExtraInformation,
+    'moon_phase' => $currentMoonPhase
+]));
 
 ```
 
 Implementing your own metadata listeners is as simple as attaching the listener to the `AuditStash.beforeLog` event. For example:
 
 ```php
-    EventManager::instance()->on('AuditStash.beforeLog', function ($event, array $logs) {
-        foreach ($logs as $event) {
-            $event->setMetadataInfo($event->getMetadataInfo() + ['extra' => 'This is extra data to be stored']);
-        }
-    });
+EventManager::instance()->on('AuditStash.beforeLog', function ($event, array $logs) {
+    foreach ($logs as $event) {
+        $event->setMetadataInfo($event->getMetadataInfo() + ['extra' => 'This is extra data to be stored']);
+    }
+});
 ```
 
 ### Implementing Your Own Persister Strategies
@@ -204,7 +203,7 @@ your own storage engines. It is as simple as implementing the `PersisterInterfac
 ```php
 use AuditStash\PersisterInterface;
 
-class DatabasePersister implements PersisteInterface
+class DatabasePersister implements PersisterInterface
 {
     public function logEvents(array $logs)
     {
@@ -235,6 +234,12 @@ lines:
 ```php
 ...
 'AuditStash' => ['persister' => 'App\Namespace\For\Your\DatabasePersister']
+```
+
+or if you are using as standalone via 
+
+```php
+\Cake\Core\Configure::write('AuditStash.presister', 'App\Namespace\For\Your\DatabasePersister');
 ```
 
 The configuration contains the fully namespaced class name of your persister.
