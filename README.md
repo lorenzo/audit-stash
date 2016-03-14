@@ -205,7 +205,7 @@ use AuditStash\PersisterInterface;
 
 class DatabasePersister implements PersisterInterface
 {
-    public function logEvents(array $logs)
+    public function logEvents(array $auditLogs)
     {
         foreach ($auditLogs as $log) {
             $eventType = $log->getEventType();
@@ -236,7 +236,7 @@ lines:
 'AuditStash' => ['persister' => 'App\Namespace\For\Your\DatabasePersister']
 ```
 
-or if you are using as standalone via 
+or if you are using as standalone via
 
 ```php
 \Cake\Core\Configure::write('AuditStash.presister', 'App\Namespace\For\Your\DatabasePersister');
