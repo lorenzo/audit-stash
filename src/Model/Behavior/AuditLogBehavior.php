@@ -34,7 +34,7 @@ class AuditLogBehavior extends Behavior
     ];
 
     /**
-     * The persiter object
+     * The persister object
      *
      * @var PersisterInterface
      */
