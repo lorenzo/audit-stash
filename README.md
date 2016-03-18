@@ -25,7 +25,7 @@ the following lines:
 
 ```
 composer require cakephp/elastic-search
-bin/cake plugin load ElasticSearch
+bin/cake plugin load Cake/ElasticSearch
 ```
 
 ## Configuration
