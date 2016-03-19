@@ -249,3 +249,5 @@ or if you are using as standalone via
 ```
 
 The configuration contains the fully namespaced class name of your persister.
+
+## Contributing
