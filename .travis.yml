@@ -1,0 +1,42 @@
+language: php
+
+php:
+  - 5.4
+  - 5.5
+  - 5.6
+  - 7
+
+sudo: true
+
+env:
+  global:
+    - PHPUNIT=1
+
+matrix:
+  fast_finish: true
+
+  include:
+    - php: 5.6
+      env: PHPCS=1 PHPUNIT=0
+
+    - php: 5.6
+      env: CODECOVERAGE=1 PHPUNIT=0
+
+  allow_failures:
+    - php: 7
+
+before_script:
+  - composer self-update
+  - composer install --prefer-dist --no-interaction
+
+script:
+  - sh -c "if [ '$PHPUNIT' = '1' ]; then vendor/bin/phpunit; fi"
+
+  - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi"
+
+  - sh -c "if [ '$CODECOVERAGE' = '1' ]; then vendor/phpunit/phpunit/phpunit --coverage-clover=clover.xml || true; fi"
+  - sh -c "if [ '$CODECOVERAGE' = '1' ]; then wget -O codecov.sh https://codecov.io/bash; fi"
+  - sh -c "if [ '$CODECOVERAGE' = '1' ]; then bash codecov.sh; fi"
+
+notifications:
+  email: false
