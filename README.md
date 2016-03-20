@@ -190,7 +190,7 @@ Implementing your own metadata listeners is as simple as attaching the listener 
 ```php
 EventManager::instance()->on('AuditStash.beforeLog', function ($event, array $logs) {
     foreach ($logs as $event) {
-        $event->setMetadataInfo($event->getMetadataInfo() + ['extra' => 'This is extra data to be stored']);
+        $event->setMetaInfo($event->getMetaInfo() + ['extra' => 'This is extra data to be stored']);
     }
 });
 ```
