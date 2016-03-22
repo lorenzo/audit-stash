@@ -1,0 +1,20 @@
+preset: recommended
+
+risky: false
+
+linting: true
+
+enabled:
+  - unalign_double_arrow
+  - concat_with_spaces
+
+disabled:
+  - align_double_arrow
+  - blankline_after_open_tag
+  - concat_without_spaces
+  - phpdoc_align
+  - spaces_cast
+  - phpdoc_separation
+  - no_blank_lines_after_class_opening
+  - multiline_array_trailing_comma
+  - return
