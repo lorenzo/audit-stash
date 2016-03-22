@@ -2,11 +2,9 @@
 
 namespace AuditStash\Test\Model\Behavior;
 
-use AuditStash\EventInterface;
 use AuditStash\Event\AuditCreateEvent;
 use AuditStash\Event\AuditUpdateEvent;
 use AuditStash\Model\Behavior\AuditLogBehavior;
-use AuditStash\PersisterInterface;
 use Cake\Event\Event;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
@@ -14,7 +12,6 @@ use Cake\TestSuite\TestCase;
 
 class AuditLogBehaviorTest extends TestCase
 {
-
     public function setUp()
     {
         parent::setUp();
@@ -37,7 +34,7 @@ class AuditLogBehaviorTest extends TestCase
         $entity = new Entity($data, ['markNew' => true]);
 
         $event = new Event('Model.afterSave');
-        $queue = new \SplObjectStorage;
+        $queue = new \SplObjectStorage();
         $this->behavior->afterSave($event, $entity, [
             '_auditQueue' => $queue,
             '_auditTransaction' => 1,
@@ -65,7 +62,7 @@ class AuditLogBehaviorTest extends TestCase
         $entity->title = 'Another Title';
 
         $event = new Event('Model.afterSave');
-        $queue = new \SplObjectStorage;
+        $queue = new \SplObjectStorage();
         $this->behavior->afterSave($event, $entity, [
             '_auditQueue' => $queue,
             '_auditTransaction' => 1,
@@ -92,7 +89,7 @@ class AuditLogBehaviorTest extends TestCase
         $entity = new Entity($data, ['markNew' => true]);
 
         $event = new Event('Model.afterSave');
-        $queue = new \SplObjectStorage;
+        $queue = new \SplObjectStorage();
         $this->behavior->afterSave($event, $entity, [
             '_auditQueue' => $queue,
             '_auditTransaction' => 1,
@@ -117,7 +114,7 @@ class AuditLogBehaviorTest extends TestCase
         $entity->author_id = 50;
 
         $event = new Event('Model.afterSave');
-        $queue = new \SplObjectStorage;
+        $queue = new \SplObjectStorage();
         $this->behavior->afterSave($event, $entity, [
             '_auditQueue' => $queue,
             '_auditTransaction' => 1,
@@ -144,7 +141,7 @@ class AuditLogBehaviorTest extends TestCase
         ];
         $entity = new Entity($data, ['markNew' => true]);
         $event = new Event('Model.afterSave');
-        $queue = new \SplObjectStorage;
+        $queue = new \SplObjectStorage();
         $this->behavior->afterSave($event, $entity, [
             '_auditQueue' => $queue,
             '_auditTransaction' => 1,

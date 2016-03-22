@@ -6,8 +6,7 @@ use AuditStash\EventInterface;
 use Datetime;
 
 /**
- * Represents an audit log event for a newly deleted record
- *
+ * Represents an audit log event for a newly deleted record.
  */
 class AuditDeleteEvent implements EventInterface
 {
@@ -17,7 +16,7 @@ class AuditDeleteEvent implements EventInterface
     }
 
     /**
-     * Construnctor
+     * Construnctor.
      *
      * @param string $transationId The global transaction id
      * @param mixed $id The primary key record that got deleted
@@ -30,11 +29,11 @@ class AuditDeleteEvent implements EventInterface
         $this->id = $id;
         $this->source = $source;
         $this->parentSource = $parentSource;
-        $this->timestamp = (new DateTime)->format(DateTime::ATOM);
+        $this->timestamp = (new DateTime())->format(DateTime::ATOM);
     }
 
     /**
-     * Returns the name of this event type
+     * Returns the name of this event type.
      *
      * @return string
      */

@@ -5,14 +5,13 @@ namespace AuditStash\Test\Persister;
 use AuditStash\Event\AuditCreateEvent;
 use AuditStash\Event\AuditDeleteEvent;
 use AuditStash\Persister\RabbitMQPersister;
-use ProcessMQ\Connection\RabbitMQConnection;
 use Cake\TestSuite\TestCase;
+use ProcessMQ\Connection\RabbitMQConnection;
 
 class RabbitMQPersisterTest extends TestCase
 {
-
     /**
-     * Tests that using the defaults calls the right methods
+     * Tests that using the defaults calls the right methods.
      *
      * @return void
      */
@@ -43,7 +42,7 @@ class RabbitMQPersisterTest extends TestCase
     }
 
     /**
-     * Tests overriding defaults
+     * Tests overriding defaults.
      *
      * @return void
      */
@@ -71,6 +70,5 @@ class RabbitMQPersisterTest extends TestCase
             ->with('bar', 'foo', $events, ['delivery_mode' => 1]);
 
         $persister->logEvents($events);
-
     }
 }

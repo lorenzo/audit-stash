@@ -4,9 +4,6 @@ namespace AuditStash\Test\Fixture;
 
 use Cake\ElasticSearch\TestSuite\TestFixture;
 
-/**
- *
- */
 class ElasticTagsFixture extends TestFixture
 {
 

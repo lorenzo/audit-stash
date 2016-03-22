@@ -6,8 +6,8 @@ use ArrayObject;
 use AuditStash\Event\AuditCreateEvent;
 use AuditStash\Event\AuditDeleteEvent;
 use AuditStash\Event\AuditUpdateEvent;
-use AuditStash\PersisterInterface;
 use AuditStash\Persister\ElasticSearchPersister;
+use AuditStash\PersisterInterface;
 use Cake\Core\Configure;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
@@ -18,7 +18,6 @@ use SplObjectStorage;
 /**
  * This behavior can be used to log all the creations, modifications and deletions
  * done to a particular table.
- *
  */
 class AuditLogBehavior extends Behavior
 {
@@ -34,14 +33,14 @@ class AuditLogBehavior extends Behavior
     ];
 
     /**
-     * The persister object
+     * The persister object.
      *
      * @var PersisterInterface
      */
     protected $persister;
 
     /**
-     * Returns the list of implemented events
+     * Returns the list of implemented events.
      *
      * @return array
      */
@@ -73,7 +72,7 @@ class AuditLogBehavior extends Behavior
         }
 
         if (!isset($options['_auditQueue'])) {
-            $options['_auditQueue'] = new SplObjectStorage;
+            $options['_auditQueue'] = new SplObjectStorage();
         }
     }
 
@@ -132,7 +131,7 @@ class AuditLogBehavior extends Behavior
     }
 
     /**
-     * Persists all audit log events stored in the `_eventQueue` key inside $options
+     * Persists all audit log events stored in the `_eventQueue` key inside $options.
      *
      * @param Cake\Event\Event The Model event that is enclosed inside a transaction
      * @param Cake\Datasource\EntityInterface $entity The entity that is to be saved or deleted
@@ -160,7 +159,7 @@ class AuditLogBehavior extends Behavior
     }
 
     /**
-     * Persists all audit log events stored in the `_eventQueue` key inside $options
+     * Persists all audit log events stored in the `_eventQueue` key inside $options.
      *
      * @param Cake\Event\Event The Model event that is enclosed inside a transaction
      * @param Cake\Datasource\EntityInterface $entity The entity that is to be saved or deleted
@@ -181,7 +180,7 @@ class AuditLogBehavior extends Behavior
 
     /**
      * Sets the persister object to use for logging al audit events.
-     * If called if no arguments, it will return the currently configured persister
+     * If called if no arguments, it will return the currently configured persister.
      *
      * @param PersisterInterface $persister The persister object to use
      * @return PersisterInterface The configured persister
@@ -190,7 +189,7 @@ class AuditLogBehavior extends Behavior
     {
         if ($persister === null && $this->persister === null) {
             $class = Configure::read('AuditStash.persister') ?: ElasticSearchPersister::class;
-            $persister = new $class;
+            $persister = new $class();
         }
 
         if ($persister === null) {
@@ -200,7 +199,7 @@ class AuditLogBehavior extends Behavior
     }
 
     /**
-     * Helper method used to get the property names of associations for a table
+     * Helper method used to get the property names of associations for a table.
      *
      * @param array $associated Whitelist of associations to look for
      * @return array List of property names

@@ -6,7 +6,7 @@ use Crud\Action\IndexAction;
 
 /**
  * A CRUD action class to implement the listing of all audit logs
- * documents in elastic search
+ * documents in elastic search.
  */
 class ElasticLogsIndexAction extends IndexAction
 {
@@ -14,7 +14,7 @@ class ElasticLogsIndexAction extends IndexAction
     use IndexConfigTrait;
 
     /**
-     * Renders the index action by searching all documents matching the URL conditions
+     * Renders the index action by searching all documents matching the URL conditions.
      *
      * @return void
      */
@@ -61,7 +61,6 @@ class ElasticLogsIndexAction extends IndexAction
         try {
             $this->addTimeConstraints($request, $query);
         } catch (\Exception $e) {
-
         }
 
         $subject = $this->_subject(['success' => true, 'query' => $query]);
@@ -75,7 +74,7 @@ class ElasticLogsIndexAction extends IndexAction
     }
 
     /**
-     * Returns the Repository object to use
+     * Returns the Repository object to use.
      *
      * @return AuditStash\Model\Type\AuditLogsType;
      */
@@ -86,7 +85,7 @@ class ElasticLogsIndexAction extends IndexAction
 
     /**
      * Alters the query object to add the time constraints as they can be found in
-     * the request object
+     * the request object.
      *
      * @param Cake\Network\Request $request The request where query string params can be found
      * @param Cake\ElasticSearch\Query $query The Query to add filters to

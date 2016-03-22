@@ -6,28 +6,27 @@ use AuditStash\PersisterInterface;
 use Cake\Datasource\ConnectionManager;
 
 /**
- * Implementes audit logs events persisting using RabbitMQ
- *
+ * Implementes audit logs events persisting using RabbitMQ.
  */
 class RabbitMQPersister implements PersisterInterface
 {
 
     /**
-     * The client or connection to RabbitMQ
+     * The client or connection to RabbitMQ.
      *
      * @var ProcessMQ\RabbitMQConnection;
      */
     protected $connection;
 
     /**
-     * The options set for this persister
+     * The options set for this persister.
      *
      * @var array
      */
     protected $options;
 
     /**
-     * Sets the options for this persister. The available options are:
+     * Sets the options for this persister. The available options are:.
      *
      * - connection: The connection name for rabbitmq as configured in ConnectionManager
      * - delivery_mode: The delivery_mode to use for each message (default: 2 for persisting messages in disk)
@@ -48,7 +47,7 @@ class RabbitMQPersister implements PersisterInterface
     }
 
     /**
-     * Persists all of the audit log event objects that are provided
+     * Persists all of the audit log event objects that are provided.
      *
      * @param array $auditLogs An array of EventInterface objects
      * @return void

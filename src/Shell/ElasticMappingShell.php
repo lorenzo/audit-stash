@@ -3,20 +3,18 @@
 namespace AuditStash\Shell;
 
 use Cake\Console\Shell;
-use Cake\ORM\TableRegistry;
 use Cake\Datasource\ConnectionManager;
-use Elastica\Type\Mapping as ElasticaMapping;
+use Cake\ORM\TableRegistry;
 use Elastica\Request;
+use Elastica\Type\Mapping as ElasticaMapping;
 
 /**
- * Exposes a shell command to create the required Elastic Search mappings
+ * Exposes a shell command to create the required Elastic Search mappings.
  */
 class ElasticMappingShell extends Shell
 {
-
     /**
-     * {@inheritDoc}
-     *
+     * {@inheritdoc}
      */
     public function getOptionParser()
     {
@@ -41,10 +39,10 @@ class ElasticMappingShell extends Shell
 
     /**
      * Creates the elastic search mapping for the provided table, or just prints it out
-     * to the screen if the `dry-run` option is provided
+     * to the screen if the `dry-run` option is provided.
      *
      * @param string $table The table name to inspect and create a mapping for
-     * @return boolean
+     * @return bool
      */
     public function main($table)
     {
@@ -118,7 +116,7 @@ class ElasticMappingShell extends Shell
     }
 
     /**
-     * Returns the correct mapping properties for a table column
+     * Returns the correct mapping properties for a table column.
      *
      * @param Cake\Databse\Schema\Table $schema The table schema
      * @param string $column The column name to instrospect

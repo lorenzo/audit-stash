@@ -16,7 +16,7 @@ class ElasticSearchPersisterTest extends TestCase
 {
 
     /**
-     * Fixtures to be loaded
+     * Fixtures to be loaded.
      *
      * @var string
      */
@@ -27,7 +27,7 @@ class ElasticSearchPersisterTest extends TestCase
     ];
 
     /**
-     * Tests that create events are correctly stored
+     * Tests that create events are correctly stored.
      *
      * @return void
      */
@@ -80,7 +80,7 @@ class ElasticSearchPersisterTest extends TestCase
     }
 
     /**
-     * Tests that update events are correctly stored
+     * Tests that update events are correctly stored.
      *
      * @return void
      */
@@ -125,7 +125,7 @@ class ElasticSearchPersisterTest extends TestCase
     }
 
     /**
-     * Tests that delete events are correctly stored
+     * Tests that delete events are correctly stored.
      *
      * @return void
      */
@@ -162,7 +162,7 @@ class ElasticSearchPersisterTest extends TestCase
     }
 
     /**
-     * Tests that all events sent to the logger are actually persisted in the right types
+     * Tests that all events sent to the logger are actually persisted in the right types.
      *
      * @return void
      */
@@ -193,7 +193,6 @@ class ElasticSearchPersisterTest extends TestCase
         $persister->logEvents($events);
         $client->getIndex()->refresh();
 
-
         $tags = TypeRegistry::get('Tags')->find()->all();
         $this->assertCount(1, $tags);
         $tag = $tags->first();
@@ -220,7 +219,6 @@ class ElasticSearchPersisterTest extends TestCase
         ];
         unset($tag['@timestamp'], $tag['id']);
         $this->assertEquals($expected, $tag->toArray());
-
 
         $authors = TypeRegistry::get('Authors')->find()->all();
         $this->assertCount(1, $authors);
@@ -259,7 +257,7 @@ class ElasticSearchPersisterTest extends TestCase
     }
 
     /**
-     * Tests that Time objects are correctly serialized
+     * Tests that Time objects are correctly serialized.
      *
      * @return void
      */
@@ -310,7 +308,7 @@ class ElasticSearchPersisterTest extends TestCase
     }
 
     /**
-     * Tests that metadata is correctly stored
+     * Tests that metadata is correctly stored.
      *
      * @return void
      */

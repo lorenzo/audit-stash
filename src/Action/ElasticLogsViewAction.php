@@ -2,15 +2,13 @@
 namespace AuditStash\Action;
 
 use Cake\ElasticSearch\TypeRegistry;
-use Crud\Action\ViewAction;
-use Crud\Traits\ViewTrait;
-use Crud\Traits\ViewVarTrait;
-use Crud\Event\Subject;
 use Cake\Event\Event;
+use Crud\Action\ViewAction;
+use Crud\Event\Subject;
 
 /**
  * A CRUD action class to implement the view of all details of a single audit log event
- * from elastic search
+ * from elastic search.
  */
 class ElasticLogsViewAction extends ViewAction
 {
@@ -18,7 +16,7 @@ class ElasticLogsViewAction extends ViewAction
     use IndexConfigTrait;
 
     /**
-     * Returns the Repository object to use
+     * Returns the Repository object to use.
      *
      * @return AuditStash\Model\Type\AuditLogsType;
      */
@@ -28,7 +26,7 @@ class ElasticLogsViewAction extends ViewAction
     }
 
     /**
-     * Find a audit log by id
+     * Find a audit log by id.
      *
      * @param string $id Record id
      * @param \Crud\Event\Subject $subject Event subject
