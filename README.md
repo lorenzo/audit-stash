@@ -1,7 +1,7 @@
 # AuditStash plugin for CakePHP
 
 [![Build Status](https://img.shields.io/travis/lorenzo/audit-stash/master.svg?style=flat-square)](https://travis-ci.org/cvo-technologies/cakephp-gearman)
-[![StyleCI Status](https://styleci.io/repos/43746752/shield)](https://styleci.io/repos/43746752)
+[![StyleCI Status](https://styleci.io/repos/39250084/shield)](https://styleci.io/repos/39250084)
 [![Coverage Status](https://img.shields.io/codecov/c/github/lorenzo/audit-stash/master.svg?style=flat-square)](https://codecov.io/github/lorenzo/audit-stash)
 [![Total Downloads](https://img.shields.io/packagist/dt/lorenzo/audit-stash.svg?style=flat-square)](https://packagist.org/packages/lorenzo/audit-stash)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE.txt)
