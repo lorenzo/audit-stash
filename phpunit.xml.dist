@@ -31,7 +31,7 @@
 
     <!-- Prevent coverage reports from looking in tests and vendors -->
     <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
+        <whitelist processUncoveredFilesFromWhitelist="false">
             <directory suffix=".php">./src/</directory>
         </whitelist>
     </filter>
