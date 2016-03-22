@@ -22,9 +22,6 @@ matrix:
 
   include:
     - php: 7
-      env: PHPCS=1 PHPUNIT=0
-
-    - php: 7
       env: CODECOVERAGE=1 PHPUNIT=0
 
 before_script:
