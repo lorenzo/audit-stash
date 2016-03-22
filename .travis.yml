@@ -5,7 +5,13 @@ php:
   - 5.6
   - 7
 
-sudo: true
+sudo: false
+
+services:
+  - elasticsearch
+
+before_script:
+  - sleep 10
 
 env:
   global:
