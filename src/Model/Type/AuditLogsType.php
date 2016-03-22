@@ -8,11 +8,9 @@ use Elastica\Aggregation\Terms as TermsAggregation;
 /**
  * Represents the rpository containing all the audit logs events
  * of any kind and source.
- *
  */
 class AuditLogsType extends Type
 {
-
     /**
      * The default connection name to inject when creating an instance.
      *
@@ -24,7 +22,7 @@ class AuditLogsType extends Type
     }
 
     /**
-     * Sets the type name to use for querying
+     * Sets the type name to use for querying.
      *
      * @param string $name The name of the type(s) to query
      * @return string
@@ -38,7 +36,7 @@ class AuditLogsType extends Type
     }
 
     /**
-     * Returns a query setup for getting the 'type' aggregation
+     * Returns a query setup for getting the 'type' aggregation.
      *
      * @param Cake\ElasticSearch\Query $query The Query Object
      * @return Cake\ElasticSearch\Query

@@ -2,9 +2,7 @@
 
 namespace AuditStash\Test\Meta;
 
-use AuditStash\Event\AuditCreateEvent;
 use AuditStash\Event\AuditDeleteEvent;
-use AuditStash\Event\AuditUpdateEvent;
 use AuditStash\Meta\ApplicationMetadata;
 use Cake\Event\EventManagertrait;
 use Cake\TestSuite\TestCase;
@@ -15,7 +13,7 @@ class ApplicationMetadataTest extends TestCase
     use EventManagertrait;
 
     /**
-     * Tests that metadata is added to the audit log objects
+     * Tests that metadata is added to the audit log objects.
      *
      * @return void
      */

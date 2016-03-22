@@ -1,13 +1,13 @@
 <?php
-$findRoot = function($root) {
+$findRoot = function ($root) {
     do {
         $lastRoot = $root;
         $root = dirname($root);
         if (is_dir($root . '/vendor/cakephp/cakephp')) {
             return $root;
         }
-    } while($root !== $lastRoot);
-    throw new Exception("Cannot find the root of the application, unable to run tests");
+    } while ($root !== $lastRoot);
+    throw new Exception('Cannot find the root of the application, unable to run tests');
 };
 
 $root = $findRoot(__FILE__);
@@ -21,4 +21,5 @@ if (!getenv('elastic_dsn')) {
 require $root . '/vendor/cakephp/cakephp/tests/bootstrap.php';
 
 use Cake\Datasource\ConnectionManager;
+
 ConnectionManager::config('test_elastic', ['url' => getenv('elastic_dsn')]);

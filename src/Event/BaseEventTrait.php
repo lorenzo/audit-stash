@@ -3,55 +3,54 @@
 namespace AuditStash\Event;
 
 /**
- * Implements most of the methods of the EventInterface
- *
+ * Implements most of the methods of the EventInterface.
  */
 trait BaseEventTrait
 {
     /**
-     * Global transaction id
+     * Global transaction id.
      *
      * @var string
      */
     protected $transactionId;
 
     /**
-     * Entity primary key
+     * Entity primary key.
      *
      * @var mixed
      */
     protected $id;
 
     /**
-     * Repository name
+     * Repository name.
      *
      * @var string
      */
     protected $source;
 
     /**
-     * Parent repository name
+     * Parent repository name.
      *
      * @var string
      */
     protected $parentSource;
 
     /**
-     * Time of event
+     * Time of event.
      *
      * @var string
      */
     protected $timestamp;
 
     /**
-     * Extra information to describe the event
+     * Extra information to describe the event.
      *
      * @var array
      */
     protected $meta = [];
 
     /**
-     * Returns the global transaction id in which this event is contained
+     * Returns the global transaction id in which this event is contained.
      *
      * @return string
      */
@@ -61,7 +60,7 @@ trait BaseEventTrait
     }
 
     /**
-     * Returns the id of the entity that was created or altered
+     * Returns the id of the entity that was created or altered.
      *
      * @return mixed
      */
@@ -74,7 +73,7 @@ trait BaseEventTrait
     }
 
     /**
-     * Returns the repository name in which the entity is
+     * Returns the repository name in which the entity is.
      *
      * @return string
      */
@@ -84,7 +83,7 @@ trait BaseEventTrait
     }
 
     /**
-     * Returns the repository name that triggered this event
+     * Returns the repository name that triggered this event.
      *
      * @return string
      */
@@ -94,7 +93,7 @@ trait BaseEventTrait
     }
 
     /**
-     * Sets the name of the repository taht trigered this event
+     * Sets the name of the repository taht trigered this event.
      *
      * @param string $source The repository name
      * @return void
@@ -105,7 +104,7 @@ trait BaseEventTrait
     }
 
     /**
-     * Returns the time string in which this change happened
+     * Returns the time string in which this change happened.
      *
      * @return string
      */
@@ -115,7 +114,7 @@ trait BaseEventTrait
     }
 
     /**
-     * Returns an array with meta information that can describe this event
+     * Returns an array with meta information that can describe this event.
      *
      * @return array
      */
@@ -125,7 +124,7 @@ trait BaseEventTrait
     }
 
     /**
-     * Sets the meta information that can describe this event
+     * Sets the meta information that can describe this event.
      *
      * @param array $meta The meta information to attach to the event
      * @return void

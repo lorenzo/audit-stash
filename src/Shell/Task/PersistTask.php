@@ -3,23 +3,22 @@
 namespace AuditStash\Shell\Task;
 
 use AuditStash\EventFactory;
-use AuditStash\PersisterInterface;
 use AuditStash\Persister\ElasticSearchPersister;
+use AuditStash\PersisterInterface;
 use Cake\Console\Shell;
 
 /**
- * Used to directly persist event logs into the configured persister
+ * Used to directly persist event logs into the configured persister.
  */
 class PersistTask extends Shell
 {
 
     /**
-     * The persister object to use
+     * The persister object to use.
      *
      * @var PersisterInterface
      */
     protected $persister;
-
 
     /**
      * Persists a list of event logs represented in arrays
@@ -42,7 +41,7 @@ class PersistTask extends Shell
 
     /**
      * Sets the persister object to use for logging al audit events.
-     * If called if no arguments, it will return the ElasitSearchPersister
+     * If called if no arguments, it will return the ElasitSearchPersister.
      *
      * @param PersisterInterface $persister The persister object to use
      * @return PersisterInterface The configured persister

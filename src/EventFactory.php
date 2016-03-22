@@ -3,21 +3,19 @@
 namespace AuditStash;
 
 use AuditStash\Event\AuditCreateEvent;
-use AuditStash\Event\AuditUpdateEvent;
 use AuditStash\Event\AuditDeleteEvent;
+use AuditStash\Event\AuditUpdateEvent;
 use ReflectionObject;
 
 /**
  * Can be used to convert an array of data obtained from elastic search
  * to convert it to an EventInterface object.
- *
  */
 class EventFactory
 {
-
     /**
      * Converts an array of data as comming from elastic search and
-     * converts it into an AuditStash\EventInterface object
+     * converts it into an AuditStash\EventInterface object.
      *
      * @param array $data The array data from elastic search
      * @return AuditStash\EventInterface

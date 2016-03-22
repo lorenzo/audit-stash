@@ -12,14 +12,14 @@ use Cake\Event\EventListenerInterface;
 class ApplicationMetadata implements EventListenerInterface
 {
     /**
-     * Extra application details to be passed to the audit logs
+     * Extra application details to be passed to the audit logs.
      *
      * @var array
      */
     protected $data;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param array $data The extra application data to be copied to
      * each audit log event.
@@ -30,7 +30,7 @@ class ApplicationMetadata implements EventListenerInterface
     }
 
     /**
-     * Returns an array with the events this class listens to
+     * Returns an array with the events this class listens to.
      *
      * @return array
      */
@@ -41,7 +41,7 @@ class ApplicationMetadata implements EventListenerInterface
 
     /**
      * Enriches all of the passed audit logs to add the request
-     * info metadata
+     * info metadata.
      *
      * @param Event The AuditStash.beforeLog event
      * @param array $logs The audit log event objects

@@ -2,10 +2,10 @@
 
 namespace AuditStash\Test\Model\Behavior;
 
-use AuditStash\Model\Behavior\AuditLogBehavior;
 use AuditStash\Event\AuditCreateEvent;
-use AuditStash\Event\AuditUpdateEvent;
 use AuditStash\Event\AuditDeleteEvent;
+use AuditStash\Event\AuditUpdateEvent;
+use AuditStash\Model\Behavior\AuditLogBehavior;
 use AuditStash\PersisterInterface;
 use Cake\Event\Event;
 use Cake\ORM\Entity;
@@ -14,7 +14,6 @@ use Cake\TestSuite\TestCase;
 
 class DebugPersister implements PersisterInterface
 {
-
     public function logEvents(array $events)
     {
     }
@@ -24,7 +23,7 @@ class AuditIntegrationTest extends TestCase
 {
 
     /**
-     * Fixtures to use
+     * Fixtures to use.
      *
      * @var array
      */
@@ -37,7 +36,7 @@ class AuditIntegrationTest extends TestCase
     ];
 
     /**
-     * tests setup
+     * tests setup.
      *
      * @return void
      */
@@ -56,7 +55,7 @@ class AuditIntegrationTest extends TestCase
     }
 
     /**
-     * Tests that creating an article means having one audit log create event
+     * Tests that creating an article means having one audit log create event.
      *
      * @return void
      */
@@ -71,7 +70,7 @@ class AuditIntegrationTest extends TestCase
         $this->persister
             ->expects($this->once())
             ->method('logEvents')
-            ->will($this->returnCallback(function (array $events)  use ($entity) {
+            ->will($this->returnCallback(function (array $events) use ($entity) {
                 $this->assertCount(1, $events);
                 $event = $events[0];
                 $this->assertInstanceOf(AuditCreateEvent::class, $event);
@@ -89,7 +88,7 @@ class AuditIntegrationTest extends TestCase
     }
 
     /**
-     * Tests that updating an article means having one audit log update event
+     * Tests that updating an article means having one audit log update event.
      *
      * @return void
      */
@@ -102,7 +101,7 @@ class AuditIntegrationTest extends TestCase
         $this->persister
             ->expects($this->once())
             ->method('logEvents')
-            ->will($this->returnCallback(function (array $events)  use ($entity) {
+            ->will($this->returnCallback(function (array $events) use ($entity) {
                 $this->assertCount(1, $events);
                 $event = $events[0];
                 $this->assertInstanceOf(AuditUpdateEvent::class, $event);
@@ -122,7 +121,7 @@ class AuditIntegrationTest extends TestCase
 
     /**
      * Tests that adding a belongsTo association means having one update
-     * log event for the main entity
+     * log event for the main entity.
      *
      * @return void
      */
@@ -137,7 +136,7 @@ class AuditIntegrationTest extends TestCase
         $this->persister
             ->expects($this->once())
             ->method('logEvents')
-            ->will($this->returnCallback(function (array $events)  use ($entity) {
+            ->will($this->returnCallback(function (array $events) use ($entity) {
                 $this->assertCount(1, $events);
                 $event = $events[0];
                 $this->assertInstanceOf(AuditCreateEvent::class, $event);
@@ -155,7 +154,7 @@ class AuditIntegrationTest extends TestCase
 
     /**
      * Tests that adding a belongsTo association means having one update
-     * log event for the main entity
+     * log event for the main entity.
      *
      * @return void
      */
@@ -170,7 +169,7 @@ class AuditIntegrationTest extends TestCase
         $this->persister
             ->expects($this->once())
             ->method('logEvents')
-            ->will($this->returnCallback(function (array $events)  use ($entity) {
+            ->will($this->returnCallback(function (array $events) use ($entity) {
                 $this->assertCount(1, $events);
                 $event = $events[0];
                 $this->assertInstanceOf(AuditUpdateEvent::class, $event);
@@ -191,7 +190,7 @@ class AuditIntegrationTest extends TestCase
 
     /**
      * Tests that adding a new belongsTo entity means having one update
-     * log event for the main entity and one of the new belongsto entity
+     * log event for the main entity and one of the new belongsto entity.
      *
      * @return void
      */
@@ -210,7 +209,7 @@ class AuditIntegrationTest extends TestCase
         $this->persister
             ->expects($this->once())
             ->method('logEvents')
-            ->will($this->returnCallback(function (array $events)  use ($entity) {
+            ->will($this->returnCallback(function (array $events) use ($entity) {
                 $this->assertCount(2, $events);
                 $this->assertEquals('authors', $events[0]->getSourceName());
                 $this->assertEquals('articles', $events[1]->getSourceName());
@@ -229,7 +228,7 @@ class AuditIntegrationTest extends TestCase
 
     /**
      * Tests that adding has many entities means one event for each of the updated
-     * associated entities
+     * associated entities.
      *
      * @return void
      */
@@ -255,7 +254,7 @@ class AuditIntegrationTest extends TestCase
         $this->persister
             ->expects($this->once())
             ->method('logEvents')
-            ->will($this->returnCallback(function (array $events)  use ($entity) {
+            ->will($this->returnCallback(function (array $events) use ($entity) {
                 $this->assertCount(2, $events);
                 $this->assertEquals('comments', $events[0]->getSourceName());
                 $this->assertEquals('comments', $events[1]->getSourceName());
@@ -285,7 +284,7 @@ class AuditIntegrationTest extends TestCase
 
     /**
      * Tests that adding has many entities means one event for each of the updated
-     * associated entities and finally and event for the main entity if it is new
+     * associated entities and finally and event for the main entity if it is new.
      *
      * @return void
      */
@@ -307,7 +306,7 @@ class AuditIntegrationTest extends TestCase
         $this->persister
             ->expects($this->once())
             ->method('logEvents')
-            ->will($this->returnCallback(function (array $events)  use ($entity) {
+            ->will($this->returnCallback(function (array $events) use ($entity) {
                 $this->assertCount(3, $events);
                 $this->assertEquals('comments', $events[0]->getSourceName());
                 $this->assertEquals('articles', $events[0]->getParentSourceName());
@@ -325,7 +324,7 @@ class AuditIntegrationTest extends TestCase
     /**
      * Tests that adding belongsToMany entities means log events for each new
      * entity in the target table and events for as many entities got saved in the
-     * junction table
+     * junction table.
      *
      * @return void
      */
@@ -350,7 +349,7 @@ class AuditIntegrationTest extends TestCase
         $this->persister
             ->expects($this->once())
             ->method('logEvents')
-            ->will($this->returnCallback(function (array $events)  use ($entity) {
+            ->will($this->returnCallback(function (array $events) use ($entity) {
                 $this->assertCount(3, $events);
                 $this->assertEquals('tags', $events[0]->getSourceName());
                 $this->assertEquals('articles_tags', $events[1]->getSourceName());
@@ -364,7 +363,7 @@ class AuditIntegrationTest extends TestCase
     }
 
     /**
-     * Tests that deleting an entity logs a single event
+     * Tests that deleting an entity logs a single event.
      *
      * @return void
      */
@@ -374,7 +373,7 @@ class AuditIntegrationTest extends TestCase
         $this->persister
             ->expects($this->once())
             ->method('logEvents')
-            ->will($this->returnCallback(function (array $events)  use ($entity) {
+            ->will($this->returnCallback(function (array $events) use ($entity) {
                 $this->assertCount(1, $events);
                 $this->assertinstanceOf(AuditDeleteEvent::class, $events[0]);
                 $this->assertEquals(1, $events[0]->getId());
@@ -386,7 +385,7 @@ class AuditIntegrationTest extends TestCase
     }
 
     /**
-     * Tests that deleting an entity with cascading delete
+     * Tests that deleting an entity with cascading delete.
      *
      * @return void
      */
@@ -414,7 +413,7 @@ class AuditIntegrationTest extends TestCase
         $this->persister
             ->expects($this->once())
             ->method('logEvents')
-            ->will($this->returnCallback(function (array $events)  use ($entity) {
+            ->will($this->returnCallback(function (array $events) use ($entity) {
                 $this->assertCount(7, $events);
                 $id = $events[0]->getTransactionId();
                 foreach ($events as $event) {

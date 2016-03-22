@@ -2,12 +2,10 @@
 
 namespace AuditStash\Test\Persister;
 
-use AuditStash\Event\AuditCreateEvent;
 use AuditStash\Event\AuditDeleteEvent;
-use AuditStash\Event\AuditUpdateEvent;
 use AuditStash\Meta\RequestMetadata;
-use Cake\Network\Request;
 use Cake\Event\EventManagertrait;
+use Cake\Network\Request;
 use Cake\TestSuite\TestCase;
 
 class RequestMetadataTest extends TestCase
@@ -16,7 +14,7 @@ class RequestMetadataTest extends TestCase
     use EventManagertrait;
 
     /**
-     * Tests that request metadata is added to the audit log objects
+     * Tests that request metadata is added to the audit log objects.
      *
      * @return void
      */

@@ -14,24 +14,24 @@ class RequestMetadata implements EventListenerInterface
 {
 
     /**
-     * The current request
+     * The current request.
      *
      * @var Request
      */
     protected $request;
 
     /**
-     * The current user name or id
+     * The current user name or id.
      *
      * @var mixed
      */
     protected $user;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param Request $request The current request
-     * @param string|integer $user The current user id or usernam
+     * @param string|int $user The current user id or usernam
      */
     public function __construct($request, $user = null)
     {
@@ -40,7 +40,7 @@ class RequestMetadata implements EventListenerInterface
     }
 
     /**
-     * Returns an array with the events this class listens to
+     * Returns an array with the events this class listens to.
      *
      * @return array
      */
@@ -51,7 +51,7 @@ class RequestMetadata implements EventListenerInterface
 
     /**
      * Enriches all of the passed audit logs to add the request
-     * info metadata
+     * info metadata.
      *
      * @param Event The AuditStash.beforeLog event
      * @param array $logs The audit log event objects

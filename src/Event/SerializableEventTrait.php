@@ -3,14 +3,12 @@
 namespace AuditStash\Event;
 
 /**
- * Exposes basic functions for serializing event classes
- *
+ * Exposes basic functions for serializing event classes.
  */
 trait SerializableEventTrait
 {
-
     /**
-     * Returns the string representation of this object
+     * Returns the string representation of this object.
      *
      * @return string
      */
@@ -20,7 +18,7 @@ trait SerializableEventTrait
     }
 
     /**
-     * Takes the string representation of this object so it can be reconstructed
+     * Takes the string representation of this object so it can be reconstructed.
      *
      * @param string $data serialized string
      * @return void
@@ -34,7 +32,7 @@ trait SerializableEventTrait
     }
 
     /**
-     * Returns an array with the basic variables that should be json serialized
+     * Returns an array with the basic variables that should be json serialized.
      *
      * @return void
      */

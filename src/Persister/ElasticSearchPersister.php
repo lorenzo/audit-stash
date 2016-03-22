@@ -9,14 +9,13 @@ use Elastica\Client;
 use Elastica\Document;
 
 /**
- * Implementes audit logs events persisting using ElastiSearch
- *
+ * Implementes audit logs events persisting using ElastiSearch.
  */
 class ElasticSearchPersister implements PersisterInterface
 {
 
     /**
-     * The client or connection to ElastiSearch
+     * The client or connection to ElastiSearch.
      *
      * @var Elastica\Client;
      */
@@ -30,7 +29,7 @@ class ElasticSearchPersister implements PersisterInterface
     protected $useTransactionId = false;
 
     /**
-     * Persists all of the audit log event objects that are provided
+     * Persists all of the audit log event objects that are provided.
      *
      * @param array $auditLogs An array of EventInterface objects
      * @return void
@@ -44,7 +43,7 @@ class ElasticSearchPersister implements PersisterInterface
     }
 
     /**
-     * Transforms the EventInterface objects to Elastica Documents
+     * Transforms the EventInterface objects to Elastica Documents.
      *
      * @param array $auditLogs An array of EventInterface objects.
      * @param string $index The name of the index where the documents will be stored.
@@ -83,7 +82,8 @@ class ElasticSearchPersister implements PersisterInterface
      * @param bool $use Whether or not to copy the transactionId as the document id
      * @return void
      */
-    public function reuseTransactionId($use = true) {
+    public function reuseTransactionId($use = true)
+    {
         $this->useTransactionId = $use;
     }
 

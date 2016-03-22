@@ -15,21 +15,21 @@ abstract class BaseEvent implements EventInterface
     use SerializableEventTrait;
 
     /**
-     * The array of changed properties for the entity
+     * The array of changed properties for the entity.
      *
      * @var array
      */
     protected $changed;
 
     /**
-     * The array of original properties before they got changed
+     * The array of original properties before they got changed.
      *
      * @var array
      */
     protected $original;
 
     /**
-     * Construnctor
+     * Construnctor.
      *
      * @param string $transationId The global transaction id
      * @param mixed $id The primary key record that got deleted
@@ -44,11 +44,11 @@ abstract class BaseEvent implements EventInterface
         $this->source = $source;
         $this->changed = $changed;
         $this->original = $original;
-        $this->timestamp = (new DateTime)->format(DateTime::ATOM);
+        $this->timestamp = (new DateTime())->format(DateTime::ATOM);
     }
 
     /**
-     * Returns an array with the properties and their values before they got changed
+     * Returns an array with the properties and their values before they got changed.
      *
      * @return array
      */
@@ -58,7 +58,7 @@ abstract class BaseEvent implements EventInterface
     }
 
     /**
-     * Returns an array with the properties and their values as they were changed
+     * Returns an array with the properties and their values as they were changed.
      *
      * @return array
      */
@@ -68,14 +68,14 @@ abstract class BaseEvent implements EventInterface
     }
 
     /**
-     * Returns the name of this event type
+     * Returns the name of this event type.
      *
      * @return string
      */
     abstract public function getEventType();
 
     /**
-     * Returns he array to be used for encoding this object as json
+     * Returns he array to be used for encoding this object as json.
      *
      * @return array
      */
