@@ -32,7 +32,7 @@ class PersistTask extends Shell
         $factory = new EventFactory();
         $events = array_map(
             function ($event) use ($factory) {
-                return is_array($event) ? $factory->create($events) : $event;
+                return is_array($event) ? $factory->create($event) : $event;
             },
             $events
         );
@@ -55,6 +55,7 @@ class PersistTask extends Shell
         if ($persister === null) {
             return $this->persister;
         }
+
         return $this->persister = $persister;
     }
 }
