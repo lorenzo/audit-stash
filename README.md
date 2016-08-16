@@ -250,4 +250,65 @@ or if you are using as standalone via
 
 The configuration contains the fully namespaced class name of your persister.
 
+### Working With Transactional Queries
+
+Occasionally, you may want to wrap a number of database changes in a transaction, so that it can be rolled back if one part of the process fails. In order to create audit logs during a transaction, some additional setup is required. First create the file `src/Model/Audit/AuditTrail.php` with the following:
+
+```
+<?php
+namespace App\Model\Audit;
+
+use Cake\Utility\Text;
+use SplObjectStorage;
+
+class AuditTrail
+{
+    protected $_auditQueue;
+    protected $_auditTransaction;
+
+    public function __construct()
+    {
+        $this->_auditQueue = new SplObjectStorage;
+        $this->_auditTransaction = Text::uuid();
+    }
+
+    public function toSaveOptions()
+    {
+        return [
+            '_auditQueue' => $this->_auditQueue,
+            '_auditTransaction' => $this->_auditTransaction
+        ];
+    }
+}
+```
+
+Anywhere you wish to use `Connection::transactional()`, you will need to first include the following at the top of the file:
+```
+use App\Model\Audit\AuditTrail;
+use Cake\Event\Event;
+```
+
+Your transaction should then look similar to this example of a BookmarksController:
+```
+$trail = new AuditTrail();
+$success = $this->Bookmarks->connection()->transactional(function () use ($trail) {
+    $bookmark = $this->Bookmarks->newEntity();
+    $bookmark1->save($data1, $trail->toSaveOptions());
+    $bookmark2 = $this->Bookmarks->newEntity();
+    $bookmark2->save($data2, $trail->toSaveOptions());
+    ....
+    $bookmarkN = $this->Bookmarks->newEntity();
+    $bookmarkN->save($dataN, $trail->toSaveOptions());
+
+    return true;
+});
+
+if ($success) {
+    $event = new Event('Model.afterCommit', $this->Bookmarks);
+    $table->behaviors()->get('AuditLog')->afterCommit($event, $result, $auditTrail->toSaveOptions());
+}
+```
+
+This will save all audit info for your objects, as well as audits for any associated data. Please note, `$result` must be an instance of an Object. Do not change the text "Model.afterCommit".
+
 ## Contributing
