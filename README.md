@@ -254,7 +254,7 @@ The configuration contains the fully namespaced class name of your persister.
 
 Occasionally, you may want to wrap a number of database changes in a transaction, so that it can be rolled back if one part of the process fails. In order to create audit logs during a transaction, some additional setup is required. First create the file `src/Model/Audit/AuditTrail.php` with the following:
 
-```
+```php
 <?php
 namespace App\Model\Audit;
 
@@ -283,13 +283,15 @@ class AuditTrail
 ```
 
 Anywhere you wish to use `Connection::transactional()`, you will need to first include the following at the top of the file:
-```
+
+```php
 use App\Model\Audit\AuditTrail;
 use Cake\Event\Event;
 ```
 
 Your transaction should then look similar to this example of a BookmarksController:
-```
+
+```php
 $trail = new AuditTrail();
 $success = $this->Bookmarks->connection()->transactional(function () use ($trail) {
     $bookmark = $this->Bookmarks->newEntity();
