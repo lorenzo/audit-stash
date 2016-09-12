@@ -113,7 +113,7 @@ class AuditLogBehavior extends Behavior
             unset($changed[$property], $original[$property]);
         }
 
-        if (!$changed) {
+        if (!$changed || ($original === $changed && !$entity->isNew())) {
             return;
         }
 
