@@ -222,8 +222,9 @@ class DatabasePersister implements PersisterInterface
                 'primary_key' => $log->getId(),
                 'source' => $log->getSourceName(),
                 'parent_source' => $log->getParentSourceName(),
-                'changed' => $eventType === 'delete' ? null : $log->getChanged(),
-                'meta' => $log->getMetaInfo()
+                'original' => json_encode($log->getOriginal()),
+                'changed' => $eventType === 'delete' ? null : json_encode($log->getChanged()),
+                'meta' => json_encode($log->getMetaInfo())
             ];
             TableRegistry::get('MyAuditsTable')->save(new Entity($data));
         }
@@ -245,7 +246,7 @@ lines:
 or if you are using as standalone via
 
 ```php
-\Cake\Core\Configure::write('AuditStash.presister', 'App\Namespace\For\Your\DatabasePersister');
+\Cake\Core\Configure::write('AuditStash.persister', 'App\Namespace\For\Your\DatabasePersister');
 ```
 
 The configuration contains the fully namespaced class name of your persister.
