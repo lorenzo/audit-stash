@@ -295,11 +295,11 @@ class ElasticSearchPersisterTest extends TestCase
             'parent_source' => null,
             'original' => [
                 'title' => 'Old article title',
-                'published_date' => '2015-04-12T20:20:21+0000'
+                'published_date' => '2015-04-12T20:20:21+00:00'
             ],
             'changed' => [
                 'title' => 'A new article',
-                'published_date' => '2015-04-13T20:20:21+0000'
+                'published_date' => '2015-04-13T20:20:21+00:00'
             ],
             'meta' => []
         ];
