@@ -16,7 +16,6 @@ class RequestMetadataTest extends TestCase
     /**
      * Tests that request metadata is added to the audit log objects.
      *
-     * @group failing
      * @return void
      */
     public function testRequestDataIsAdded()
