@@ -54,13 +54,23 @@ class TablePersister implements PersisterInterface
      *
      *   Defines whether/which meta data fields to extract as entity properties, thus
      *   making them savable in the target table. When set to `true`, all meta data fields
-     *   being extracted, where the keys are being used as the property/column names.
+     *   are being extracted, where the keys are being used as the property/column names.
      *
-     *   When passing an array, either a `key => value` map, or single string values are
-     *   expected, where the key will be used as the property/column named, and the value
-     *   should be a `Hash::get()` compatible path that is used to extract from the meta
-     *   data. When passing single values, the value will be used as the property/name
-     *   as well as the path for extracting.
+     *   When passing an array, a `key => value` map is expected, where the key should be
+     *   a `Hash::get()` compatible path that is used to extract from the meta data, and
+     *   the value will be used as the property/column named:
+     *
+     *   ```
+     *   [
+     *       'user.id' => 'user_id'
+     *   ]
+     *   ```
+     *
+     *   This would extract `['user']['id']` from the metadata array, and pass it as
+     *   a field named `user_id` to the entity to persist.
+     *
+     *   Alternatively a flat array with single string values can be passed, where the value
+     *   will be used as the property/name as well as the path for extracting.
      *
      * - `logErrors` (`bool`, defaults to `true`)
      *
