@@ -24,21 +24,21 @@ class ElasticTagsFixture extends TestFixture
     public $schema = [
         'id' => ['type' => 'integer'],
         '@timestamp' => ['type' => 'date'],
-        'transaction' => ['type' => 'string', 'index' => 'not_analyzed'],
-        'type' => ['type' => 'string', 'index' => 'not_analyzed'],
+        'transaction' => ['type' => 'text', 'index' => 'not_analyzed'],
+        'type' => ['type' => 'text', 'index' => 'not_analyzed'],
         'primary_key' => ['type' => 'integer'],
-        'source' => ['type' => 'string', 'index' => 'not_analyzed'],
-        'parent_source' => ['type' => 'string', 'index' => 'not_analyzed'],
+        'source' => ['type' => 'text', 'index' => 'not_analyzed'],
+        'parent_source' => ['type' => 'text', 'index' => 'not_analyzed'],
         'original' => [
             'properties' => [
                 'id' => ['type' => 'integer'],
-                'name' => ['type' => 'string'],
+                'name' => ['type' => 'text'],
             ]
         ],
         'changed' => [
             'properties' => [
                 'id' => ['type' => 'integer'],
-                'name' => ['type' => 'string'],
+                'name' => ['type' => 'text'],
             ]
         ],
     ];

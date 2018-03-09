@@ -50,11 +50,11 @@ class ElasticMappingShell extends Shell
         $schema = $table->schema();
         $mapping = [
             '@timestamp' => ['type' => 'date', 'format' => 'basic_t_time_no_millis||dateOptionalTime||basic_date_time||ordinal_date_time_no_millis||yyyy-MM-dd HH:mm:ss'],
-            'transaction' => ['type' => 'string', 'index' => 'not_analyzed'],
-            'type' => ['type' => 'string', 'index' => 'not_analyzed'],
-            'primary_key' => ['type' => 'string', 'index' => 'not_analyzed'],
-            'source' => ['type' => 'string', 'index' => 'not_analyzed'],
-            'parent_source' => ['type' => 'string', 'index' => 'not_analyzed'],
+            'transaction' => ['type' => 'text', 'index' => 'not_analyzed'],
+            'type' => ['type' => 'text', 'index' => 'not_analyzed'],
+            'primary_key' => ['type' => 'text', 'index' => 'not_analyzed'],
+            'source' => ['type' => 'text', 'index' => 'not_analyzed'],
+            'parent_source' => ['type' => 'text', 'index' => 'not_analyzed'],
             'original' => [
                 'properties' => []
             ],
@@ -63,10 +63,10 @@ class ElasticMappingShell extends Shell
             ],
             'meta' => [
                 'properties' => [
-                    'ip' => ['type' => 'string', 'index' => 'not_analyzed'],
-                    'url' => ['type' => 'string', 'index' => 'not_analyzed'],
-                    'user' => ['type' => 'string', 'index' => 'not_analyzed'],
-                    'app_name' => ['type' => 'string', 'index' => 'not_analyzed']
+                    'ip' => ['type' => 'text', 'index' => 'not_analyzed'],
+                    'url' => ['type' => 'text', 'index' => 'not_analyzed'],
+                    'user' => ['type' => 'text', 'index' => 'not_analyzed'],
+                    'app_name' => ['type' => 'text', 'index' => 'not_analyzed']
                 ]
             ]
         ];
@@ -127,7 +127,7 @@ class ElasticMappingShell extends Shell
         $baseType = $schema->baseColumnType($column);
         switch ($baseType) {
         case 'uuid':
-            return ['type' => 'string', 'index' => 'not_analyzed', 'null_value' => '_null_'];
+            return ['type' => 'text', 'index' => 'not_analyzed', 'null_value' => '_null_'];
         case 'integer':
             return ['type' => 'integer', 'null_value' => ~PHP_INT_MAX];
         case 'date':
@@ -147,8 +147,8 @@ class ElasticMappingShell extends Shell
             return [
                 'type' => 'multi_field',
                 'fields' => [
-                    $column => ['type' => 'string', 'null_value' => '_null_'],
-                    'raw' => ['type' => 'string', 'index' => 'not_analyzed', 'null_value' => '_null_', 'ignore_above' => 256]
+                    $column => ['type' => 'text', 'null_value' => '_null_'],
+                    'raw' => ['type' => 'text', 'index' => 'not_analyzed', 'null_value' => '_null_', 'ignore_above' => 256]
                 ]
             ];
         }

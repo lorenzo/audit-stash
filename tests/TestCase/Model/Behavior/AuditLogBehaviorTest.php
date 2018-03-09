@@ -128,7 +128,7 @@ class AuditLogBehaviorTest extends TestCase
     {
         $this->table->schema([
             'id' => ['type' => 'integer'],
-            'title' => ['type' => 'string'],
+            'title' => ['type' => 'text'],
             'body' => ['type' => 'text']
         ]);
         $this->behavior->config('whitelist', false);

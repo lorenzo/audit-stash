@@ -26,7 +26,7 @@ class RabbitMQPersister implements PersisterInterface
     protected $options;
 
     /**
-     * Sets the options for this persister. The available options are:.
+     * Sets the options for this persister. The available options are:
      *
      * - connection: The connection name for rabbitmq as configured in ConnectionManager
      * - delivery_mode: The delivery_mode to use for each message (default: 2 for persisting messages in disk)

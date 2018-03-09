@@ -46,6 +46,7 @@ You now need to add the datasource configuration to your `config/app.php` file:
         'host' => '127.0.0.1', // server where elasticsearch is running
         'port' => 9200,
         'index' => 'audit-logs', // The name of the index where to store the data
+        'type' => 'audit', // The name of type stored
     ],
     ...
 ]
@@ -63,6 +64,7 @@ prefer to use a different index for each day (like logstash does), use the follo
         'host' => '127.0.0.1', // server where elasticsearch is running
         'port' => 9200,
         'index' => 'audit-logs%s', // Just add a %s at the end
+        'type' => 'audit', // The name of type stored
     ],
     ...
 ]

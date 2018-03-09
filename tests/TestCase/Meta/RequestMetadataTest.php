@@ -20,7 +20,7 @@ class RequestMetadataTest extends TestCase
      */
     public function testRequestDataIsAdded()
     {
-        $request = $this->getMock(Request::class, ['clientIp', 'here']);
+        $request = $this->createMock(Request::class, ['clientIp', 'here']);
         $listener = new RequestMetadata($request, 'jose');
         $this->eventManager()->attach($listener);
 

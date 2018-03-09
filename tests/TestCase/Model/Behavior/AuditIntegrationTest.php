@@ -50,7 +50,7 @@ class AuditIntegrationTest extends TestCase
             'className' => AuditLogBehavior::class
         ]);
 
-        $this->persister = $this->getMock(DebugPersister::class);
+        $this->persister = $this->createMock(DebugPersister::class);
         $this->table->behaviors()->get('AuditLog')->persister($this->persister);
     }
 

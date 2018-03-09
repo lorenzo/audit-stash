@@ -1,15 +1,15 @@
 <?php
 
-namespace AuditStash\Model\Type;
+namespace AuditStash\Model\Index;
 
-use Cake\ElasticSearch\Type;
+use Cake\ElasticSearch\Index;
 use Elastica\Aggregation\Terms as TermsAggregation;
 
 /**
- * Represents the rpository containing all the audit logs events
+ * Represents the repository containing all the audit logs events
  * of any kind and source.
  */
-class AuditLogsType extends Type
+class AuditLogsIndex extends Index
 {
     /**
      * The default connection name to inject when creating an instance.
@@ -19,20 +19,6 @@ class AuditLogsType extends Type
     public static function defaultConnectionName()
     {
         return 'auditlog_elastic';
-    }
-
-    /**
-     * Sets the type name to use for querying.
-     *
-     * @param string $name The name of the type(s) to query
-     * @return string
-     */
-    public function name($name = null)
-    {
-        if ($name === 'audit_logs') {
-            return $this->_name = '';
-        }
-        return parent::name($name);
     }
 
     /**

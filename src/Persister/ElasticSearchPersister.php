@@ -15,9 +15,9 @@ class ElasticSearchPersister implements PersisterInterface
 {
 
     /**
-     * The client or connection to ElastiSearch.
+     * The client or connection to ElasticSearch.
      *
-     * @var Elastica\Client;
+     * @var Elastica\Client
      */
     protected $connection;
 
@@ -29,6 +29,37 @@ class ElasticSearchPersister implements PersisterInterface
     protected $useTransactionId = false;
 
     /**
+     * Default mapping type of documents in ElasticSearch
+     *
+     * @var string
+     */
+    protected $documentType = 'audit';
+
+    /**
+     * Sets the options for this persister. The available options are:
+     *
+     * - connection: The client of connection to ElasticSearch
+     * - userTransactionId: Whether to use the transaction ids as document ids
+     * - documentType: The ElasticSearch mapping type
+     *
+     * @return void
+     */
+    public function __construct($options = [])
+    {
+        if (isset($options['connection'])) {
+            $this->setConnection($options['connection']);
+        }
+
+        if (isset($options['useTransactionId'])) {
+            $this->useTransactionId = (bool)$options['useTransactionId'];
+        }
+
+        if (isset($options['documentType'])) {
+            $this->documentType = $options['documentType'];
+        }
+    }
+
+    /**
      * Persists all of the audit log event objects that are provided.
      *
      * @param array $auditLogs An array of EventInterface objects
@@ -36,9 +67,13 @@ class ElasticSearchPersister implements PersisterInterface
      */
     public function logEvents(array $auditLogs)
     {
-        $client = $this->connection();
+        $client = $this->getConnection();
         $index = sprintf($client->getConfig('index'), '-' . gmdate('Y.m.d'));
+
+        print_r(" Persister: " . $index . " ");
+
         $documents = $this->transformToDocuments($auditLogs, $index);
+
         $client->addDocuments($documents);
     }
 
@@ -59,7 +94,7 @@ class ElasticSearchPersister implements PersisterInterface
             $data = [
                 '@timestamp' => $log->getTimestamp(),
                 'transaction' => $log->getTransactionId(),
-                'type' => $log->getEventType(),
+                'type' => $eventType,
                 'primary_key' => $primary,
                 'source' => $log->getSourceName(),
                 'parent_source' => $log->getParentSourceName(),
@@ -68,7 +103,7 @@ class ElasticSearchPersister implements PersisterInterface
                 'meta' => $log->getMetaInfo()
             ];
             $id = $this->useTransactionId ? $log->getTransactionId() : '';
-            $documents[] = new Document($id, $data, $log->getSourceName(), $index);
+            $documents[] = new Document($id, $data, $this->documentType, $index);
         }
 
         return $documents;
@@ -88,21 +123,48 @@ class ElasticSearchPersister implements PersisterInterface
     }
 
     /**
+     * Sets the client connection to elastic search.
+     *
+     * @param Elastica\Client $connection The conneciton to elastic search
+     * @return $this
+     */
+    public function setConnection(Client $connection)
+    {
+        $this->connection = $connection;
+
+        return $this;
+    }
+
+    /**
+     * Gets the client connection to elastic search.
+     *
+     * If connection is not defined, create a new one.
+     *
+     * @return Elastica\Client
+     */
+    public function getConnection()
+    {
+        if ($this->connection === null) {
+            $this->connection = ConnectionManager::get('auditlog_elastic');
+        }
+
+        return $this->connection;
+    }
+
+    /**
      * Sets the client connection to elastic search when passed.
      * If no arguments are provided, it returns the current connection.
      *
+     * @deprecated Use getConnection()/setConnection() instead
      * @param Elastica\Client $connection The conneciton to elastic search
      * @return Elastica\Client
      */
     public function connection(Client $connection = null)
     {
-        if ($connection === null) {
-            if ($this->connection === null) {
-                $this->connection = ConnectionManager::get('auditlog_elastic');
-            }
-            return $this->connection;
+        if ($connection !== null) {
+            return $this->setConnection($connection);
         }
 
-        return $this->connection = $connection;
+        return $this->getConnection();
     }
 }
