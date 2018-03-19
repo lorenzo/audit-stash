@@ -17,7 +17,7 @@ trait IndexConfigTrait
     protected function _configIndex($repository, $request)
     {
         $client = $repository->connection();
-        $indexTemplate = $client->getConfig('index');
+        $indexTemplate = $repository->getName();
         $client->setConfig(['index' => sprintf($indexTemplate, '*')]);
 
         if ($request->query('at')) {

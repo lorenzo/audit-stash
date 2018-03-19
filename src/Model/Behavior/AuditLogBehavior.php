@@ -28,6 +28,8 @@ class AuditLogBehavior extends Behavior
      * @var array
      */
     protected $_defaultConfig = [
+        'index' => null,
+        'type' => null,
         'blacklist' => ['created', 'modified'],
         'whitelist' => []
     ];
@@ -189,12 +191,16 @@ class AuditLogBehavior extends Behavior
     {
         if ($persister === null && $this->persister === null) {
             $class = Configure::read('AuditStash.persister') ?: ElasticSearchPersister::class;
-            $persister = new $class();
+            $index = $this->getConfig('index') ?: $this->_table->getName();
+            $type = $this->getConfig('type') ?: $this->_table->getType();
+
+            $persister = new $class(compact('index', 'type'));
         }
 
         if ($persister === null) {
             return $this->persister;
         }
+
         return $this->persister = $persister;
     }
 

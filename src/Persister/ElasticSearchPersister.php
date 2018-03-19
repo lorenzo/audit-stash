@@ -2,6 +2,7 @@
 
 namespace AuditStash\Persister;
 
+use AuditStash\Exception;
 use AuditStash\PersisterInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\ElasticSearch\Datasource\Connection;
@@ -9,13 +10,12 @@ use Elastica\Client;
 use Elastica\Document;
 
 /**
- * Implementes audit logs events persisting using ElastiSearch.
+ * Implementes audit logs events persisting using Elasticsearch.
  */
 class ElasticSearchPersister implements PersisterInterface
 {
-
     /**
-     * The client or connection to ElasticSearch.
+     * The client or connection to Elasticsearch.
      *
      * @var Elastica\Client
      */
@@ -29,18 +29,26 @@ class ElasticSearchPersister implements PersisterInterface
     protected $useTransactionId = false;
 
     /**
-     * Default mapping type of documents in ElasticSearch
+     * Elasticsearch index to store documents
      *
      * @var string
      */
-    protected $documentType = 'audit';
+    protected $index;
+
+    /**
+     * Elasticsearch mapping type of documents
+     *
+     * @var string
+     */
+    protected $type;
 
     /**
      * Sets the options for this persister. The available options are:
      *
-     * - connection: The client of connection to ElasticSearch
+     * - connection: The client of connection to Elasticsearch
      * - userTransactionId: Whether to use the transaction ids as document ids
-     * - documentType: The ElasticSearch mapping type
+     * - index: The Elasticsearch index to store documents
+     * - type: The Elasticsearch mapping type of documents
      *
      * @return void
      */
@@ -50,12 +58,18 @@ class ElasticSearchPersister implements PersisterInterface
             $this->setConnection($options['connection']);
         }
 
+        if (!isset($options['index'])) {
+            throw new Exception("You need to configure a 'index' name to store your events.");
+        }
+        $this->index = $options['index'];
+
+        if (!isset($options['type'])) {
+            throw new Exception("You need to configure a 'type' name to map your events.");
+        }
+        $this->type = $options['type'];
+
         if (isset($options['useTransactionId'])) {
             $this->useTransactionId = (bool)$options['useTransactionId'];
-        }
-
-        if (isset($options['documentType'])) {
-            $this->documentType = $options['documentType'];
         }
     }
 
@@ -68,11 +82,7 @@ class ElasticSearchPersister implements PersisterInterface
     public function logEvents(array $auditLogs)
     {
         $client = $this->getConnection();
-        $index = sprintf($client->getConfig('index'), '-' . gmdate('Y.m.d'));
-
-        print_r(" Persister: " . $index . " ");
-
-        $documents = $this->transformToDocuments($auditLogs, $index);
+        $documents = $this->transformToDocuments($auditLogs);
 
         $client->addDocuments($documents);
     }
@@ -81,11 +91,12 @@ class ElasticSearchPersister implements PersisterInterface
      * Transforms the EventInterface objects to Elastica Documents.
      *
      * @param array $auditLogs An array of EventInterface objects.
-     * @param string $index The name of the index where the documents will be stored.
      * @return array
      */
-    protected function transformToDocuments($auditLogs, $index)
+    protected function transformToDocuments($auditLogs)
     {
+        $index = $this->getIndex();
+        $type = $this->getType();
         $documents = [];
         foreach ($auditLogs as $log) {
             $primary = $log->getId();
@@ -103,7 +114,7 @@ class ElasticSearchPersister implements PersisterInterface
                 'meta' => $log->getMetaInfo()
             ];
             $id = $this->useTransactionId ? $log->getTransactionId() : '';
-            $documents[] = new Document($id, $data, $this->documentType, $index);
+            $documents[] = new Document($id, $data, $type, $index);
         }
 
         return $documents;
@@ -166,5 +177,51 @@ class ElasticSearchPersister implements PersisterInterface
         }
 
         return $this->getConnection();
+    }
+
+    /**
+     * Sets the Elasticsearch index used to store events
+     *
+     * @param string $index Name of the Elasticsearch index
+     * @return $this
+     */
+    public function setIndex($index)
+    {
+        $this->index = $index;
+
+        return $this;
+    }
+
+    /**
+     * Gets the Elasticsearch index to persist events
+     *
+     * @return string Name of the Elasticsearch index
+     */
+    public function getIndex()
+    {
+        return sprintf($this->index, '-' . gmdate('Y.m.d'));
+    }
+
+    /**
+     * Sets the Elasticsearch mapping type of stored events
+     *
+     * @param string $type Name of the Elasticsearch mapping type
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * Gets the Elasticsearch mapping type of stored events
+     *
+     * @return string Name of the Elasticsearch mapping type
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 }

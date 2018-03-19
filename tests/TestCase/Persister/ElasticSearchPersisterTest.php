@@ -14,6 +14,7 @@ use DateTime;
 
 class ElasticSearchPersisterTest extends TestCase
 {
+    protected $index = 'audits';
 
     /**
      * Fixtures to be loaded.
@@ -33,8 +34,8 @@ class ElasticSearchPersisterTest extends TestCase
      */
     public function testLogSingleCreateEvent()
     {
-        $client = ConnectionManager::get('test_elastic_audit');
-        $persister = new ElasticSearchPersister(['connection' => $client]);
+        $client = ConnectionManager::get('test_elastic');
+        $persister = new ElasticSearchPersister(['connection' => $client, 'index' => 'articles', 'type' => 'articles']);
         $data = [
             'title' => 'A new article',
             'body' => 'article body',
@@ -44,7 +45,7 @@ class ElasticSearchPersisterTest extends TestCase
 
         $events[] = new AuditCreateEvent('1234', 50, 'articles', $data, $data);
         $persister->logEvents($events);
-        $client->getIndex()->refresh();
+        $client->getIndex($this->index)->refresh();
 
         $articles = IndexRegistry::get('Articles')->find()->toArray();
         $this->assertCount(1, $articles);
@@ -85,8 +86,8 @@ class ElasticSearchPersisterTest extends TestCase
      */
     public function testLogSingleUpdateEvent()
     {
-        $client = ConnectionManager::get('test_elastic_audit');
-        $persister = new ElasticSearchPersister(['connection' => $client]);
+        $client = ConnectionManager::get('test_elastic');
+        $persister = new ElasticSearchPersister(['connection' => $client, 'index' => 'articles', 'type' => 'articles']);
         $original = [
             'title' => 'Old article title',
             'published' => 'N'
@@ -99,7 +100,7 @@ class ElasticSearchPersisterTest extends TestCase
         $events[] = new AuditUpdateEvent('1234', 50, 'articles', $changed, $original);
         $events[0]->setParentSourceName('authors');
         $persister->logEvents($events);
-        $client->getIndex()->refresh();
+        $client->getIndex($this->index)->refresh();
 
         $articles = IndexRegistry::get('Articles')->find()->toArray();
         $this->assertCount(1, $articles);
@@ -129,12 +130,12 @@ class ElasticSearchPersisterTest extends TestCase
      */
     public function testLogSingleDeleteEvent()
     {
-        $client = ConnectionManager::get('test_elastic_audit');
-        $persister = new ElasticSearchPersister(['connection' => $client]);
+        $client = ConnectionManager::get('test_elastic');
+        $persister = new ElasticSearchPersister(['connection' => $client, 'index' => 'articles', 'type' => 'articles']);
 
         $events[] = new AuditDeleteEvent('1234', 50, 'articles', 'authors');
         $persister->logEvents($events);
-        $client->getIndex()->refresh();
+        $client->getIndex($this->index)->refresh();
 
         $articles = IndexRegistry::get('Articles')->find()->toArray();
         $this->assertCount(1, $articles);
@@ -165,8 +166,8 @@ class ElasticSearchPersisterTest extends TestCase
      */
     public function testLogMultipleEvents()
     {
-        $client = ConnectionManager::get('test_elastic_audit');
-        $persister = new ElasticSearchPersister(['connection' => $client]);
+        $client = ConnectionManager::get('test_elastic');
+        $persister = new ElasticSearchPersister(['connection' => $client, 'index' => 'tags', 'type' => 'articles']);
 
         $data = [
             'id' => 3,
@@ -187,7 +188,7 @@ class ElasticSearchPersisterTest extends TestCase
         $events[] = new AuditDeleteEvent('1234', 51, 'articles');
 
         $persister->logEvents($events);
-        $client->getIndex()->refresh();
+        $client->getIndex('authors,articles')->refresh();
 
         $tags = IndexRegistry::get('Tags')->find()->all();
         $this->assertCount(1, $tags);
@@ -259,8 +260,8 @@ class ElasticSearchPersisterTest extends TestCase
      */
     public function testPersistingTimeObjects()
     {
-        $client = ConnectionManager::get('test_elastic_audit');
-        $persister = new ElasticSearchPersister(['connection' => $client]);
+        $client = ConnectionManager::get('test_elastic');
+        $persister = new ElasticSearchPersister(['connection' => $client, 'index' => 'articles', 'type' => 'articles']);
         $original = [
             'title' => 'Old article title',
             'published_date' => new Time('2015-04-12 20:20:21')
@@ -272,7 +273,7 @@ class ElasticSearchPersisterTest extends TestCase
 
         $events[] = new AuditUpdateEvent('1234', 50, 'articles', $changed, $original);
         $persister->logEvents($events);
-        $client->getIndex()->refresh();
+        $client->getIndex('articles')->refresh();
 
         $articles = IndexRegistry::get('Articles')->find()->toArray();
         $this->assertCount(1, $articles);
@@ -290,11 +291,11 @@ class ElasticSearchPersisterTest extends TestCase
             'parent_source' => null,
             'original' => [
                 'title' => 'Old article title',
-                'published_date' => '2015-04-12T20:20:21+0000'
+                'published_date' => '2015-04-12T20:20:21+00:00'
             ],
             'changed' => [
                 'title' => 'A new article',
-                'published_date' => '2015-04-13T20:20:21+0000'
+                'published_date' => '2015-04-13T20:20:21+00:00'
             ],
             'meta' => []
         ];
@@ -309,13 +310,13 @@ class ElasticSearchPersisterTest extends TestCase
      */
     public function testLogEventWithMetadata()
     {
-        $client = ConnectionManager::get('test_elastic_audit');
-        $persister = new ElasticSearchPersister(['connection' => $client]);
+        $client = ConnectionManager::get('test_elastic');
+        $persister = new ElasticSearchPersister(['connection' => $client, 'index' => 'articles', 'type' => 'articles']);
 
         $events[] = new AuditDeleteEvent('1234', 50, 'articles', 'authors');
         $events[0]->setMetaInfo(['a' => 'b', 'c' => 'd']);
         $persister->logEvents($events);
-        $client->getIndex()->refresh();
+        $client->getIndex('articles')->refresh();
 
         $articles = IndexRegistry::get('Articles')->find()->toArray();
         $this->assertCount(1, $articles);
