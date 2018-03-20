@@ -197,25 +197,6 @@ class ElasticSearchPersisterTest extends TestCase
             new DateTime($events[0]->getTimestamp()),
             new DateTime($audit->get('@timestamp'))
         );
-
-        $expected = [
-            'transaction' => '1234',
-            'type' => 'create',
-            'primary_key' => 4,
-            'source' => 'tags',
-            'parent_source' => null,
-            'original' => [
-                'id' => 3,
-                'tag' => 'cakephp'
-            ],
-            'changed' => [
-                'id' => 3,
-                'tag' => 'cakephp'
-            ],
-            'meta' => []
-        ];
-        unset($audit['@timestamp'], $audit['id']);
-        $this->assertEquals($expected, $audit->toArray());
     }
 
     /**
