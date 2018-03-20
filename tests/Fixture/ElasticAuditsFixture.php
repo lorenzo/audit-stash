@@ -24,11 +24,11 @@ class ElasticAuditsFixture extends TestFixture
     public $schema = [
         'id' => ['type' => 'integer'],
         '@timestamp' => ['type' => 'date'],
-        'transaction' => ['type' => 'text', 'index' => 'not_analyzed'],
-        'type' => ['type' => 'text', 'index' => 'not_analyzed'],
+        'transaction' => ['type' => 'text', 'index' => false],
+        'type' => ['type' => 'text', 'index' => false],
         'primary_key' => ['type' => 'integer'],
-        'source' => ['type' => 'text', 'index' => 'not_analyzed'],
-        'parent_source' => ['type' => 'text', 'index' => 'not_analyzed'],
+        'source' => ['type' => 'text', 'index' => false],
+        'parent_source' => ['type' => 'text', 'index' => false],
         'original' => [
             'properties' => [
                 'id' => ['type' => 'integer'],

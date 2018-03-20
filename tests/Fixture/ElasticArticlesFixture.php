@@ -24,18 +24,18 @@ class ElasticArticlesFixture extends TestFixture
     public $schema = [
         'id' => ['type' => 'integer'],
         '@timestamp' => ['type' => 'date'],
-        'transaction' => ['type' => 'text', 'index' => 'not_analyzed'],
-        'type' => ['type' => 'text', 'index' => 'not_analyzed'],
+        'transaction' => ['type' => 'text', 'index' => false],
+        'type' => ['type' => 'text', 'index' => false],
         'primary_key' => ['type' => 'integer'],
-        'source' => ['type' => 'text', 'index' => 'not_analyzed'],
-        'parent_source' => ['type' => 'text', 'index' => 'not_analyzed'],
+        'source' => ['type' => 'text', 'index' => false],
+        'parent_source' => ['type' => 'text', 'index' => false],
         'original' => [
             'properties' => [
                 'id' => ['type' => 'integer'],
                 'author_id' => ['type' => 'integer'],
                 'title' => ['type' => 'text'],
                 'body' => ['type' => 'text'],
-                'published' => ['type' => 'text', 'index' => 'not_analyzed'],
+                'published' => ['type' => 'text', 'index' => false],
                 'published_date' => ['type' => 'date'],
             ]
         ],
@@ -45,7 +45,7 @@ class ElasticArticlesFixture extends TestFixture
                 'author_id' => ['type' => 'integer'],
                 'title' => ['type' => 'text'],
                 'body' => ['type' => 'text'],
-                'published' => ['type' => 'text', 'index' => 'not_analyzed'],
+                'published' => ['type' => 'text', 'index' => false],
                 'published_date' => ['type' => 'date'],
             ]
         ],
