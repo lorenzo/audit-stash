@@ -14,8 +14,6 @@ use DateTime;
 
 class ElasticSearchPersisterTest extends TestCase
 {
-    protected $index = 'audits';
-
     /**
      * Fixtures to be loaded.
      *
@@ -45,7 +43,7 @@ class ElasticSearchPersisterTest extends TestCase
 
         $events[] = new AuditCreateEvent('1234', 50, 'articles', $data, $data);
         $persister->logEvents($events);
-        $client->getIndex($this->index)->refresh();
+        $client->getIndex('articles')->refresh();
 
         $articles = IndexRegistry::get('Articles')->find()->toArray();
         $this->assertCount(1, $articles);
@@ -100,7 +98,7 @@ class ElasticSearchPersisterTest extends TestCase
         $events[] = new AuditUpdateEvent('1234', 50, 'articles', $changed, $original);
         $events[0]->setParentSourceName('authors');
         $persister->logEvents($events);
-        $client->getIndex($this->index)->refresh();
+        $client->getIndex('articles')->refresh();
 
         $articles = IndexRegistry::get('Articles')->find()->toArray();
         $this->assertCount(1, $articles);
@@ -135,7 +133,7 @@ class ElasticSearchPersisterTest extends TestCase
 
         $events[] = new AuditDeleteEvent('1234', 50, 'articles', 'authors');
         $persister->logEvents($events);
-        $client->getIndex($this->index)->refresh();
+        $client->getIndex('articles')->refresh();
 
         $articles = IndexRegistry::get('Articles')->find()->toArray();
         $this->assertCount(1, $articles);
@@ -167,7 +165,7 @@ class ElasticSearchPersisterTest extends TestCase
     public function testLogMultipleEvents()
     {
         $client = ConnectionManager::get('test_elastic');
-        $persister = new ElasticSearchPersister(['connection' => $client, 'index' => 'tags', 'type' => 'articles']);
+        $persister = new ElasticSearchPersister(['connection' => $client, 'index' => 'tags', 'type' => 'tags']);
 
         $data = [
             'id' => 3,
@@ -188,7 +186,9 @@ class ElasticSearchPersisterTest extends TestCase
         $events[] = new AuditDeleteEvent('1234', 51, 'articles');
 
         $persister->logEvents($events);
-        $client->getIndex('authors,articles')->refresh();
+        $client->getIndex('tags')->refresh();
+        $client->getIndex('authors')->refresh();
+        $client->getIndex('articles')->refresh();
 
         $tags = IndexRegistry::get('Tags')->find()->all();
         $this->assertCount(1, $tags);
