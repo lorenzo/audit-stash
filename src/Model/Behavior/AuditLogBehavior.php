@@ -191,8 +191,8 @@ class AuditLogBehavior extends Behavior
     {
         if ($persister === null && $this->persister === null) {
             $class = Configure::read('AuditStash.persister') ?: ElasticSearchPersister::class;
-            $index = $this->getConfig('index') ?: $this->_table->getName();
-            $type = $this->getConfig('type') ?: $this->_table->getType();
+            $index = $this->getConfig('index') ?: $this->_table->getTable();
+            $type = $this->getConfig('type') ?: $index;
 
             $persister = new $class(compact('index', 'type'));
         }

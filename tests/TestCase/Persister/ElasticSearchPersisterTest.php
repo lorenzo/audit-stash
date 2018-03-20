@@ -21,6 +21,7 @@ class ElasticSearchPersisterTest extends TestCase
      */
     public $fixtures = [
         'plugin.audit_stash.elastic_articles',
+        'plugin.audit_stash.elastic_audits',
         'plugin.audit_stash.elastic_authors',
         'plugin.audit_stash.elastic_tags',
     ];
@@ -158,14 +159,15 @@ class ElasticSearchPersisterTest extends TestCase
     }
 
     /**
-     * Tests that all events sent to the logger are actually persisted in the right types.
+     * Tests that all events sent to the logger are actually persisted in the same index,
+     * althought your source name.
      *
      * @return void
      */
     public function testLogMultipleEvents()
     {
         $client = ConnectionManager::get('test_elastic');
-        $persister = new ElasticSearchPersister(['connection' => $client, 'index' => 'tags', 'type' => 'tags']);
+        $persister = new ElasticSearchPersister(['connection' => $client, 'index' => 'audits', 'type' => 'audits']);
 
         $data = [
             'id' => 3,
@@ -186,16 +188,14 @@ class ElasticSearchPersisterTest extends TestCase
         $events[] = new AuditDeleteEvent('1234', 51, 'articles');
 
         $persister->logEvents($events);
-        $client->getIndex('tags')->refresh();
-        $client->getIndex('authors')->refresh();
-        $client->getIndex('articles')->refresh();
+        $client->getIndex('audits')->refresh();
 
-        $tags = IndexRegistry::get('Tags')->find()->all();
-        $this->assertCount(1, $tags);
-        $tag = $tags->first();
+        $audits = IndexRegistry::get('Audits')->find()->all();
+        $this->assertCount(4, $audits);
+        $audit = $audits->first();
         $this->assertEquals(
             new DateTime($events[0]->getTimestamp()),
-            new DateTime($tag->get('@timestamp'))
+            new DateTime($audit->get('@timestamp'))
         );
 
         $expected = [
@@ -214,43 +214,8 @@ class ElasticSearchPersisterTest extends TestCase
             ],
             'meta' => []
         ];
-        unset($tag['@timestamp'], $tag['id']);
-        $this->assertEquals($expected, $tag->toArray());
-
-        $authors = IndexRegistry::get('Authors')->find()->all();
-        $this->assertCount(1, $authors);
-        $author = $authors->first();
-
-        $this->assertEquals(
-            new DateTime($events[0]->getTimestamp()),
-            new DateTime($author->get('@timestamp'))
-        );
-
-        $expected = [
-            'transaction' => '1234',
-            'type' => 'update',
-            'primary_key' => 2,
-            'source' => 'authors',
-            'parent_source' => null,
-            'original' => [
-                'title' => 'Old article title',
-                'published' => 'N'
-            ],
-            'changed' => [
-                'title' => 'A new article',
-                'published' => 'Y'
-            ],
-            'meta' => []
-        ];
-        unset($author['id'], $author['@timestamp']);
-        $this->assertEquals($expected, $author->toArray());
-
-        $articles = IndexRegistry::get('Articles')->find()->all();
-        $this->assertCount(2, $articles);
-        $this->assertEquals(
-            [50 => 'delete', 51 => 'delete'],
-            $articles->combine('primary_key', 'type')->toArray()
-        );
+        unset($audit['@timestamp'], $audit['id']);
+        $this->assertEquals($expected, $audit->toArray());
     }
 
     /**

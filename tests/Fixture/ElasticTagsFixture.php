@@ -10,7 +10,7 @@ class ElasticTagsFixture extends TestFixture
     public $connection = 'test_elastic';
 
     /**
-     * The table/type for this fixture.
+     * The table/index for this fixture.
      *
      * @var string
      */
