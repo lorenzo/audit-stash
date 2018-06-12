@@ -12,6 +12,7 @@ use DateTime;
  *
  * @package App\Persister
  * @author Cake Development Corporation
+ * @deprecated Use \AuditStash\Persister\TablePersister instead.
  */
 class DatabasePersister implements PersisterInterface
 {

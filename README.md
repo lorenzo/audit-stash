@@ -36,6 +36,8 @@ bin/cake plugin load Cake/ElasticSearch
 
 ## Configuration
 
+### Elastic Search
+
 You now need to add the datasource configuration to your `config/app.php` file:
 
 ```php
@@ -54,7 +56,6 @@ You now need to add the datasource configuration to your `config/app.php` file:
 This is the most basic setup, it will use a single index for storing all the data. If you
 prefer to use a different index for each day (like logstash does), use the following configuration:
 
-
 ```php
 'Datasources' => [
     'auditlog_elastic' => [
@@ -69,6 +70,47 @@ prefer to use a different index for each day (like logstash does), use the follo
 ```
 
 The added `%s` will be used as a placeholder for the day of the year. **Using an index per day is strongly recommended.**
+
+### Tables / Regular Databases
+
+If you want to use a regular database, respectively an engine that can be used via the CakePHP ORM API, then you can use
+the table persister that ships with this plugin.
+
+To do so you need to configure the `AuditStash.persister` option accordingly. In your `config/app.php` file add the
+following configuration:
+
+```php
+'AuditStash' => [
+    'persister' => 'AuditStash\Persister\TablePersister'
+]
+```
+
+The plugin will then by default try to store the logs in a table named `audit_logs`, via a table class with the alias
+`AuditLogs`, which you could create/overwrite in your application if you need.
+
+You can find a migration in the `config/migration` folder of this plugin which you can apply to your database, this will
+add a table named `audit_logs` with all the default columns - alternatively create the table manually. After that you
+can bake the corresponding table class.
+
+```
+bin/cake migrations migrate -p AuditStash -t 20171018185609
+bin/cake bake model AuditLogs
+```
+
+#### Table persister configuration
+
+The table persister supports various configuration options, please refer to
+[its API documentation](/src/Persister/TablePersister.php) for further information. Generally configuration can be
+applied via its `config()` (or `setConfig()`) method:
+
+```php
+$this->addBehavior('AuditStash.AuditLog');
+$this->behaviors()->get('AuditLog')->persister()->config([
+    'extractMetaFields' => [
+        'user.id' => 'user_id'
+    ]
+]);
+```
 
 ## Using AuditStash
 
@@ -209,7 +251,7 @@ your own storage engines. It is as simple as implementing the `PersisterInterfac
 ```php
 use AuditStash\PersisterInterface;
 
-class DatabasePersister implements PersisterInterface
+class MyPersister implements PersisterInterface
 {
     public function logEvents(array $auditLogs)
     {
@@ -226,21 +268,20 @@ class DatabasePersister implements PersisterInterface
                 'changed' => $eventType === 'delete' ? null : json_encode($log->getChanged()),
                 'meta' => json_encode($log->getMetaInfo())
             ];
-            TableRegistry::get('MyAuditsTable')->save(new Entity($data));
+            $storage = new MyStorage();
+            $storage->save($data);
         }
     }
 }
 ```
 
-The code above assumes you have a `MyAuditsTable` class that is capable of persisting the structure if the
-passed data.
-
 Finally, you need to configure `AuditStash` to use your new persister. In the `config/app.php` file add the following
 lines:
 
 ```php
-...
-'AuditStash' => ['persister' => 'App\Namespace\For\Your\DatabasePersister']
+'AuditStash' => [
+    'persister' => 'App\Namespace\For\Your\Persister'
+]
 ```
 
 or if you are using as standalone via
