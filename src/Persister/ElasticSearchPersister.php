@@ -6,7 +6,6 @@ use AuditStash\Exception;
 use AuditStash\PersisterInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\ElasticSearch\Datasource\Connection;
-use Elastica\Client;
 use Elastica\Document;
 
 /**
@@ -17,7 +16,7 @@ class ElasticSearchPersister implements PersisterInterface
     /**
      * The client or connection to Elasticsearch.
      *
-     * @var Elastica\Client
+     * @var Cake\ElasticSearch\Datasource\Connection
      */
     protected $connection;
 
@@ -139,7 +138,7 @@ class ElasticSearchPersister implements PersisterInterface
      * @param Elastica\Client $connection The conneciton to elastic search
      * @return $this
      */
-    public function setConnection(Client $connection)
+    public function setConnection(Connection $connection)
     {
         $this->connection = $connection;
 

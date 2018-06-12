@@ -4,7 +4,6 @@ namespace AuditStash\Shell;
 
 use Cake\Console\Shell;
 use Cake\Datasource\ConnectionManager;
-use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use Elastica\Request;
 use Elastica\Type\Mapping as ElasticaMapping;
@@ -47,8 +46,8 @@ class ElasticMappingShell extends Shell
      */
     public function main($table)
     {
-        $table = TableRegistry::get($table);
-        $schema = $table->schema();
+        $table = $this->loadModel($table)
+        $schema = $table->getSchema();
         $mapping = [
             '@timestamp' => ['type' => 'date', 'format' => 'basic_t_time_no_millis||dateOptionalTime||basic_date_time||ordinal_date_time_no_millis||yyyy-MM-dd HH:mm:ss'],
             'transaction' => ['type' => 'text', 'index' => false],

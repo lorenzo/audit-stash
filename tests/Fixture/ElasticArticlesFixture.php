@@ -14,7 +14,7 @@ class ElasticArticlesFixture extends TestFixture
      *
      * @var string
      */
-    public $table = 'articles';
+    public $table = 'article';
 
     /**
      * The mapping data.

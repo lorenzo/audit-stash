@@ -14,7 +14,7 @@ class ElasticAuthorsFixture extends TestFixture
      *
      * @var string
      */
-    public $table = 'authors';
+    public $table = 'author';
 
     /**
      * The mapping data.

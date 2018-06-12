@@ -17,10 +17,10 @@ class AuditLogsTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('audit_logs');
-        $this->primaryKey('id');
+        $this->setTable('audit_logs');
+        $this->setPrimaryKey('id');
 
-        $this->schema([
+        $this->setSchema([
             'id' => 'integer',
             'transaction' => 'string',
             'type' => 'string',
@@ -55,7 +55,7 @@ class TablePersisterTest extends TestCase
 
         $this->TablePersister = new TablePersister();
 
-        TableRegistry::config('AuditLogs', [
+        TableRegistry::getTableLocator()->setConfig('AuditLogs', [
             'className' => AuditLogsTable::class
         ]);
     }
@@ -82,7 +82,7 @@ class TablePersisterTest extends TestCase
             'table' => 'AuditLogs',
             'unsetExtractedMetaFields' => true,
         ];
-        $this->assertEquals($expected, $this->TablePersister->config());
+        $this->assertEquals($expected, $this->TablePersister->getConfig());
     }
 
     public function testGetTableDefault()
@@ -95,7 +95,7 @@ class TablePersisterTest extends TestCase
         $this->assertInstanceOf(AuditLogsTable::class, $this->TablePersister->getTable());
         $this->assertInstanceOf(TablePersister::class, $this->TablePersister->setTable('Custom'));
         $this->assertInstanceOf(Table::class, $this->TablePersister->getTable());
-        $this->assertEquals('Custom', $this->TablePersister->getTable()->alias());
+        $this->assertEquals('Custom', $this->TablePersister->getTable()->getAlias());
     }
 
     public function testSetTableAsObject()
@@ -131,9 +131,9 @@ class TablePersisterTest extends TestCase
             'primary_key' => 1,
             'meta' => null
         ]);
-        $entity->source('AuditLogs');
+        $entity->setSource('AuditLogs');
 
-        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save'], TableRegistry::config('AuditLogs'));
+        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save']);
         $AuditLogsTable
             ->expects($this->once())
             ->method('save')
@@ -168,16 +168,16 @@ class TablePersisterTest extends TestCase
             'foo' => 'bar',
             'nested' => 'value'
         ]);
-        $entity->source('AuditLogs');
+        $entity->setSource('AuditLogs');
 
-        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save'], TableRegistry::config('AuditLogs'));
+        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save']);
         $AuditLogsTable
             ->expects($this->once())
             ->method('save')
             ->with($entity)
             ->willReturn($entity);
 
-        $this->TablePersister->config([
+        $this->TablePersister->setConfig([
             'extractMetaFields' => [
                 'foo',
                 'baz.nested' => 'nested'
@@ -214,16 +214,16 @@ class TablePersisterTest extends TestCase
                 'bar' => 'foo'
             ]
         ]);
-        $entity->source('AuditLogs');
+        $entity->setSource('AuditLogs');
 
-        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save'], TableRegistry::config('AuditLogs'));
+        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save']);
         $AuditLogsTable
             ->expects($this->once())
             ->method('save')
             ->with($entity)
             ->willReturn($entity);
 
-        $this->TablePersister->config([
+        $this->TablePersister->setConfig([
             'extractMetaFields' => true
         ]);
         $this->TablePersister->setTable($AuditLogsTable);
@@ -249,16 +249,16 @@ class TablePersisterTest extends TestCase
             'meta' => '{"foo":"bar"}',
             'foo' => 'bar'
         ]);
-        $entity->source('AuditLogs');
+        $entity->setSource('AuditLogs');
 
-        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save'], TableRegistry::config('AuditLogs'));
+        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save']);
         $AuditLogsTable
             ->expects($this->once())
             ->method('save')
             ->with($entity)
             ->willReturn($entity);
 
-        $this->TablePersister->config([
+        $this->TablePersister->setConfig([
             'extractMetaFields' => [
                 'foo'
             ],
@@ -287,16 +287,16 @@ class TablePersisterTest extends TestCase
             'meta' => '{"foo":"bar"}',
             'foo' => 'bar'
         ]);
-        $entity->source('AuditLogs');
+        $entity->setSource('AuditLogs');
 
-        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save'], TableRegistry::config('AuditLogs'));
+        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save']);
         $AuditLogsTable
             ->expects($this->once())
             ->method('save')
             ->with($entity)
             ->willReturn($entity);
 
-        $this->TablePersister->config([
+        $this->TablePersister->setConfig([
             'extractMetaFields' => true,
             'unsetExtractedMetaFields' => false
         ]);
@@ -327,8 +327,8 @@ class TablePersisterTest extends TestCase
         ]);
 
         $logged = clone $entity;
-        $logged->errors('field', ['error']);
-        $logged->source('AuditLogs');
+        $logged->setError('field', ['error']);
+        $logged->setSource('AuditLogs');
 
         $TablePersister
             ->expects($this->once())
@@ -338,10 +338,10 @@ class TablePersisterTest extends TestCase
                 Debugger::exportVar($logged, 4)
             );
 
-        $TablePersister->getTable()->eventManager()->on(
+        $TablePersister->getTable()->getEventManager()->on(
             'Model.beforeSave',
             function ($event, EntityInterface $entity) {
-                $entity->errors('field', ['error']);
+                $entity->setError('field', ['error']);
                 return false;
             }
         );
@@ -361,10 +361,10 @@ class TablePersisterTest extends TestCase
             ->expects($this->never())
             ->method('log');
 
-        $TablePersister->config([
+        $TablePersister->setConfig([
             'logErrors' => false
         ]);
-        $TablePersister->getTable()->eventManager()->on(
+        $TablePersister->getTable()->getEventManager()->on(
             'Model.beforeSave',
             function ($event, EntityInterface $entity) {
                 return false;
@@ -390,16 +390,16 @@ class TablePersisterTest extends TestCase
             'primary_key' => '[1,2,3]',
             'meta' => '[]',
         ]);
-        $entity->source('AuditLogs');
+        $entity->setSource('AuditLogs');
 
-        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save'], TableRegistry::config('AuditLogs'));
+        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save']);
         $AuditLogsTable
             ->expects($this->once())
             ->method('save')
             ->with($entity)
             ->willReturn($entity);
 
-        $AuditLogsTable->schema()->columnType('primary_key', 'string');
+        $AuditLogsTable->getSchema()->setColumnType('primary_key', 'string');
 
         $this->TablePersister->setTable($AuditLogsTable);
         $this->TablePersister->logEvents([$event]);
@@ -420,16 +420,16 @@ class TablePersisterTest extends TestCase
             'primary_key' => 1,
             'meta' => '[]',
         ]);
-        $entity->source('AuditLogs');
+        $entity->setSource('AuditLogs');
 
-        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save'], TableRegistry::config('AuditLogs'));
+        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save']);
         $AuditLogsTable
             ->expects($this->once())
             ->method('save')
             ->with($entity)
             ->willReturn($entity);
 
-        $this->TablePersister->config([
+        $this->TablePersister->setConfig([
             'primaryKeyExtractionStrategy' => TablePersister::STRATEGY_RAW
         ]);
         $this->TablePersister->setTable($AuditLogsTable);
@@ -451,18 +451,18 @@ class TablePersisterTest extends TestCase
             'primary_key' => [1, 2, 3],
             'meta' => '[]',
         ]);
-        $entity->source('AuditLogs');
+        $entity->setSource('AuditLogs');
 
-        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save'], TableRegistry::config('AuditLogs'));
+        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save']);
         $AuditLogsTable
             ->expects($this->once())
             ->method('save')
             ->with($entity)
             ->willReturn($entity);
 
-        $AuditLogsTable->schema()->columnType('primary_key', 'json');
+        $AuditLogsTable->getSchema()->setColumnType('primary_key', 'json');
 
-        $this->TablePersister->config([
+        $this->TablePersister->setConfig([
             'primaryKeyExtractionStrategy' => TablePersister::STRATEGY_RAW
         ]);
         $this->TablePersister->setTable($AuditLogsTable);
@@ -484,16 +484,16 @@ class TablePersisterTest extends TestCase
             'primary_key' => 1,
             'meta' => '[]',
         ]);
-        $entity->source('AuditLogs');
+        $entity->setSource('AuditLogs');
 
-        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save'], TableRegistry::config('AuditLogs'));
+        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save']);
         $AuditLogsTable
             ->expects($this->once())
             ->method('save')
             ->with($entity)
             ->willReturn($entity);
 
-        $this->TablePersister->config([
+        $this->TablePersister->setConfig([
             'primaryKeyExtractionStrategy' => TablePersister::STRATEGY_PROPERTIES
         ]);
         $this->TablePersister->setTable($AuditLogsTable);
@@ -517,16 +517,16 @@ class TablePersisterTest extends TestCase
             'primary_key_2' => 3,
             'meta' => '[]',
         ]);
-        $entity->source('AuditLogs');
+        $entity->setSource('AuditLogs');
 
-        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save'], TableRegistry::config('AuditLogs'));
+        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save']);
         $AuditLogsTable
             ->expects($this->once())
             ->method('save')
             ->with($entity)
             ->willReturn($entity);
 
-        $this->TablePersister->config([
+        $this->TablePersister->setConfig([
             'primaryKeyExtractionStrategy' => TablePersister::STRATEGY_PROPERTIES
         ]);
         $this->TablePersister->setTable($AuditLogsTable);
@@ -548,18 +548,18 @@ class TablePersisterTest extends TestCase
             'primary_key' => '"pk"',
             'meta' => '[]',
         ]);
-        $entity->source('AuditLogs');
+        $entity->setSource('AuditLogs');
 
-        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save'], TableRegistry::config('AuditLogs'));
+        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save']);
         $AuditLogsTable
             ->expects($this->once())
             ->method('save')
             ->with($entity)
             ->willReturn($entity);
 
-        $AuditLogsTable->schema()->columnType('primary_key', 'string');
+        $AuditLogsTable->getSchema()->setColumnType('primary_key', 'string');
 
-        $this->TablePersister->config([
+        $this->TablePersister->setConfig([
             'primaryKeyExtractionStrategy' => TablePersister::STRATEGY_SERIALIZED
         ]);
         $this->TablePersister->setTable($AuditLogsTable);
@@ -581,18 +581,18 @@ class TablePersisterTest extends TestCase
             'primary_key' => '[1,2,3]',
             'meta' => '[]',
         ]);
-        $entity->source('AuditLogs');
+        $entity->setSource('AuditLogs');
 
-        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save'], TableRegistry::config('AuditLogs'));
+        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save']);
         $AuditLogsTable
             ->expects($this->once())
             ->method('save')
             ->with($entity)
             ->willReturn($entity);
 
-        $AuditLogsTable->schema()->columnType('primary_key', 'string');
+        $AuditLogsTable->getSchema()->setColumnType('primary_key', 'string');
 
-        $this->TablePersister->config([
+        $this->TablePersister->setConfig([
             'primaryKeyExtractionStrategy' => TablePersister::STRATEGY_SERIALIZED
         ]);
         $this->TablePersister->setTable($AuditLogsTable);
@@ -619,23 +619,30 @@ class TablePersisterTest extends TestCase
                 'foo' => 'bar'
             ],
         ]);
-        $entity->source('AuditLogs');
+        $entity->setSource('AuditLogs');
 
-        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save'], TableRegistry::config('AuditLogs'));
+        $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save']);
         $AuditLogsTable
             ->expects($this->once())
             ->method('save')
             ->with($entity)
             ->willReturn($entity);
 
-        $AuditLogsTable->schema()->columnType('original', 'json');
-        $AuditLogsTable->schema()->columnType('changed', 'json');
-        $AuditLogsTable->schema()->columnType('meta', 'json');
+        $AuditLogsTable->getSchema()->setColumnType('original', 'json');
+        $AuditLogsTable->getSchema()->setColumnType('changed', 'json');
+        $AuditLogsTable->getSchema()->setColumnType('meta', 'json');
 
-        $this->TablePersister->config([
+        $this->TablePersister->setConfig([
             'serializeFields' => false
         ]);
         $this->TablePersister->setTable($AuditLogsTable);
         $this->TablePersister->logEvents([$event]);
+    }
+
+    public function getMockForModel($alias, array $methods = [], array $options = [])
+    {
+	    return parent::getMockForModel($alias, $methods, $options + [
+		    'className' => AuditLogsTable::class
+	    ]);
     }
 }

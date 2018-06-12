@@ -14,7 +14,7 @@ class ElasticTagsFixture extends TestFixture
      *
      * @var string
      */
-    public $table = 'tags';
+    public $table = 'tag';
 
     /**
      * The mapping data.

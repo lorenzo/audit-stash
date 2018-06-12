@@ -4,7 +4,7 @@ namespace AuditStash\Meta;
 
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest as Request;
 
 /**
  * Event listener that is capable of enriching the audit logs

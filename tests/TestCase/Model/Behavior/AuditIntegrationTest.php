@@ -7,9 +7,9 @@ use AuditStash\Event\AuditDeleteEvent;
 use AuditStash\Event\AuditUpdateEvent;
 use AuditStash\Model\Behavior\AuditLogBehavior;
 use AuditStash\PersisterInterface;
+use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\Event;
 use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 class DebugPersister implements PersisterInterface
@@ -21,6 +21,7 @@ class DebugPersister implements PersisterInterface
 
 class AuditIntegrationTest extends TestCase
 {
+    use ModelAwareTrait;
 
     /**
      * Fixtures to use.
@@ -42,7 +43,7 @@ class AuditIntegrationTest extends TestCase
      */
     public function setUp()
     {
-        $this->table = TableRegistry::get('Articles');
+        $this->table = $this->loadModel('Articles');
         $this->table->hasMany('Comments');
         $this->table->belongsToMany('Tags');
         $this->table->belongsTo('Authors');
@@ -249,7 +250,7 @@ class AuditIntegrationTest extends TestCase
             'user_id' => 1,
             'comment' => 'This is another comment'
         ]);
-        $entity->dirty('comments', true);
+        $entity->setDirty('comments', true);
 
         $this->persister
             ->expects($this->once())
@@ -344,7 +345,7 @@ class AuditIntegrationTest extends TestCase
             'name' => 'This is a Tag'
         ]);
         $entity->tags[] = $this->table->Tags->get(3);
-        $entity->dirty('tags', true);
+        $entity->setDirty('tags', true);
 
         $this->persister
             ->expects($this->once())
@@ -404,17 +405,17 @@ class AuditIntegrationTest extends TestCase
             'contain' => ['Comments', 'Tags']
         ]);
 
-        $this->table->Comments->dependent(true);
-        $this->table->Comments->cascadeCallbacks(true);
+        $this->table->Comments->setDependent(true);
+        $this->table->Comments->setCascadeCallbacks(true);
 
-        $this->table->Tags->dependent(true);
-        $this->table->Tags->cascadeCallbacks(true);
+        $this->table->Tags->setDependent(true);
+        $this->table->Tags->getCascadeCallbacks(true);
 
         $this->persister
             ->expects($this->once())
             ->method('logEvents')
             ->will($this->returnCallback(function (array $events) use ($entity) {
-                $this->assertCount(7, $events);
+                $this->assertCount(5, $events);
                 $id = $events[0]->getTransactionId();
                 foreach ($events as $event) {
                     $this->assertinstanceOf(AuditDeleteEvent::class, $event);
@@ -426,9 +427,7 @@ class AuditIntegrationTest extends TestCase
                 $this->assertEquals('comments', $events[1]->getSourceName());
                 $this->assertEquals('comments', $events[2]->getSourceName());
                 $this->assertEquals('comments', $events[3]->getSourceName());
-                $this->assertEquals('articles_tags', $events[4]->getSourceName());
-                $this->assertEquals('articles_tags', $events[5]->getSourceName());
-                $this->assertEquals('articles', $events[6]->getSourceName());
+                $this->assertEquals('articles', $events[4]->getSourceName());
             }));
 
         $this->table->delete($entity);

@@ -96,7 +96,7 @@ class AuditLogBehavior extends Behavior
 
         $config = $this->_config;
         if (empty($config['whitelist'])) {
-            $config['whitelist'] = $this->_table->schema()->columns();
+            $config['whitelist'] = $this->_table->getSchema()->columns();
             $config['whitelist'] = array_merge(
                 $config['whitelist'],
                 $this->getAssociationProperties(array_keys($options['associated']))
@@ -120,14 +120,14 @@ class AuditLogBehavior extends Behavior
             return;
         }
 
-        $primary = $entity->extract((array)$this->_table->primaryKey());
+        $primary = $entity->extract((array)$this->_table->getPrimaryKey());
         $auditEvent = $entity->isNew() ? AuditCreateEvent::class : AuditUpdateEvent::class;
 
         $transaction = $options['_auditTransaction'];
-        $auditEvent = new $auditEvent($transaction, $primary, $this->_table->table(), $changed, $original);
+        $auditEvent = new $auditEvent($transaction, $primary, $this->_table->getTable(), $changed, $original);
 
         if (!empty($options['_sourceTable'])) {
-            $auditEvent->setParentSourceName($options['_sourceTable']->table());
+            $auditEvent->setParentSourceName($options['_sourceTable']->getTable());
         }
 
         $options['_auditQueue']->attach($entity, $auditEvent);
@@ -158,7 +158,7 @@ class AuditLogBehavior extends Behavior
         }
 
         $data = $this->_table->dispatchEvent('AuditStash.beforeLog', ['logs' => $events]);
-        $this->persister()->logEvents($data->data['logs']);
+        $this->persister()->logEvents($data->getData('logs'));
     }
 
     /**
@@ -175,9 +175,9 @@ class AuditLogBehavior extends Behavior
             return;
         }
         $transaction = $options['_auditTransaction'];
-        $parent = isset($options['_sourceTable']) ? $options['_sourceTable']->table() : null;
-        $primary = $entity->extract((array)$this->_table->primaryKey());
-        $auditEvent = new AuditDeleteEvent($transaction, $primary, $this->_table->table(), $parent);
+        $parent = isset($options['_sourceTable']) ? $options['_sourceTable']->getTable() : null;
+        $primary = $entity->extract((array)$this->_table->getPrimaryKey());
+        $auditEvent = new AuditDeleteEvent($transaction, $primary, $this->_table->getTable(), $parent);
         $options['_auditQueue']->attach($entity, $auditEvent);
     }
 
@@ -217,7 +217,7 @@ class AuditLogBehavior extends Behavior
         $result = [];
 
         foreach ($associated as $name) {
-            $result[] = $associations->get($name)->property();
+            $result[] = $associations->get($name)->getProperty();
         }
 
         return $result;

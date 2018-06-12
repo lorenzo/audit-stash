@@ -16,7 +16,7 @@ class AuditLogBehaviorTest extends TestCase
     {
         parent::setUp();
         $this->table = new Table(['table' => 'articles']);
-        $this->table->primaryKey('id');
+        $this->table->setPrimaryKey('id');
         $this->behavior = new AuditLogBehavior($this->table, [
             'whitelist' => ['id', 'title', 'body', 'author_id']
         ]);
@@ -78,7 +78,7 @@ class AuditLogBehaviorTest extends TestCase
 
     public function testSaveCreateWithBlacklist()
     {
-        $this->behavior->config('blacklist', ['author_id']);
+        $this->behavior->setConfig('blacklist', ['author_id']);
         $data = [
             'id' => 13,
             'title' => 'The Title',
@@ -103,7 +103,7 @@ class AuditLogBehaviorTest extends TestCase
 
     public function testSaveUpdateWithBlacklist()
     {
-        $this->behavior->config('blacklist', ['author_id']);
+        $this->behavior->setConfig('blacklist', ['author_id']);
         $data = [
             'id' => 13,
             'title' => 'The Title',
@@ -126,12 +126,12 @@ class AuditLogBehaviorTest extends TestCase
 
     public function testSaveWithFieldsFromSchema()
     {
-        $this->table->schema([
+        $this->table->setSchema([
             'id' => ['type' => 'integer'],
             'title' => ['type' => 'text'],
             'body' => ['type' => 'text']
         ]);
-        $this->behavior->config('whitelist', false);
+        $this->behavior->setConfig('whitelist', false);
         $data = [
             'id' => 13,
             'title' => 'The Title',

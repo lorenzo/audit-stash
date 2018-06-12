@@ -134,7 +134,7 @@ class TablePersister implements PersisterInterface
     public function getTable()
     {
         if ($this->_table === null) {
-            $this->setTable($this->config('table'));
+            $this->setTable($this->getConfig('table'));
         }
 
         return $this->_table;
@@ -149,7 +149,7 @@ class TablePersister implements PersisterInterface
     public function setTable($table)
     {
         if (is_string($table)) {
-            $table = $this->tableLocator()->get($table);
+            $table = $this->getTableLocator()->get($table);
         }
 
         if (!($table instanceof Table)) {
@@ -173,11 +173,11 @@ class TablePersister implements PersisterInterface
     {
         $PersisterTable = $this->getTable();
 
-        $serializeFields = $this->config('serializeFields');
-        $primaryKeyExtractionStrategy = $this->config('primaryKeyExtractionStrategy');
-        $extractMetaFields = $this->config('extractMetaFields');
-        $unsetExtractedMetaFields = $this->config('unsetExtractedMetaFields');
-        $logErrors = $this->config('logErrors');
+        $serializeFields = $this->getConfig('serializeFields');
+        $primaryKeyExtractionStrategy = $this->getConfig('primaryKeyExtractionStrategy');
+        $extractMetaFields = $this->getConfig('extractMetaFields');
+        $unsetExtractedMetaFields = $this->getConfig('unsetExtractedMetaFields');
+        $logErrors = $this->getConfig('logErrors');
 
         foreach ($auditLogs as $log) {
             $fields = $this->extractBasicFields($log, $serializeFields);

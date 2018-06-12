@@ -14,7 +14,7 @@ class ElasticAuditsFixture extends TestFixture
      *
      * @var string
      */
-    public $table = 'audits';
+    public $table = 'audit';
 
     /**
      * The mapping data.
