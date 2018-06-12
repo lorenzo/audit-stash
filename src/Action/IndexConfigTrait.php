@@ -10,14 +10,14 @@ trait IndexConfigTrait
      * Configures the index to use in elastic search by completing the placeholders with the current date
      * if needed.
      *
-     * @param Cake\ElasticSearch\Type $repository
+     * @param Cake\ElasticSearch\Index $repository
      * @param Cake\Network\Request
      * @return void
      */
     protected function _configIndex($repository, $request)
     {
         $client = $repository->connection();
-        $indexTemplate = $client->getConfig('index');
+        $indexTemplate = $repository->getName();
         $client->setConfig(['index' => sprintf($indexTemplate, '*')]);
 
         if ($request->query('at')) {

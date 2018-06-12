@@ -10,7 +10,7 @@ class ElasticArticlesFixture extends TestFixture
     public $connection = 'test_elastic';
 
     /**
-     * The table/type for this fixture.
+     * The table/index for this fixture.
      *
      * @var string
      */
@@ -24,18 +24,18 @@ class ElasticArticlesFixture extends TestFixture
     public $schema = [
         'id' => ['type' => 'integer'],
         '@timestamp' => ['type' => 'date'],
-        'transaction' => ['type' => 'string', 'index' => 'not_analyzed'],
-        'type' => ['type' => 'string', 'index' => 'not_analyzed'],
+        'transaction' => ['type' => 'text', 'index' => false],
+        'type' => ['type' => 'text', 'index' => false],
         'primary_key' => ['type' => 'integer'],
-        'source' => ['type' => 'string', 'index' => 'not_analyzed'],
-        'parent_source' => ['type' => 'string', 'index' => 'not_analyzed'],
+        'source' => ['type' => 'text', 'index' => false],
+        'parent_source' => ['type' => 'text', 'index' => false],
         'original' => [
             'properties' => [
                 'id' => ['type' => 'integer'],
                 'author_id' => ['type' => 'integer'],
-                'title' => ['type' => 'string'],
-                'body' => ['type' => 'string'],
-                'published' => ['type' => 'string', 'index' => 'not_analyzed'],
+                'title' => ['type' => 'text'],
+                'body' => ['type' => 'text'],
+                'published' => ['type' => 'text', 'index' => false],
                 'published_date' => ['type' => 'date'],
             ]
         ],
@@ -43,9 +43,9 @@ class ElasticArticlesFixture extends TestFixture
             'properties' => [
                 'id' => ['type' => 'integer'],
                 'author_id' => ['type' => 'integer'],
-                'title' => ['type' => 'string'],
-                'body' => ['type' => 'string'],
-                'published' => ['type' => 'string', 'index' => 'not_analyzed'],
+                'title' => ['type' => 'text'],
+                'body' => ['type' => 'text'],
+                'published' => ['type' => 'text', 'index' => false],
                 'published_date' => ['type' => 'date'],
             ]
         ],

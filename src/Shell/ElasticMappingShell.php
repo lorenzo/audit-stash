@@ -5,6 +5,7 @@ namespace AuditStash\Shell;
 use Cake\Console\Shell;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Inflector;
 use Elastica\Request;
 use Elastica\Type\Mapping as ElasticaMapping;
 
@@ -50,11 +51,11 @@ class ElasticMappingShell extends Shell
         $schema = $table->schema();
         $mapping = [
             '@timestamp' => ['type' => 'date', 'format' => 'basic_t_time_no_millis||dateOptionalTime||basic_date_time||ordinal_date_time_no_millis||yyyy-MM-dd HH:mm:ss'],
-            'transaction' => ['type' => 'string', 'index' => 'not_analyzed'],
-            'type' => ['type' => 'string', 'index' => 'not_analyzed'],
-            'primary_key' => ['type' => 'string', 'index' => 'not_analyzed'],
-            'source' => ['type' => 'string', 'index' => 'not_analyzed'],
-            'parent_source' => ['type' => 'string', 'index' => 'not_analyzed'],
+            'transaction' => ['type' => 'text', 'index' => false],
+            'type' => ['type' => 'text', 'index' => false],
+            'primary_key' => ['type' => 'text', 'index' => false],
+            'source' => ['type' => 'text', 'index' => false],
+            'parent_source' => ['type' => 'text', 'index' => false],
             'original' => [
                 'properties' => []
             ],
@@ -63,10 +64,10 @@ class ElasticMappingShell extends Shell
             ],
             'meta' => [
                 'properties' => [
-                    'ip' => ['type' => 'string', 'index' => 'not_analyzed'],
-                    'url' => ['type' => 'string', 'index' => 'not_analyzed'],
-                    'user' => ['type' => 'string', 'index' => 'not_analyzed'],
-                    'app_name' => ['type' => 'string', 'index' => 'not_analyzed']
+                    'ip' => ['type' => 'text', 'index' => false],
+                    'url' => ['type' => 'text', 'index' => false],
+                    'user' => ['type' => 'text', 'index' => false],
+                    'app_name' => ['type' => 'text', 'index' => false]
                 ]
             ]
         ];
@@ -76,17 +77,22 @@ class ElasticMappingShell extends Shell
             $properties[$column] = $this->mapType($schema, $column);
         }
 
+        $indexName = $table->getTable();
+        $typeName = Inflector::singularize(str_replace('%s', '', $indexName));
+
         if ($table->hasBehavior('AuditLog')) {
             $whitelist = (array)$table->behaviors()->AuditLog->config('whitelist');
             $blacklist = (array)$table->behaviors()->AuditLog->config('blacklist');
             $properties = empty($whitelist) ? $properties : array_intersect_key($properties, array_flip($whitelist));
             $properties = array_diff_key($properties, array_flip($blacklist));
+            $indexName = $table->behaviors()->AuditLog->config('index') ?: $indexName;
+            $typeName = $table->behaviors()->AuditLog->config('type') ?: $typeName;
         }
 
         $mapping['original']['properties'] = $mapping['changed']['properties'] = $properties;
         $client = ConnectionManager::get('auditlog_elastic');
-        $index = $client->getIndex(sprintf($client->getConfig('index'), '-' . gmdate('Y.m.d')));
-        $type = $index->getType($table->table());
+        $index = $client->getIndex(sprintf($indexName, '-' . gmdate('Y.m.d')));
+        $type = $index->getType($typeName);
         $elasticMapping = new ElasticaMapping();
         $elasticMapping->setType($type);
         $elasticMapping->setProperties($mapping);
@@ -98,7 +104,7 @@ class ElasticMappingShell extends Shell
 
         if ($this->params['use-templates']) {
             $template = [
-                'template' => sprintf($client->getConfig('index'), '*'),
+                'template' => sprintf($indexName, '*'),
                 'mappings' => $elasticMapping->toArray()
             ];
             $response = $client->request('_template/template_' . $type->getName(), Request::PUT, $template);
@@ -127,7 +133,7 @@ class ElasticMappingShell extends Shell
         $baseType = $schema->baseColumnType($column);
         switch ($baseType) {
         case 'uuid':
-            return ['type' => 'string', 'index' => 'not_analyzed', 'null_value' => '_null_'];
+            return ['type' => 'text', 'index' => false, 'null_value' => '_null_'];
         case 'integer':
             return ['type' => 'integer', 'null_value' => ~PHP_INT_MAX];
         case 'date':
@@ -147,8 +153,8 @@ class ElasticMappingShell extends Shell
             return [
                 'type' => 'multi_field',
                 'fields' => [
-                    $column => ['type' => 'string', 'null_value' => '_null_'],
-                    'raw' => ['type' => 'string', 'index' => 'not_analyzed', 'null_value' => '_null_', 'ignore_above' => 256]
+                    $column => ['type' => 'text', 'null_value' => '_null_'],
+                    'raw' => ['type' => 'text', 'index' => false, 'null_value' => '_null_', 'ignore_above' => 256]
                 ]
             ];
         }

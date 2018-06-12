@@ -1,17 +1,20 @@
 language: php
 
 php:
-  - 5.5
-  - 5.6
-  - 7
+  - 7.1
+  - 7.2
 
-sudo: false
+sudo: true
 
 services:
   - elasticsearch
 
 before_script:
   - sleep 10
+  - phpenv rehash
+
+before_install:
+  - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.2.2.deb && sudo dpkg -i --force-confnew elasticsearch-6.2.2.deb && sudo service elasticsearch restart
 
 env:
   global:
@@ -21,12 +24,12 @@ matrix:
   fast_finish: true
 
   include:
-    - php: 7
+    - php: 7.2
       env: CODECOVERAGE=1 PHPUNIT=0
 
-before_script:
+install:
   - composer self-update
-  - composer install --prefer-dist --no-interaction
+  - composer install --dev --no-interaction
 
 script:
   - sh -c "if [ '$PHPUNIT' = '1' ]; then vendor/bin/phpunit; fi"

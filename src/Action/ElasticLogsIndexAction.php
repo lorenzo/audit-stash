@@ -1,7 +1,7 @@
 <?php
 namespace AuditStash\Action;
 
-use Cake\ElasticSearch\TypeRegistry;
+use Cake\ElasticSearch\IndexRegistry;
 use Crud\Action\IndexAction;
 
 /**
@@ -76,11 +76,11 @@ class ElasticLogsIndexAction extends IndexAction
     /**
      * Returns the Repository object to use.
      *
-     * @return AuditStash\Model\Type\AuditLogsType;
+     * @return AuditStash\Model\Index\AuditLogsIndex;
      */
     protected function _table()
     {
-        return $this->_controller()->AuditLogs = TypeRegistry::get('AuditStash.AuditLogs');
+        return $this->_controller()->AuditLogs = IndexRegistry::get('AuditStash.AuditLogs');
     }
 
     /**

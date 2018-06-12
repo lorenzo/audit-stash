@@ -15,11 +15,12 @@ unset($findRoot);
 chdir($root);
 
 if (!getenv('elastic_dsn')) {
-    putenv('elastic_dsn=Cake\ElasticSearch\Datasource\Connection://127.0.0.1:9200?index=audits_test&driver=Cake\ElasticSearch\Datasource\Connection');
+    putenv('elastic_dsn=Cake\ElasticSearch\Datasource\Connection://127.0.0.1:9200?driver=Cake\ElasticSearch\Datasource\Connection');
 }
 
 require $root . '/vendor/cakephp/cakephp/tests/bootstrap.php';
 
 use Cake\Datasource\ConnectionManager;
 
+// Connection for audit storage
 ConnectionManager::config('test_elastic', ['url' => getenv('elastic_dsn')]);

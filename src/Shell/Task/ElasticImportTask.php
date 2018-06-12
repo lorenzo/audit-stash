@@ -56,7 +56,7 @@ class ElasticImportTask extends Shell
     {
         $table = $this->loadModel('Audits');
         $table->hasMany('AuditDeltas');
-        $table->schema()->columnType('created', 'string');
+        $table->schema()->columnType('created', 'text');
         $map = [];
         $meta = [];
 

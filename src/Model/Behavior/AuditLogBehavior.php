@@ -12,6 +12,7 @@ use Cake\Core\Configure;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
+use Cake\Utility\Inflector;
 use Cake\Utility\Text;
 use SplObjectStorage;
 
@@ -28,6 +29,8 @@ class AuditLogBehavior extends Behavior
      * @var array
      */
     protected $_defaultConfig = [
+        'index' => null,
+        'type' => null,
         'blacklist' => ['created', 'modified'],
         'whitelist' => []
     ];
@@ -189,12 +192,16 @@ class AuditLogBehavior extends Behavior
     {
         if ($persister === null && $this->persister === null) {
             $class = Configure::read('AuditStash.persister') ?: ElasticSearchPersister::class;
-            $persister = new $class();
+            $index = $this->getConfig('index') ?: $this->_table->getTable();
+            $type = $this->getConfig('type') ?: Inflector::singularize($index);
+
+            $persister = new $class(compact('index', 'type'));
         }
 
         if ($persister === null) {
             return $this->persister;
         }
+
         return $this->persister = $persister;
     }
 

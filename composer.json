@@ -4,13 +4,13 @@
     "type": "cakephp-plugin",
     "license": "MIT",
     "require": {
-        "php": ">=5.5.0",
-        "cakephp/orm": "~3.0"
+        "php": ">=7.0.0",
+        "cakephp/orm": "^3.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "*",
-        "cakephp/cakephp": "~3.0",
-        "cakephp/elastic-search": "~0.1",
+        "phpunit/phpunit": "^6.0",
+        "cakephp/cakephp": "^3.0",
+        "cakephp/elastic-search": "^2.0-dev",
         "friendsofcake/process-mq": "dev-master"
     },
     "suggest": {
