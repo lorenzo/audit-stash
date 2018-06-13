@@ -46,7 +46,7 @@ class ElasticMappingShell extends Shell
      */
     public function main($table)
     {
-        $table = $this->loadModel($table)
+        $table = $this->loadModel($table);
         $schema = $table->getSchema();
         $mapping = [
             '@timestamp' => ['type' => 'date', 'format' => 'basic_t_time_no_millis||dateOptionalTime||basic_date_time||ordinal_date_time_no_millis||yyyy-MM-dd HH:mm:ss'],
