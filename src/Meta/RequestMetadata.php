@@ -61,7 +61,7 @@ class RequestMetadata implements EventListenerInterface
     {
         $meta = [
             'ip' => $this->request->clientIp(),
-            'url' => $this->request->here(),
+            'url' => $this->request->getRequestTarget(),
             'user' => $this->user
         ];
 

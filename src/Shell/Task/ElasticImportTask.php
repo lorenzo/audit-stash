@@ -19,7 +19,7 @@ class ElasticImportTask extends Shell
     public function getOptionParser()
     {
         return parent::getOptionParser()
-            ->description('Imports audit logs from the legacy audit logs tables into elastic search')
+            ->setDescription('Imports audit logs from the legacy audit logs tables into elastic search')
             ->addOption('from', [
                 'short' => 'f',
                 'help' => 'The date from which to start importing audit logs',

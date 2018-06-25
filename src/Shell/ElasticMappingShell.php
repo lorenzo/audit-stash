@@ -19,7 +19,7 @@ class ElasticMappingShell extends Shell
     public function getOptionParser()
     {
         return parent::getOptionParser()
-            ->description('Creates type mappings in elastic search for the tables you want tracked with audit logging')
+            ->setDescription('Creates type mappings in elastic search for the tables you want tracked with audit logging')
             ->addArgument('table', [
                 'short' => 't',
                 'help' => 'The name of the database table to inspect and create a mapping for',
