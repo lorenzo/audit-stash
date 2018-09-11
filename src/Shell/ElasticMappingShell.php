@@ -123,7 +123,7 @@ class ElasticMappingShell extends Shell
     /**
      * Returns the correct mapping properties for a table column.
      *
-     * @param Cake\Databse\Schema\Table $schema The table schema
+     * @param \Cake\Database\Schema\TableSchema $schema The table schema
      * @param string $column The column name to instrospect
      * @return array
      */
@@ -134,7 +134,7 @@ class ElasticMappingShell extends Shell
         case 'uuid':
             return ['type' => 'text', 'index' => false, 'null_value' => '_null_'];
         case 'integer':
-            return ['type' => 'integer', 'null_value' => ~PHP_INT_MAX];
+            return ['type' => 'integer', 'null_value' => pow(-2,31)];
         case 'date':
             return ['type' => 'date', 'format' => 'dateOptionalTime||basic_date||yyy-MM-dd', 'null_value' => '0001-01-01'];
         case 'datetime':
@@ -142,18 +142,18 @@ class ElasticMappingShell extends Shell
             return ['type' => 'date', 'format' => 'basic_t_time_no_millis||dateOptionalTime||basic_date_time||ordinal_date_time_no_millis||yyyy-MM-dd HH:mm:ss||basic_date', 'null_value' => '0001-01-01 00:00:00'];
         case 'float':
         case 'decimal':
-            return ['type' => 'float', 'null_value' => ~PHP_INT_MAX];
+            return ['type' => 'float', 'null_value' => pow(-2,31)];
         case 'float':
         case 'decimal':
-            return ['type' => 'float', 'null_value' => ~PHP_INT_MAX];
+            return ['type' => 'float', 'null_value' => pow(-2,31)];
         case 'boolean':
             return ['type' => 'boolean'];
         default:
             return [
-                'type' => 'multi_field',
+                'type' => 'text',
                 'fields' => [
-                    $column => ['type' => 'text', 'null_value' => '_null_'],
-                    'raw' => ['type' => 'text', 'index' => false, 'null_value' => '_null_', 'ignore_above' => 256]
+                    $column => ['type' => 'text'],
+                    'raw' => ['type' => 'text', 'index' => false]
                 ]
             ];
         }
