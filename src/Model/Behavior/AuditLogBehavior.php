@@ -32,7 +32,8 @@ class AuditLogBehavior extends Behavior
         'index' => null,
         'type' => null,
         'blacklist' => ['created', 'modified'],
-        'whitelist' => []
+        'whitelist' => [],
+        'logDeletedValues' => false,
     ];
 
     /**
@@ -177,7 +178,8 @@ class AuditLogBehavior extends Behavior
         $transaction = $options['_auditTransaction'];
         $parent = isset($options['_sourceTable']) ? $options['_sourceTable']->getTable() : null;
         $primary = $entity->extract((array)$this->_table->getPrimaryKey());
-        $auditEvent = new AuditDeleteEvent($transaction, $primary, $this->_table->getTable(), $parent);
+        $original = $this->getConfig('logDeletedValues') ? $entity->getOriginalValues() : null;
+        $auditEvent = new AuditDeleteEvent($transaction, $primary, $this->_table->getTable(), null, $original);
         $options['_auditQueue']->attach($entity, $auditEvent);
     }
 
