@@ -44,7 +44,7 @@ class RequestMetadata implements EventListenerInterface
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return ['AuditStash.beforeLog' => 'beforeLog'];
     }
