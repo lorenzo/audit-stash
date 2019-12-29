@@ -12,7 +12,7 @@ use Cake\TestSuite\TestCase;
 
 class AuditLogBehaviorTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->table = new Table(['table' => 'articles']);

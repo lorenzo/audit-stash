@@ -13,7 +13,7 @@ use Cake\TestSuite\TestCase;
 
 class AuditLogsTable extends Table
 {
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         parent::initialize($config);
 
@@ -49,7 +49,7 @@ class TablePersisterTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -65,7 +65,7 @@ class TablePersisterTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->TablePersister);
 

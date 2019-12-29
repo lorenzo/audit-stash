@@ -20,10 +20,10 @@ class ElasticSearchPersisterTest extends TestCase
      * @var string
      */
     public $fixtures = [
-        'plugin.audit_stash.elastic_articles',
-        'plugin.audit_stash.elastic_audits',
-        'plugin.audit_stash.elastic_authors',
-        'plugin.audit_stash.elastic_tags',
+        'plugin.AuditStash.ElasticArticles',
+        'plugin.AuditStash.ElasticAudits',
+        'plugin.AuditStash.ElasticAuthors',
+        'plugin.AuditStash.ElasticTags',
     ];
 
     /**
