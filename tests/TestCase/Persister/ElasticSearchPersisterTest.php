@@ -266,6 +266,6 @@ class ElasticSearchPersisterTest extends TestCase
 
         $articles = IndexRegistry::get('Article')->find()->toArray();
         $this->assertCount(1, $articles);
-        $this->assertEquals(['a' => 'b', 'c' => 'd'], $articles[0]->meta);
+        $this->assertEquals(['a' => 'b', 'c' => 'd'], $articles[0]['meta']);
     }
 }
