@@ -47,7 +47,7 @@ class AuditLogBehavior extends Behavior
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return [
             'Model.beforeSave' => 'injectTracking',

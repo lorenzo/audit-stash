@@ -2,6 +2,7 @@
 
 namespace AuditStash\Shell;
 
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Datasource\ConnectionManager;
 use Cake\Utility\Inflector;
@@ -16,7 +17,7 @@ class ElasticMappingShell extends Shell
     /**
      * {@inheritdoc}
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         return parent::getOptionParser()
             ->setDescription('Creates type mappings in elastic search for the tables you want tracked with audit logging')

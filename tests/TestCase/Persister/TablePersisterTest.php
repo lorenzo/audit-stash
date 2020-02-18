@@ -10,10 +10,11 @@ use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 
 class AuditLogsTable extends Table
 {
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         parent::initialize($config);
 
@@ -49,7 +50,7 @@ class TablePersisterTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -65,7 +66,7 @@ class TablePersisterTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->TablePersister);
 
@@ -106,12 +107,10 @@ class TablePersisterTest extends TestCase
         $this->assertSame($customTable, $this->TablePersister->getTable());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The `$table` argument must be either a table alias, or an instance of `\Cake\ORM\Table`.
-     */
     public function testSetInvalidTable()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The `$table` argument must be either a table alias, or an instance of `\Cake\ORM\Table`.');
         $this->TablePersister->setTable(null);
     }
 

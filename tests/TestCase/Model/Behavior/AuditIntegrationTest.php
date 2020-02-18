@@ -29,11 +29,11 @@ class AuditIntegrationTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.articles',
-        'core.comments',
-        'core.authors',
-        'core.tags',
-        'core.articles_tags',
+        'core.Articles',
+        'core.Comments',
+        'core.Authors',
+        'core.Tags',
+        'core.ArticlesTags',
     ];
 
     /**
@@ -41,7 +41,7 @@ class AuditIntegrationTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->table = $this->loadModel('Articles');
         $this->table->hasMany('Comments');
