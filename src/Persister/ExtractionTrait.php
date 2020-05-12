@@ -28,8 +28,8 @@ trait ExtractionTrait
         ];
 
         if (Type::getMap('datetime') !== DateTimeType::class) {
-			$fields['created'] = (new \DateTime($event->getTimestamp()))->format('Y-m-d H:i:s');
-		}
+            $fields['created'] = (new \DateTime($event->getTimestamp()))->format('Y-m-d H:i:s');
+        }
 
         if (method_exists($event, 'getParentSourceName')) {
             $fields['parent_source'] = $event->getParentSourceName();
