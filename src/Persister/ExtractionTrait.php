@@ -4,6 +4,8 @@ namespace AuditStash\Persister;
 
 use AuditStash\Event\BaseEvent;
 use AuditStash\EventInterface;
+use Cake\Database\Type;
+use Cake\Database\Type\DateTimeType;
 use Cake\Utility\Hash;
 
 trait ExtractionTrait
