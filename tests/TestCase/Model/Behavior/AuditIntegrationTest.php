@@ -29,11 +29,11 @@ class AuditIntegrationTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.articles',
-        'core.comments',
-        'core.authors',
-        'core.tags',
-        'core.articles_tags',
+        'core.Articles',
+        'core.Comments',
+        'core.Authors',
+        'core.Tags',
+        'core.ArticlesTags',
     ];
 
     /**
