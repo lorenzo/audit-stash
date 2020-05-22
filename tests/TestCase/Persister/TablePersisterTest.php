@@ -639,7 +639,7 @@ class TablePersisterTest extends TestCase
         $this->TablePersister->logEvents([$event]);
     }
 
-    public function getMockForModel($alias, array $methods = [], array $options = [])
+    public function getMockForModel($alias, $methods = [], array $options = [])
     {
 	    return parent::getMockForModel($alias, $methods, $options + [
 		    'className' => AuditLogsTable::class
