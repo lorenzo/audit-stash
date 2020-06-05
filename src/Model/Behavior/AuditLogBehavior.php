@@ -174,10 +174,20 @@ class AuditLogBehavior extends Behavior
         if (!isset($options['_auditQueue'])) {
             return;
         }
+
         $transaction = $options['_auditTransaction'];
         $parent = isset($options['_sourceTable']) ? $options['_sourceTable']->getTable() : null;
         $primary = $entity->extract((array)$this->_table->getPrimaryKey());
-        $auditEvent = new AuditDeleteEvent($transaction, $primary, $this->_table->getTable(), $parent);
+        $original = $entity->getOriginalValues();
+
+        $auditEvent = new AuditDeleteEvent(
+            $transaction,
+            $primary,
+            $this->_table->getTable(),
+            $parent,
+            $original
+        );
+
         $options['_auditQueue']->attach($entity, $auditEvent);
     }
 

@@ -45,7 +45,7 @@ class DatabasePersister implements PersisterInterface
                 'source_key' => $primaryKey,
                 'source' => $log->getSourceName(),
                 'parent_source' => $log->getParentSourceName(),
-                'original' => $eventType === 'delete' ? null : json_encode($log->getOriginal()),
+                'original' => json_encode($log->getOriginal()),
                 'changed' => $eventType === 'delete' ? null : json_encode($log->getChanged()),
                 'meta' => json_encode($meta)
             ];
