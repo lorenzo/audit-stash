@@ -1,4 +1,4 @@
-# AuditStash plugin for CakePHP
+# AuditStash Plugin For CakePHP
 
 [![Build Status](https://img.shields.io/travis/lorenzo/audit-stash/master.svg?style=flat-square)](https://travis-ci.org/lorenzo/audit-stash)
 [![Coverage Status](https://img.shields.io/codecov/c/github/lorenzo/audit-stash/master.svg?style=flat-square)](https://codecov.io/github/lorenzo/audit-stash)
@@ -17,7 +17,7 @@ own persisting strategies, if so you wish.
 
 ## Installation
 
-You can install this plugin into your CakePHP application using [composer](http://getcomposer.org) and executing the
+You can install this plugin into your CakePHP application using [composer](https://getcomposer.org) and executing the
 following lines in the root of your application.
 
 ```
@@ -51,23 +51,6 @@ You now need to add the datasource configuration to your `config/app.php` file:
 ]
 ```
 
-This is the most basic setup, it will use a single index for storing all the data. If you
-prefer to use a different index for each day (like logstash does), use the following configuration:
-
-```php
-'Datasources' => [
-    'auditlog_elastic' => [
-        'className' => 'Cake\ElasticSearch\Datasource\Connection',
-        'driver' => 'Cake\ElasticSearch\Datasource\Connection',
-        'host' => '127.0.0.1', // server where elasticsearch is running
-        'port' => 9200
-    ],
-    ...
-]
-```
-
-The added `%s` will be used as a placeholder for the day of the year. **Using an index per day is strongly recommended.**
-
 ### Tables / Regular Databases
 
 If you want to use a regular database, respectively an engine that can be used via the CakePHP ORM API, then you can use
@@ -94,7 +77,7 @@ bin/cake migrations migrate -p AuditStash -t 20171018185609
 bin/cake bake model AuditLogs
 ```
 
-#### Table persister configuration
+#### Table Persister Configuration
 
 The table persister supports various configuration options, please refer to
 [its API documentation](/src/Persister/TablePersister.php) for further information. Generally configuration can be
@@ -116,7 +99,7 @@ Enabling the Audit Log in any of your table classes is as simple as adding a beh
 ```php
 class ArticlesTable extends Table
 {
-    public function initialize(array $config = [] )
+    public function initialize(array $config = [])
     {
         ...
         $this->addBehavior('AuditStash.AuditLog');
@@ -147,7 +130,7 @@ The `AuditLog` behavior can be configured to ignore certain fields of your table
 ```php
 class ArticlesTable extends Table
 {
-    public function initialize(array $config = [] )
+    public function initialize(array $config = [])
     {
         ...
         $this->addBehavior('AuditStash.AuditLog', [
@@ -160,13 +143,13 @@ class ArticlesTable extends Table
 If you prefer, you can use a `whitelist` instead. This means that only the fields listed in that array will be tracked by the behavior:
 
 ```php
-    public function initialize(array $config = [] )
-    {
-        ...
-        $this->addBehavior('AuditStash.AuditLog', [
-            'whitelist' => ['title', 'description', 'author_id']
-        ]);
-    }
+public function initialize(array $config = [])
+{
+    ...
+    $this->addBehavior('AuditStash.AuditLog', [
+        'whitelist' => ['title', 'description', 'author_id']
+    ]);
+}
 ```
 
 ### Storing The Logged In User
@@ -234,8 +217,8 @@ Implementing your own metadata listeners is as simple as attaching the listener 
 
 ```php
 EventManager::instance()->on('AuditStash.beforeLog', function ($event, array $logs) {
-    foreach ($logs as $event) {
-        $event->setMetaInfo($event->getMetaInfo() + ['extra' => 'This is extra data to be stored']);
+    foreach ($logs as $log) {
+        $log->setMetaInfo($log->getMetaInfo() + ['extra' => 'This is extra data to be stored']);
     }
 });
 ```
@@ -337,7 +320,7 @@ $success = $this->Bookmarks->connection()->transactional(function () use ($trail
     $bookmark1->save($data1, $trail->toSaveOptions());
     $bookmark2 = $this->Bookmarks->newEntity();
     $bookmark2->save($data2, $trail->toSaveOptions());
-    ....
+    ...
     $bookmarkN = $this->Bookmarks->newEntity();
     $bookmarkN->save($dataN, $trail->toSaveOptions());
 
@@ -351,5 +334,3 @@ if ($success) {
 ```
 
 This will save all audit info for your objects, as well as audits for any associated data. Please note, `$result` must be an instance of an Object. Do not change the text "Model.afterCommit".
-
-## Contributing
