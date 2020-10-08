@@ -87,7 +87,7 @@ class ElasticLogsIndexAction extends IndexAction
      * Alters the query object to add the time constraints as they can be found in
      * the request object.
      *
-     * @param Cake\Network\Request $request The request where query string params can be found
+     * @param Cake\Http\Request $request The request where query string params can be found
      * @param Cake\ElasticSearch\Query $query The Query to add filters to
      * @return void
      */
