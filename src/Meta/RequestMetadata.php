@@ -12,7 +12,6 @@ use Cake\Http\ServerRequest as Request;
  */
 class RequestMetadata implements EventListenerInterface
 {
-
     /**
      * The current request.
      *
@@ -31,7 +30,7 @@ class RequestMetadata implements EventListenerInterface
      * Constructor.
      *
      * @param Request $request The current request
-     * @param string|int $user The current user id or usernam
+     * @param string|int $user The current user id or username
      */
     public function __construct($request, $user = null)
     {
