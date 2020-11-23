@@ -11,7 +11,7 @@ trait IndexConfigTrait
      * if needed.
      *
      * @param Cake\ElasticSearch\Index $repository
-     * @param Cake\Network\Request
+     * @param Cake\Http\Request
      * @return void
      */
     protected function _configIndex($repository, $request)
