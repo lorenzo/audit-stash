@@ -93,7 +93,7 @@ trait BaseEventTrait
     }
 
     /**
-     * Sets the name of the repository taht trigered this event.
+     * Sets the name of the repository that triggered this event.
      *
      * @param string $source The repository name
      * @return void

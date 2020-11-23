@@ -10,7 +10,6 @@ use Cake\Datasource\ConnectionManager;
  */
 class RabbitMQPersister implements PersisterInterface
 {
-
     /**
      * The client or connection to RabbitMQ.
      *

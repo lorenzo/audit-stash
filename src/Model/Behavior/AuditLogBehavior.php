@@ -22,7 +22,6 @@ use SplObjectStorage;
  */
 class AuditLogBehavior extends Behavior
 {
-
     /**
      * Default configuration.
      *
@@ -182,8 +181,8 @@ class AuditLogBehavior extends Behavior
     }
 
     /**
-     * Sets the persister object to use for logging al audit events.
-     * If called if no arguments, it will return the currently configured persister.
+     * Sets the persister object to use for logging all audit events.
+     * If called with no arguments, it will return the currently configured persister.
      *
      * @param PersisterInterface $persister The persister object to use
      * @return PersisterInterface The configured persister

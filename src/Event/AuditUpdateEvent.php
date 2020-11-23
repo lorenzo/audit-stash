@@ -3,7 +3,7 @@
 namespace AuditStash\Event;
 
 /**
- * Represents an audit log event for a modified created record.
+ * Represents an audit log event for a modified record.
  */
 class AuditUpdateEvent extends BaseEvent
 {
