@@ -79,7 +79,7 @@ abstract class BaseEvent implements EventInterface
      *
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->basicSerialize() + [
             'original' => $this->original,

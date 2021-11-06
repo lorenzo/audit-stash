@@ -32,11 +32,35 @@ trait SerializableEventTrait
     }
 
     /**
-     * Returns an array with the basic variables that should be json serialized.
+     * Returns the string representation of this object.
      *
+     * @return string
+     */
+    public function __serialize()
+    {
+        return serialize(get_object_vars($this));
+    }
+
+    /**
+     * Takes the string representation of this object so it can be reconstructed.
+     *
+     * @param string $data serialized string
      * @return void
      */
-    protected function basicSerialize()
+    public function __unserialize($data)
+    {
+        $vars = unserialize($data);
+        foreach ($vars as $var => $value) {
+            $this->{$var} = $value;
+        }
+    }
+
+    /**
+     * Returns an array with the basic variables that should be json serialized.
+     *
+     * @return array
+     */
+    protected function basicSerialize(): mixed
     {
         return [
             'type' => $this->getEventType(),
