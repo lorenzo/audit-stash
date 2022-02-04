@@ -30,7 +30,7 @@ class AuditLogBehavior extends Behavior
     protected $_defaultConfig = [
         'index' => null,
         'type' => null,
-        'blacklist' => ['created', 'modified'],
+        'blacklist' => ['created', 'modified', 'id'],
         'whitelist' => []
     ];
 
