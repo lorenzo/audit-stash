@@ -1,5 +1,5 @@
 {
-    "name": "lorenzo/audit-stash",
+    "name": "kdesilva/audit-stash",
     "description": "Flexible and rock solid audit log tracking plugin for cakephp",
     "type": "cakephp-plugin",
     "license": "MIT",
