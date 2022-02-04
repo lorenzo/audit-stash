@@ -12,6 +12,7 @@ use Cake\Core\Configure;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
 use Cake\Utility\Text;
 use SplObjectStorage;
@@ -22,6 +23,8 @@ use SplObjectStorage;
  */
 class AuditLogBehavior extends Behavior
 {
+    use LocatorAwareTrait;
+
     /**
      * Default configuration.
      *
@@ -31,7 +34,8 @@ class AuditLogBehavior extends Behavior
         'index' => null,
         'type' => null,
         'blacklist' => ['created', 'modified', 'id'],
-        'whitelist' => []
+        'whitelist' => [],
+        'foreignKeys' => [],
     ];
 
     /**
@@ -89,9 +93,12 @@ class AuditLogBehavior extends Behavior
      */
     public function afterSave(Event $event, EntityInterface $entity, $options)
     {
+
         if (!isset($options['_auditQueue'])) {
             return;
         }
+
+        // $labelFormat = $entity->get('label_format');
 
         $config = $this->_config;
         if (empty($config['whitelist'])) {
@@ -111,12 +118,55 @@ class AuditLogBehavior extends Behavior
 
         $original = $entity->extractOriginal(array_keys($changed));
         $properties = $this->getAssociationProperties(array_keys($options['associated']));
+
+        // get required associated data
+        $sourceEntity = basename(
+            str_replace('\\', '/', $this->table()->getEntityClass())
+        );
+
+        $sourceEntity = Inflector::underscore($sourceEntity);
+
         foreach ($properties as $property) {
-            unset($changed[$property], $original[$property]);
+            if (in_array($property, array_keys($original)) && count($original[$property]) > 0
+                && $original[$property][0] instanceof \Cake\ORM\Entity) { // i.e. associted properies
+                foreach ($original[$property] as $associatedKey => $associatedRow) {
+
+                    if (!$associatedRow->isDirty()) {
+                        unset($changed[$property][$associatedKey], $original[$property][$associatedKey]);
+                    } else {
+                        if (isset($associatedRow[$sourceEntity . '_id'])
+                            && in_array($sourceEntity . '_id', $config['blacklist'])) {
+                            unset(
+                                $changed[$property][$associatedKey][$sourceEntity . '_id'],
+                                $original[$property][$associatedKey][$sourceEntity . '_id']
+                            );
+                        }
+                    }
+                }
+
+                if (count($original[$property]) == 0) {
+                    unset($changed[$property], $original[$property]);
+                }
+            }
         }
 
+        // now check $changed is empty or equals to $original, if not new
         if (!$changed || ($original === $changed && !$entity->isNew())) {
             return;
+        }
+
+        // find the value of foreign key linked
+        foreach ($config['foreignKeys'] as $model => $fieldName) {
+            $fieldKey = Inflector::underscore(Inflector::singularize($model));
+            if (isset($changed[$fieldKey . '_id'])) {
+                $changed[$fieldKey] = $this->getTableLocator()->get($model)
+                    ->get($changed[$fieldKey . '_id'])->{$fieldName};
+            }
+
+            if (isset($original[$fieldKey . '_id'])) {
+                $original[$fieldKey] = $this->getTableLocator()->get($model)
+                    ->get($original[$fieldKey . '_id'])->{$fieldName};
+            }
         }
 
         $primary = $entity->extract((array)$this->_table->getPrimaryKey());

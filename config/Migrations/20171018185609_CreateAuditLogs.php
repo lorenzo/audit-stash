@@ -42,6 +42,11 @@ class CreateAuditLogs extends AbstractMigration
                 'limit' => 255,
                 'null' => true,
             ])
+            ->addColumn('username', 'string', [
+                'default' => null,
+                'limit' => 255,
+                'null' => true,
+            ])
             ->addColumn('original', 'text', [
                 'default' => null,
                 'limit' => 16777215,
@@ -62,36 +67,13 @@ class CreateAuditLogs extends AbstractMigration
                 'limit' => null,
                 'null' => true,
             ])
-            ->addIndex(
-                [
-                    'transaction',
-                ]
-            )
-            ->addIndex(
-                [
-                    'type',
-                ]
-            )
-            ->addIndex(
-                [
-                    'primary_key',
-                ]
-            )
-            ->addIndex(
-                [
-                    'source',
-                ]
-            )
-            ->addIndex(
-                [
-                    'parent_source',
-                ]
-            )
-            ->addIndex(
-                [
-                    'created',
-                ]
-            )
+            ->addIndex(['transaction'])
+            ->addIndex(['type'])
+            ->addIndex(['primary_key'])
+            ->addIndex(['source'])
+            ->addIndex(['parent_source'])
+            ->addIndex(['username'])
+            ->addIndex(['created'])
             ->create();
     }
 
