@@ -36,6 +36,7 @@ class AuditLogBehavior extends Behavior
         'blacklist' => ['created', 'modified', 'id'],
         'whitelist' => [],
         'foreignKeys' => [],
+        'unsetAssociatedEntityFieldsNotDirtyByFieldName' => [],
     ];
 
     /**
@@ -132,21 +133,44 @@ class AuditLogBehavior extends Behavior
                 foreach ($original[$property] as $associatedKey => $associatedRow) {
 
                     if (!$associatedRow->isDirty()) {
-                        unset($changed[$property][$associatedKey], $original[$property][$associatedKey]);
+                        $fieldToCompare = $config['unsetAssociatedEntityFieldsNotDirtyByFieldName'][$property] ?? null;
+                        if (isset($fieldToCompare)) {
+                            foreach ($changed[$property] as $changedAssociatedKey => $changedAssociatedRow) {
+                                if ($associatedRow->{$fieldToCompare} == $changedAssociatedRow->{$fieldToCompare}) {
+                                    unset($original[$property][$associatedKey], $changed[$property][$changedAssociatedKey]);
+                                    break;
+                                }
+                            }
+                        }
                     } else {
-                        if (isset($associatedRow[$sourceEntity . '_id'])
-                            && in_array($sourceEntity . '_id', $config['blacklist'])) {
-                            unset(
-                                $changed[$property][$associatedKey][$sourceEntity . '_id'],
-                                $original[$property][$associatedKey][$sourceEntity . '_id']
-                            );
+                        /*
+                         * add original data (currently in CakePHP 4.x - assiciated entities do not get the orignal
+                         * values from EntityTrait::extractOriginal())
+                         */
+                        $associatedDirtyFields = $associatedRow->getDirty();
+                        foreach ($associatedDirtyFields as $associatedDirtyField) {
+                            $original[$property][$associatedKey]->{$associatedDirtyField} = $associatedRow->getOriginal($associatedDirtyField);
                         }
                     }
                 }
 
-                if (count($original[$property]) == 0) {
-                    unset($changed[$property], $original[$property]);
+                if (count($original[$property]) > 0) {
+                    $original[$property] = array_values($original[$property]);
                 }
+                if (count($changed[$property]) > 0) {
+                    $changed[$property] = array_values($changed[$property]);
+                }
+
+                // remove any blacklist columns from associated data
+                /*foreach ($original[$property] as $associatedKey => $associatedRow) {
+                    if (isset($associatedRow[$sourceEntity . '_id'])
+                        && in_array($sourceEntity . '_id', $config['blacklist'])) {
+                        unset(
+                            //$changed[$property][$associatedKey][$sourceEntity . '_id'],
+                            $original[$property][$associatedKey][$sourceEntity . '_id']
+                        );
+                    }
+                }*/
             }
         }
 
@@ -226,7 +250,25 @@ class AuditLogBehavior extends Behavior
         $transaction = $options['_auditTransaction'];
         $parent = isset($options['_sourceTable']) ? $options['_sourceTable']->getTable() : null;
         $primary = $entity->extract((array)$this->_table->getPrimaryKey());
-        $auditEvent = new AuditDeleteEvent($transaction, $primary, $this->_table->getTable(), $parent);
+
+        $config = $this->_config;
+
+        $original = $entity->getOriginalValues();
+
+        foreach ($original as $originalKey => $originalValue) {
+            if (in_array($originalKey, $config['blacklist'])) {
+                unset($original[$originalKey]);
+            }
+        }
+
+        $auditEvent = new AuditDeleteEvent(
+            $transaction,
+            $primary,
+            $this->_table->getTable(),
+            $parent,
+            $original
+        );
+
         $options['_auditQueue']->attach($entity, $auditEvent);
     }
 

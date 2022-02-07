@@ -2,13 +2,12 @@
 
 namespace AuditStash\Event;
 
-use AuditStash\EventInterface;
 use Datetime;
 
 /**
  * Represents an audit log event for a newly deleted record.
  */
-class AuditDeleteEvent implements EventInterface
+class AuditDeleteEvent extends BaseEvent
 {
     use BaseEventTrait;
     use SerializableEventTrait {
@@ -22,14 +21,11 @@ class AuditDeleteEvent implements EventInterface
      * @param mixed $id The primary key record that got deleted
      * @param string $source The name of the source (table) where the record was deleted
      * @param string $parentSource The name of the source (table) that triggered this change
+     * @param array $original The original values the entity had before it got changed
      */
-    public function __construct($transactionId, $id, $source, $parentSource = null)
+    public function __construct($transactionId, $id, $source, $parentSource = null, $original = [])
     {
-        $this->transactionId = $transactionId;
-        $this->id = $id;
-        $this->source = $source;
-        $this->parentSource = $parentSource;
-        $this->timestamp = (new DateTime())->format(DateTime::ATOM);
+        parent::__construct($transactionId, $id, $source, [], $original);
     }
 
     /**

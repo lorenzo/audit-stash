@@ -380,6 +380,7 @@ class AuditIntegrationTest extends TestCase
                 $this->assertEquals(1, $events[0]->getId());
                 $this->assertEquals('articles', $events[0]->getSourceName());
                 $this->assertNotEmpty($events[0]->getTransactionId());
+                $this->assertNotEmpty($events[0]->getOriginal());
             }));
 
         $this->table->delete($entity);

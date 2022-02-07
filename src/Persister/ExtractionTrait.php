@@ -38,8 +38,10 @@ trait ExtractionTrait
         }
 
         if ($event instanceof BaseEvent) {
-            $fields['original'] = $serialize ? $this->serialize($event->getOriginal()) : $event->getOriginal();
-            $fields['changed'] = $serialize ? $this->serialize($event->getChanged()) : $event->getChanged();
+            $fields['original'] = $fields['type'] == 'create' ? null :
+                ($serialize ? $this->serialize($event->getOriginal()) : $event->getOriginal());
+            $fields['changed'] = $fields['type'] == 'delete' ? null :
+                ($serialize ? $this->serialize($event->getChanged()) : $event->getChanged());
         }
 
         return $fields;
@@ -150,7 +152,7 @@ trait ExtractionTrait
         }
 
         if ($serialize) {
-            $extracted['meta'] = $this->serialize($extracted['meta']);
+            $extracted['meta'] = $this->serialize(array_filter($extracted['meta']));
         }
 
         return $extracted;
