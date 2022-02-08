@@ -85,9 +85,10 @@ $this->behaviors()->get('AuditLog')->persister()->config([
 ]);
 ```
 
-Also, you can set some common config via the app.php. Currently, the plugin supports 'extractMetaFields' and 'blacklist'
+Also, you can set some common config via the `app.php`. Currently, the plugin supports 'extractMetaFields' and 'blacklist'
 
 ```php
+...
 'AuditStash' => [
     'persister' => 'AuditStash\Persister\TablePersister',
     'extractMetaFields' => [
@@ -95,7 +96,7 @@ Also, you can set some common config via the app.php. Currently, the plugin supp
             'user.customer_id' => 'customer_id',
         ],
     'blacklist' => ['customer_id'],
-]
+],
 ```
 
 ## Using AuditStash
