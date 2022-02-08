@@ -164,7 +164,7 @@ public function initialize(array $config = [])
 }
 ```
 
-As explained in the project description above, CakePHP (4.x) ORM returns all associated data even if no changes made to the associated data.
+As explained in the project description above, CakePHP (4.x) ORM returns all associated data even if no are changes made to the associated data.
 Therefore, you need to set `unsetAssociatedEntityFieldsNotDirtyByFieldName` as you can see in the above example if you need to remove unchanged data from the associated entities.
 
 ### Storing The Logged In User
