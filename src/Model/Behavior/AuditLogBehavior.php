@@ -99,8 +99,6 @@ class AuditLogBehavior extends Behavior
             return;
         }
 
-        // $labelFormat = $entity->get('label_format');
-
         $config = $this->_config;
         if (empty($config['whitelist'])) {
             $config['whitelist'] = $this->_table->getSchema()->columns();
