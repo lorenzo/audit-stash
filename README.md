@@ -6,11 +6,16 @@ The above plugin has the following issues or does not have the features I wanted
 - Original data is not recorded at the delete event.
     - This is useful if you add the plugin after some data has already been added.
   
-- Associated table records were not saved properly
+- Associated table records were not saved properly (In this case I considered two models with ‘hasMany’ relationship)
     - Currently, in the CakePHP (4.x) ORM when there is a ‘hasMany’ relationship (for example; think about 2 DB tables: items and item_attributes), `EntityTrait::extractOriginal(array $fields)` doesn't return the original value of the associated table’s (item_attributes) original data instead they return the modified values.
     - Also, there is another bug in CakePHP (4.x) ORM, it marks the associated ('hasMany') entities as dirty, even if there are no changes made to the associated table data.
+    - Unable to records only the changed data columns from the associated tables
 
 - Unable to record audit logs when saveMany() is called to save multiple entities. 
+- Unable to set some common configurations for the AuditLog behaviour and/or Table Persister via the app.php
+- Doesn't record a human-friendly data field from foreign keys
+- Create event adds the same data into the 'original' and 'changed' columns
+- The 'id' (primary key) filed is added to the 'original' and 'changed' data, unless you blacklist it in each model class. (The primary key is recorded as a separate field as well)
 
 
 Therefore, I decided to fork from the original project and improve it to support the above missing features.
@@ -37,19 +42,7 @@ bin/cake plugin load Cake/ElasticSearch
 
 ### Elastic Search
 
-You now need to add the datasource configuration to your `config/app.php` file:
-
-```php
-'Datasources' => [
-    'auditlog_elastic' => [
-        'className' => 'Cake\ElasticSearch\Datasource\Connection',
-        'driver' => 'Cake\ElasticSearch\Datasource\Connection',
-        'host' => '127.0.0.1', // server where elasticsearch is running
-        'port' => 9200
-    ],
-    ...
-]
-```
+If you decided to use ElasticSearch as the storage engine, please refer to [lorenzo/audit-stash](https://github.com/lorenzo/audit-stash)
 
 ### Tables / Regular Databases
 
@@ -87,13 +80,12 @@ applied via its `config()` (or `setConfig()`) method:
 $this->addBehavior('AuditStash.AuditLog');
 $this->behaviors()->get('AuditLog')->persister()->config([
     'extractMetaFields' => [
-        'user.id' => 'user_id'
+        'user.name' => 'username'
     ]
 ]);
 ```
 
-
-Also, you can set some common config via the app.php. Currently, support 'extractMetaFields' and 'blacklist'
+Also, you can set some common config via the app.php. Currently, the plugin supports 'extractMetaFields' and 'blacklist'
 
 ```php
 'AuditStash' => [
@@ -121,25 +113,9 @@ class ArticlesTable extends Table
 }
 ```
 
-When using the `Elasticserch` persister, it is recommended that you tell Elasticsearch about the schema of your table. You can do this
-automatically by executing the following command:
+### Configuring the Behavior
 
-```
-bin/cake elastic_mapping Articles
-```
-
-If you are using one index per day, save yourself some time and add the `--use-templates` option. This will create a schema template so
-any new index will inherit this configuration:
-
-```
-bin/cake elastic_mapping Articles --use-templates
-```
-
-Remember to execute the command line each time you change the schema of your table!
-
-### Configuring The Behavior
-
-The `AuditLog` behavior can be configured to ignore certain fields of your table, by default it ignores the `created` and `modified` fields:
+The `AuditLog` behavior can be configured to ignore certain fields of your table, by default it ignores the `id`, `created` and `modified` fields:
 
 ```php
 class ArticlesTable extends Table
@@ -167,6 +143,29 @@ public function initialize(array $config = [])
 }
 ```
 
+If you need to retrieve human-friendly data fields from related tables (i.e. with foreign keys) you can set `foreignKeys` as below.
+```php
+
+public function initialize(array $config = [])
+{
+    ...
+
+    $this->addBehavior('AuditStash.AuditLog', [
+        'blacklist' => ['customer_id', 'product_id'],
+        'foreignKeys' => [
+            'Categories' => 'name', // foreign key Model => human-friendly field name
+            'ProductStatuses' => 'status',
+        ],
+        'unsetAssociatedEntityFieldsNotDirtyByFieldName' => [
+            'associated_table_name' => 'field_name_in_associated_table'
+        ]
+    ]);
+}
+```
+
+As explained in the project description above, CakePHP (4.x) ORM returns all associated data even if no changes made to the associated data.
+Therefore, you need to set `unsetAssociatedEntityFieldsNotDirtyByFieldName` as you can see in the above example if you need to remove unchanged data from the associated entities.
+
 ### Storing The Logged In User
 
 It is often useful to store the identifier of the user that is triggering the changes in a certain table. For this purpose, `AuditStash`
@@ -183,7 +182,15 @@ class AppController extends Controller
     {
         ...
         $eventManager = $this->loadModel()->eventManager();
-        $eventManager->on(new RequestMetadata($this->request, $this->Auth->user('id')));
+        $identity = $this->request->getAttribute('identity');
+        if ($identity != null) {
+            $eventManager->on(
+                 new RequestMetadata($this->request, [
+                    'username' => $identity['username'],
+                    'customer_id' => $identity['customer_id'],
+                ])
+            );
+        }
     }
 }
 ```
@@ -203,7 +210,15 @@ class AppController extends Controller
     public function beforeFilter(Event $event)
     {
         ...
-        EventManager::instance()->on(new RequestMetadata($this->request, $this->Auth->user('id')));
+        $identity = $this->request->getAttribute('identity');
+        if ($identity != null) {
+            EventManager::instance()->on(
+                new RequestMetadata($this->request, [
+                    'username' => $identity['username'],
+                    'customer_id' => $identity['customer_id'],
+                ])
+            );
+        }
     }
 }
 ```
@@ -349,3 +364,16 @@ if ($success) {
 ```
 
 This will save all audit info for your objects, as well as audits for any associated data. Please note, `$result` must be an instance of an Object. Do not change the text "Model.afterCommit".
+
+### Saving Multiple Entities
+Create the file `src/Model/Audit/AuditTrail.php` as shown in the above section
+
+```php
+...
+$auditTrail = new AuditTrail();
+
+if ($this->Bookmarks->saveMany($entities, $auditTrail->toSaveOptions())) {
+    ...                   
+}
+```
+
