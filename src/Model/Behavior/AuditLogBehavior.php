@@ -232,6 +232,9 @@ class AuditLogBehavior extends Behavior
 
         $data = $this->_table->dispatchEvent('AuditStash.beforeLog', ['logs' => $events]);
         $this->persister()->logEvents($data->getData('logs'));
+
+        // stop duplicate records adding to audit_logs table, when saveMany() is called
+        unset($options['_auditQueue']);
     }
 
     /**
