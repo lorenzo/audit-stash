@@ -99,6 +99,8 @@ class AuditLogBehavior extends Behavior
             return;
         }
 
+        $this->setCommonConfig();
+
         $config = $this->_config;
         if (empty($config['whitelist'])) {
             $config['whitelist'] = $this->_table->getSchema()->columns();
@@ -119,12 +121,6 @@ class AuditLogBehavior extends Behavior
         $properties = $this->getAssociationProperties(array_keys($options['associated']));
 
         // get required associated data
-        $sourceEntity = basename(
-            str_replace('\\', '/', $this->table()->getEntityClass())
-        );
-
-        $sourceEntity = Inflector::underscore($sourceEntity);
-
         foreach ($properties as $property) {
             if (in_array($property, array_keys($original)) && count($original[$property]) > 0
                 && $original[$property][0] instanceof \Cake\ORM\Entity) { // i.e. associted properies
@@ -159,8 +155,13 @@ class AuditLogBehavior extends Behavior
                     $changed[$property] = array_values($changed[$property]);
                 }
 
-                // remove any blacklist columns from associated data
-                /*foreach ($original[$property] as $associatedKey => $associatedRow) {
+                // todo: remove any blacklist columns from associated data
+                /*$sourceEntity = basename(
+                    str_replace('\\', '/', $this->table()->getEntityClass())
+                );
+
+                $sourceEntity = Inflector::underscore($sourceEntity);
+                foreach ($original[$property] as $associatedKey => $associatedRow) {
                     if (isset($associatedRow[$sourceEntity . '_id'])
                         && in_array($sourceEntity . '_id', $config['blacklist'])) {
                         unset(
@@ -169,6 +170,7 @@ class AuditLogBehavior extends Behavior
                         );
                     }
                 }*/
+
             }
         }
 
@@ -252,6 +254,8 @@ class AuditLogBehavior extends Behavior
         $parent = isset($options['_sourceTable']) ? $options['_sourceTable']->getTable() : null;
         $primary = $entity->extract((array)$this->_table->getPrimaryKey());
 
+        $this->setCommonConfig();
+
         $config = $this->_config;
 
         $original = $entity->getOriginalValues();
@@ -313,5 +317,18 @@ class AuditLogBehavior extends Behavior
         }
 
         return $result;
+    }
+
+    /**
+     * @return void
+     */
+    private function setCommonConfig()
+    {
+        $commonBlacklist = Configure::read('AuditStash.blacklist') ?? null;
+        if (isset($commonBlacklist)) {
+            $this->setConfig('blacklist', $commonBlacklist);
+        }
+
+        // set other conifgs similar to the above if necessary
     }
 }

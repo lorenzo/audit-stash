@@ -1,19 +1,19 @@
 # AuditStash Plugin For CakePHP
 
-[![Build Status](https://img.shields.io/travis/lorenzo/audit-stash/master.svg?style=flat-square)](https://travis-ci.org/lorenzo/audit-stash)
-[![Coverage Status](https://img.shields.io/codecov/c/github/lorenzo/audit-stash/master.svg?style=flat-square)](https://codecov.io/github/lorenzo/audit-stash)
-[![Total Downloads](https://img.shields.io/packagist/dt/lorenzo/audit-stash.svg?style=flat-square)](https://packagist.org/packages/lorenzo/audit-stash)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE.txt)
+This plugin is forked from [lorenzo/audit-stash](https://github.com/lorenzo/audit-stash)
 
-This plugin implements an "audit trail" for any of your Table classes in your application, that is,
-the ability of recording any creation, modification or delete of the entities of any particular table.
+The above plugin has the following issues or does not have the features I wanted.
+- Original data is not recorded at the delete event.
+    - This is useful if you add the plugin after some data has already been added.
+  
+- Associated table records were not saved properly
+    - Currently, in the CakePHP (4.x) ORM when there is a ‘hasMany’ relationship (for example; think about 2 DB tables: items and item_attributes), `EntityTrait::extractOriginal(array $fields)` doesn't return the original value of the associated table’s (item_attributes) original data instead they return the modified values.
+    - Also, there is another bug in CakePHP (4.x) ORM, it marks the associated ('hasMany') entities as dirty, even if there are no changes made to the associated table data.
 
-By default, this plugin stores the audit logs into [Elasticsearch](https://www.elastic.co/products/elasticsearch),
-as we have found that it is a fantastic storage engine for append-only streams of data and provides really
-powerful features for finding changes in the historic data.
+- Unable to record audit logs when saveMany() is called to save multiple entities. 
 
-Even though we suggest storing the logs in Elasticsearch, this plugin is generic enough so you can implement your
-own persisting strategies, if so you wish.
+
+Therefore, I decided to fork from the original project and improve it to support the above missing features.
 
 ## Installation
 
@@ -21,7 +21,7 @@ You can install this plugin into your CakePHP application using [composer](https
 following lines in the root of your application.
 
 ```
-composer require lorenzo/audit-stash
+composer require kdesilva/audit-trail
 bin/cake plugin load AuditStash
 ```
 
@@ -92,6 +92,20 @@ $this->behaviors()->get('AuditLog')->persister()->config([
 ]);
 ```
 
+
+Also, you can set some common config via the app.php. Currently, support 'extractMetaFields' and 'blacklist'
+
+```php
+'AuditStash' => [
+    'persister' => 'AuditStash\Persister\TablePersister',
+    'extractMetaFields' => [
+            'user.username' => 'username',
+            'user.customer_id' => 'customer_id',
+        ],
+    'blacklist' => ['customer_id'],
+]
+```
+
 ## Using AuditStash
 
 Enabling the Audit Log in any of your table classes is as simple as adding a behavior in the `initialize()` function:
@@ -141,6 +155,7 @@ class ArticlesTable extends Table
 ```
 
 If you prefer, you can use a `whitelist` instead. This means that only the fields listed in that array will be tracked by the behavior:
+
 
 ```php
 public function initialize(array $config = [])
