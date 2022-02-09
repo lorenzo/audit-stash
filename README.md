@@ -1,4 +1,4 @@
-# AuditStash Plugin For CakePHP
+# AuditStash Plugin For CakePHP 4.x
 
 This plugin is forked from [lorenzo/audit-stash](https://github.com/lorenzo/audit-stash)
 
