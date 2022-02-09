@@ -216,7 +216,7 @@ class AuditLogBehavior extends Behavior
      */
     public function afterCommit(Event $event, EntityInterface $entity, $options)
     {
-        if (!isset($options['_auditQueue'])) {
+        if (!isset($options['_auditQueue']) || $options['_auditQueue']->count() == 0) {
             return;
         }
 
@@ -234,7 +234,15 @@ class AuditLogBehavior extends Behavior
         $this->persister()->logEvents($data->getData('logs'));
 
         // stop duplicate records adding to audit_logs table, when saveMany() is called
-        unset($options['_auditQueue']);
+        /**
+         * @var SplObjectStorage $attachedAuditQueueEntities
+         */
+        $options['_auditQueue']->rewind();
+        while ($options['_auditQueue']->valid()) {
+            $obj = $options['_auditQueue']->current();
+            $options['_auditQueue']->next();
+            $options['_auditQueue']->detach($obj);
+        }
     }
 
     /**

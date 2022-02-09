@@ -4,7 +4,7 @@ This plugin is forked from [lorenzo/audit-stash](https://github.com/lorenzo/audi
 
 The above plugin has the following issues or does not have the features I wanted.
 - Original data is not recorded at the delete event.
-    - This is useful if you add the plugin after some data has already been added.
+    - This is useful if you add the plugin after some data was added.
   
 - Associated table records were not saved properly (In this case I considered two models with ‘hasMany’ relationship)
     - Currently, in the CakePHP (4.x) ORM when there is a ‘hasMany’ relationship (for example; think about 2 DB tables: items and item_attributes), `EntityTrait::extractOriginal(array $fields)` doesn't return the original value of the associated table’s (item_attributes) original data instead they return the modified values.
@@ -14,7 +14,7 @@ The above plugin has the following issues or does not have the features I wanted
 - Unable to record audit logs when saveMany() is called to save multiple entities. 
 - Unable to set some common configurations for the AuditLog behaviour and/or Table Persister via the app.php
 - Doesn't record a human-friendly data field from foreign keys
-- Create event adds the same data into the 'original' and 'changed' columns
+- The Create event adds the same data into the 'original' and 'changed' columns
 - The 'id' (primary key) filed is added to the 'original' and 'changed' data, unless you blacklist it in each model class. (The primary key is recorded as a separate field as well)
 
 
@@ -30,19 +30,9 @@ composer require kdesilva/audit-trail
 bin/cake plugin load AuditStash
 ```
 
-For using the default storage engine (ElasticSearch) you need to install the official `elastic-search` plugin, by executing
-the following lines:
-
-```
-composer require cakephp/elastic-search
-bin/cake plugin load Cake/ElasticSearch
-```
+If you plan to use ElasticSearch as the storage engine, please refer to [lorenzo/audit-stash](https://github.com/lorenzo/audit-stash)
 
 ## Configuration
-
-### Elastic Search
-
-If you decided to use ElasticSearch as the storage engine, please refer to [lorenzo/audit-stash](https://github.com/lorenzo/audit-stash)
 
 ### Tables / Regular Databases
 
@@ -62,8 +52,10 @@ The plugin will then by default try to store the logs in a table named `audit_lo
 `AuditLogs`, which you could create/overwrite in your application if you need.
 
 You can find a migration in the `config/migration` folder of this plugin which you can apply to your database, this will
-add a table named `audit_logs` with all the default columns - alternatively create the table manually. After that you
-can bake the corresponding table class.
+add a table named `audit_logs` with all the default columns. Alternatively you can bake your own migration to create the table. After that you
+can migrate the corresponding table class.
+
+If you use the plugin's default migration, you can create the table and model class using the commands below.
 
 ```
 bin/cake migrations migrate -p AuditStash -t 20171018185609
