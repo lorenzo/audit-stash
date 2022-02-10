@@ -2,7 +2,7 @@
 
 This plugin is forked from [lorenzo/audit-stash](https://github.com/lorenzo/audit-stash)
 
-Although the above plugin is very good for storing change history, it has the following issues or does not have the features I needed.
+Although the above plugin is very good for storing change history, it has the following issues or does not have all the features I needed.
 
 - Original data is not recorded at the delete event.
     - This is useful if you add the plugin after some data was added.
