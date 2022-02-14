@@ -75,7 +75,7 @@ abstract class BaseEvent implements EventInterface
      *
      * @return string
      */
-    abstract public function getEventType();
+    abstract public function getEventType(): string;
 
     /**
      * Returns the array to be used for encoding this object as json.
