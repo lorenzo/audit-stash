@@ -17,7 +17,7 @@ Although the above plugin is very good for storing change history, it has the fo
 - Doesn't record a human-friendly data field from foreign keys
 - The Create event adds the same data into the 'original' and 'changed' columns
 - The 'id' (primary key) filed is added to the 'original' and 'changed' data, unless you blacklist it in each model class. (The primary key is recorded as a separate field as well)
-- Unable to store a user-friendly field value in DB. So, I used CakePHP Model::setDisplayField()
+- Unable to store a user-friendly field value in DB. It is useful to identify the records easily; especially, when the DB stores changed data only. So, I used CakePHP Model::setDisplayField() to retrieve a user-friendly field value.
 
 Therefore, I decided to fork from the original project and improve it to support the above missing features.
 
@@ -101,6 +101,7 @@ class ArticlesTable extends Table
 {
     public function initialize(array $config = [])
     {
+        $this->setDisplayField('article_name');
         ...
         $this->addBehavior('AuditStash.AuditLog');
     }
@@ -116,6 +117,7 @@ class ArticlesTable extends Table
 {
     public function initialize(array $config = [])
     {
+        $this->setDisplayField('article_name');
         ...
         $this->addBehavior('AuditStash.AuditLog', [
             'blacklist' => ['created', 'modified', 'another_field_name']
@@ -128,12 +130,16 @@ If you prefer, you can use a `whitelist` instead. This means that only the field
 
 
 ```php
-public function initialize(array $config = [])
+class ArticlesTable extends Table
 {
-    ...
-    $this->addBehavior('AuditStash.AuditLog', [
-        'whitelist' => ['title', 'description', 'author_id']
-    ]);
+    public function initialize(array $config = [])
+    {
+        $this->setDisplayField('article_name');
+        ...
+        $this->addBehavior('AuditStash.AuditLog', [
+            'whitelist' => ['title', 'description', 'author_id']
+        ]);
+    }
 }
 ```
 
@@ -142,8 +148,8 @@ If you need to retrieve human-friendly data fields from related tables (i.e. wit
 
 public function initialize(array $config = [])
 {
+    $this->setDisplayField('article_name');
     ...
-
     $this->addBehavior('AuditStash.AuditLog', [
         'blacklist' => ['customer_id', 'product_id'],
         'foreignKeys' => [
@@ -266,6 +272,7 @@ class MyPersister implements PersisterInterface
                 'transaction' => $log->getTransactionId(),
                 'type' => $log->getEventType(),
                 'primary_key' => $log->getId(),
+                'display_value' => $event->getDisplayValue(),
                 'source' => $log->getSourceName(),
                 'parent_source' => $log->getParentSourceName(),
                 'original' => json_encode($log->getOriginal()),
