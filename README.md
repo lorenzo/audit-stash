@@ -17,7 +17,7 @@ Although the above plugin is very good for storing change history, it has the fo
 - Doesn't record a human-friendly data field from foreign keys
 - The Create event adds the same data into the 'original' and 'changed' columns
 - The 'id' (primary key) filed is added to the 'original' and 'changed' data, unless you blacklist it in each model class. (The primary key is recorded as a separate field as well)
-
+- Unable to store a user-friendly field value in DB. So, I used CakePHP Model::setDisplayField()
 
 Therefore, I decided to fork from the original project and improve it to support the above missing features.
 

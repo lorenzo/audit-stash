@@ -170,7 +170,6 @@ class AuditLogBehavior extends Behavior
                         );
                     }
                 }*/
-
             }
         }
 
@@ -196,8 +195,21 @@ class AuditLogBehavior extends Behavior
         $primary = $entity->extract((array)$this->_table->getPrimaryKey());
         $auditEvent = $entity->isNew() ? AuditCreateEvent::class : AuditUpdateEvent::class;
 
+        /*
+         * Please check ModelTable class initialize() method. In that method you can set the display filed,
+         * ModelTable::setDisplayField()
+         */
+        $displayValue = $entity->get($this->_table->getDisplayField());
+
         $transaction = $options['_auditTransaction'];
-        $auditEvent = new $auditEvent($transaction, $primary, $this->_table->getTable(), $changed, $original);
+        $auditEvent = new $auditEvent(
+            $transaction,
+            $primary,
+            $this->_table->getTable(),
+            $changed,
+            $original,
+            $displayValue
+        );
 
         if (!empty($options['_sourceTable'])) {
             $auditEvent->setParentSourceName($options['_sourceTable']->getTable());
@@ -261,6 +273,7 @@ class AuditLogBehavior extends Behavior
         $transaction = $options['_auditTransaction'];
         $parent = isset($options['_sourceTable']) ? $options['_sourceTable']->getTable() : null;
         $primary = $entity->extract((array)$this->_table->getPrimaryKey());
+        $displayValue = $entity->get($this->_table->getDisplayField());
 
         $this->setCommonConfig();
 
@@ -279,7 +292,8 @@ class AuditLogBehavior extends Behavior
             $primary,
             $this->_table->getTable(),
             $parent,
-            $original
+            $original,
+            $displayValue
         );
 
         $options['_auditQueue']->attach($entity, $auditEvent);

@@ -24,6 +24,7 @@ trait ExtractionTrait
             'type' => $event->getEventType(),
             'source' => $event->getSourceName(),
             'parent_source' => null,
+            'display_value' => $event->getDisplayValue(),
             'original' => null,
             'changed' => null,
             'created' => new \DateTime($event->getTimestamp())

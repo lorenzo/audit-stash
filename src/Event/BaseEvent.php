@@ -19,31 +19,34 @@ abstract class BaseEvent implements EventInterface
      *
      * @var array
      */
-    protected $changed;
+    protected array $changed;
 
     /**
      * The array of original properties before they got changed.
      *
      * @var array
      */
-    protected $original;
+    protected array $original;
+
 
     /**
      * Construnctor.
      *
-     * @param string $transationId The global transaction id
+     * @param string $transactionId The global transaction id
      * @param mixed $id The entities primary key
      * @param string $source The name of the source (table)
      * @param array $changed The array of changes that got detected for the entity
      * @param array $original The original values the entity had before it got changed
+     * @param string|null $displayValue Human friendly text for the record.
      */
-    public function __construct($transactionId, $id, $source, $changed, $original)
+    public function __construct(string $transactionId, $id, string $source, array $changed, array $original, ?string $displayValue)
     {
         $this->transactionId = $transactionId;
         $this->id = $id;
         $this->source = $source;
         $this->changed = $changed;
         $this->original = $original;
+        $this->displayValue = $displayValue;
         $this->timestamp = (new DateTime())->format(DateTime::ATOM);
     }
 
@@ -82,8 +85,8 @@ abstract class BaseEvent implements EventInterface
     public function jsonSerialize()
     {
         return $this->basicSerialize() + [
-            'original' => $this->original,
-            'changed' => $this->changed
-        ];
+                'original' => $this->original,
+                'changed' => $this->changed
+            ];
     }
 }

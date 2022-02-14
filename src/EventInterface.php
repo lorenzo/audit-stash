@@ -14,14 +14,14 @@ interface EventInterface extends JsonSerializable, Serializable
      *
      * @return string
      */
-    public function getEventType();
+    public function getEventType(): string;
 
     /**
      * Returns the global transaction id in which this event is contained.
      *
      * @return string
      */
-    public function getTransactionId();
+    public function getTransactionId(): string;
 
     /**
      * Returns the id of the entity that was created or altered.
@@ -35,21 +35,21 @@ interface EventInterface extends JsonSerializable, Serializable
      *
      * @return string
      */
-    public function getSourceName();
+    public function getSourceName(): string;
 
     /**
      * Returns the time string in which this change happened.
      *
      * @return string
      */
-    public function getTimestamp();
+    public function getTimestamp(): string;
 
     /**
      * Returns an array with meta information that can describe this event.
      *
      * @return array
      */
-    public function getMetaInfo();
+    public function getMetaInfo(): array;
 
     /**
      * Sets the meta information that can describe this event.
@@ -57,5 +57,13 @@ interface EventInterface extends JsonSerializable, Serializable
      * @param array $meta The meta information to attach to the event
      * @return void
      */
-    public function setMetaInfo($meta);
+    public function setMetaInfo(array $meta);
+
+    /**
+     * Returns the display field value.
+     * The display field is set via the Model.setDisplayField($fieldName) property
+     *
+     * @return string
+     */
+    public function getDisplayValue(): string;
 }

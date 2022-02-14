@@ -12,7 +12,7 @@ trait BaseEventTrait
      *
      * @var string
      */
-    protected $transactionId;
+    protected string $transactionId;
 
     /**
      * Entity primary key.
@@ -26,35 +26,40 @@ trait BaseEventTrait
      *
      * @var string
      */
-    protected $source;
+    protected string $source;
 
     /**
      * Parent repository name.
      *
      * @var string
      */
-    protected $parentSource;
+    protected string $parentSource;
 
     /**
      * Time of event.
      *
      * @var string
      */
-    protected $timestamp;
+    protected string $timestamp;
 
     /**
      * Extra information to describe the event.
      *
      * @var array
      */
-    protected $meta = [];
+    protected array $meta = [];
+
+    /**
+     * @var string
+     */
+    protected string $displayValue;
 
     /**
      * Returns the global transaction id in which this event is contained.
      *
      * @return string
      */
-    public function getTransactionId()
+    public function getTransactionId(): string
     {
         return $this->transactionId;
     }
@@ -77,7 +82,7 @@ trait BaseEventTrait
      *
      * @return string
      */
-    public function getSourceName()
+    public function getSourceName(): string
     {
         return $this->source;
     }
@@ -87,7 +92,7 @@ trait BaseEventTrait
      *
      * @return string
      */
-    public function getParentSourceName()
+    public function getParentSourceName(): string
     {
         return $this->parentSource;
     }
@@ -118,7 +123,7 @@ trait BaseEventTrait
      *
      * @return array
      */
-    public function getMetaInfo()
+    public function getMetaInfo(): array
     {
         return $this->meta;
     }
@@ -129,8 +134,16 @@ trait BaseEventTrait
      * @param array $meta The meta information to attach to the event
      * @return void
      */
-    public function setMetaInfo($meta)
+    public function setMetaInfo(array $meta)
     {
         $this->meta = $meta;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDisplayValue(): string
+    {
+        return $this->displayValue;
     }
 }
