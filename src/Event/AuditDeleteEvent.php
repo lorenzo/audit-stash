@@ -34,7 +34,7 @@ class AuditDeleteEvent extends BaseEvent
      *
      * @return string
      */
-    public function getEventType()
+    public function getEventType(): string
     {
         return 'delete';
     }

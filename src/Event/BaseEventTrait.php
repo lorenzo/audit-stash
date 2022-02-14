@@ -33,7 +33,7 @@ trait BaseEventTrait
      *
      * @var string
      */
-    protected string $parentSource;
+    protected ?string $parentSource = null;
 
     /**
      * Time of event.
@@ -92,7 +92,7 @@ trait BaseEventTrait
      *
      * @return string
      */
-    public function getParentSourceName(): string
+    public function getParentSourceName(): ?string
     {
         return $this->parentSource;
     }
@@ -113,7 +113,7 @@ trait BaseEventTrait
      *
      * @return string
      */
-    public function getTimestamp()
+    public function getTimestamp(): string
     {
         return $this->timestamp;
     }
