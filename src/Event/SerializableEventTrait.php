@@ -14,7 +14,7 @@ trait SerializableEventTrait
      */
     public function serialize()
     {
-        return serialize(get_object_vars($this));
+        return $this->__serialize();
     }
 
     /**
@@ -25,10 +25,7 @@ trait SerializableEventTrait
      */
     public function unserialize($data)
     {
-        $vars = unserialize($data);
-        foreach ($vars as $var => $value) {
-            $this->{$var} = $value;
-        }
+        $this->__unserialize($data);
     }
 
     /**
