@@ -2,7 +2,7 @@
 namespace AuditStash\Persister;
 
 use AuditStash\PersisterInterface;
-use Cake\Datasource\ModelAwareTrait;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use DateTime;
 
 /**
@@ -16,7 +16,7 @@ use DateTime;
  */
 class DatabasePersister implements PersisterInterface
 {
-    use ModelAwareTrait;
+    use LocatorAwareTrait;
 
     /**
      * Persists all of the audit log event objects that are provided
@@ -49,7 +49,7 @@ class DatabasePersister implements PersisterInterface
                 'changed' => $eventType === 'delete' ? null : json_encode($log->getChanged()),
                 'meta' => json_encode($meta)
             ];
-            $Audit = $this->loadModel('Audits');
+            $Audit = $this->fetchTable('Audits');
             if (!empty($meta['user'])) {
                 $data['user_id'] = $meta['user'];
             }
