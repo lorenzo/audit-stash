@@ -19,12 +19,13 @@ class DatabasePersister implements PersisterInterface
     use LocatorAwareTrait;
 
     /**
-     * Persists all of the audit log event objects that are provided
+     * Persists all the audit log event objects that are provided
      *
      * @param array $auditLogs An array of EventInterface objects
      * @return void
+     * @throws \Exception
      */
-    public function logEvents(array $auditLogs)
+    public function logEvents(array $auditLogs): void
     {
         foreach ($auditLogs as $log) {
             $eventType = $log->getEventType();

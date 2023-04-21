@@ -16,30 +16,30 @@ class ElasticSearchPersister implements PersisterInterface
     /**
      * The client or connection to Elasticsearch.
      *
-     * @var Cake\ElasticSearch\Datasource\Connection
+     * @var \Cake\ElasticSearch\Datasource\Connection
      */
-    protected $connection;
+    protected Connection $connection;
 
     /**
      * Whether to use the transaction ids as document ids.
      *
      * @var bool
      */
-    protected $useTransactionId = false;
+    protected bool $useTransactionId = false;
 
     /**
      * Elasticsearch index to store documents
      *
      * @var string
      */
-    protected $index;
+    protected mixed $index;
 
     /**
      * Elasticsearch mapping type of documents
      *
      * @var string
      */
-    protected $type;
+    protected mixed $type;
 
     /**
      * Sets the options for this persister. The available options are:
@@ -50,6 +50,7 @@ class ElasticSearchPersister implements PersisterInterface
      * - type: The Elasticsearch mapping type of documents
      *
      * @return void
+     * @throws \AuditStash\Exception
      */
     public function __construct($options = [])
     {
@@ -78,7 +79,7 @@ class ElasticSearchPersister implements PersisterInterface
      * @param array $auditLogs An array of EventInterface objects
      * @return void
      */
-    public function logEvents(array $auditLogs)
+    public function logEvents(array $auditLogs): void
     {
         $client = $this->getConnection();
         $documents = $this->transformToDocuments($auditLogs);
@@ -92,7 +93,7 @@ class ElasticSearchPersister implements PersisterInterface
      * @param array $auditLogs An array of EventInterface objects.
      * @return array
      */
-    protected function transformToDocuments($auditLogs)
+    protected function transformToDocuments(array $auditLogs): array
     {
         $index = $this->getIndex();
         $type = $this->getType();
@@ -124,10 +125,10 @@ class ElasticSearchPersister implements PersisterInterface
      * id in elastic search. Only enable this feature if you know that your transactions are
      * only comprised of a single event log per commit.
      *
-     * @param bool $use Whether or not to copy the transactionId as the document id
+     * @param bool $use Whether to copy the transactionId as the document id
      * @return void
      */
-    public function reuseTransactionId($use = true)
+    public function reuseTransactionId(bool $use = true): void
     {
         $this->useTransactionId = $use;
     }
@@ -135,10 +136,10 @@ class ElasticSearchPersister implements PersisterInterface
     /**
      * Sets the client connection to elastic search.
      *
-     * @param Elastica\Client $connection The conneciton to elastic search
+     * @param \Cake\ElasticSearch\Datasource\Connection $connection The conneciton to elastic search
      * @return $this
      */
-    public function setConnection(Connection $connection)
+    public function setConnection(Connection $connection): static
     {
         $this->connection = $connection;
 

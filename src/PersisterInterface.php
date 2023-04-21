@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace AuditStash;
 
@@ -14,5 +15,5 @@ interface PersisterInterface
      * @param array $auditLogs List of EventInterface objects to persist
      * @return void
      */
-    public function logEvents(array $auditLogs);
+    public function logEvents(array $auditLogs): void;
 }

@@ -129,7 +129,7 @@ trait BaseEventTrait
      * @param array $meta The meta information to attach to the event
      * @return void
      */
-    public function setMetaInfo($meta)
+    public function setMetaInfo(array $meta)
     {
         $this->meta = $meta;
     }

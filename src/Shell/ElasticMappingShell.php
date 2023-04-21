@@ -11,6 +11,8 @@ use Elastica\Type\Mapping as ElasticaMapping;
 
 /**
  * Exposes a shell command to create the required Elastic Search mappings.
+ *
+ * @deprecated Remove
  */
 class ElasticMappingShell extends Shell
 {
