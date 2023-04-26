@@ -6,12 +6,13 @@ namespace AuditStash\Shell\Task;
 use AuditStash\EventFactory;
 use AuditStash\Persister\ElasticSearchPersister;
 use AuditStash\PersisterInterface;
-use Cake\Console\Shell;
 
 /**
  * Used to directly persist event logs into the configured persister.
+ *
+ * @deprecated
  */
-class PersistTask extends Shell
+class PersistTask
 {
 
     /**

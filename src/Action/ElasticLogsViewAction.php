@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace AuditStash\Action;
 
+use AuditStash\Model\Document\AuditLog;
+use Cake\ElasticSearch\Index;
 use Cake\ElasticSearch\IndexRegistry;
 use Crud\Action\ViewAction;
 use Crud\Event\Subject;
@@ -13,15 +15,14 @@ use Crud\Event\Subject;
  */
 class ElasticLogsViewAction extends ViewAction
 {
-
     use IndexConfigTrait;
 
     /**
      * Returns the Repository object to use.
      *
-     * @return AuditStash\Model\Index\AuditLogsIndex;
+     * @return \Cake\ElasticSearch\Index;
      */
-    protected function _table()
+    protected function _table(): Index
     {
         return $this->_controller()->AuditLogs = IndexRegistry::get('AuditStash.AuditLogs');
     }
@@ -32,14 +33,15 @@ class ElasticLogsViewAction extends ViewAction
      * @param string $id Record id
      * @param \Crud\Event\Subject $subject Event subject
      * @return \AuditStash\Model\Document\AuditLog
+     * @throws \Exception
      */
-    protected function _findRecord($id, Subject $subject)
+    protected function _findRecord($id, Subject $subject): AuditLog
     {
         $repository = $this->_table();
-        $this->_configIndex($repository, $this->_request());
+        $this->configIndex($repository, $this->_request());
 
-        if ($this->_request()->query('type')) {
-            $repository->name($this->_request()->query('type'));
+        if ($this->_request()->getQuery('type')) {
+            $repository->setName($this->_request()->getQuery('type'));
         }
 
         $query = $repository->find($this->findMethod());
