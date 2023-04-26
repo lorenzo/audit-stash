@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace AuditStash\Test\Persister;
 
@@ -19,7 +20,7 @@ class ElasticSearchPersisterTest extends TestCase
      *
      * @var string
      */
-    public $fixtures = [
+    public array $fixtures = [
         'plugin.AuditStash.ElasticArticles',
         'plugin.AuditStash.ElasticAudits',
         'plugin.AuditStash.ElasticAuthors',

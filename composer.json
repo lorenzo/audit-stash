@@ -8,10 +8,11 @@
         "cakephp/orm": "5.x-dev"
     },
     "require-dev": {
-        "phpunit/phpunit": "^8.0",
+        "phpunit/phpunit": "^9.6",
         "cakephp/cakephp": "5.x-dev",
         "cakephp/elastic-search": "4.x-dev",
-        "cakephp/migrations": "*"
+        "cakephp/migrations": "*",
+        "friendsofcake/process-mq": "dev-1.next-cake5"
     },
     "suggest": {
         "cakephp/elastic-search": "The default persister engine for audit-stash is elastic search and requires this plugin",
@@ -29,5 +30,11 @@
             "AuditStash\\Test\\": "tests",
             "Cake\\Test\\": "./vendor/cakephp/cakephp/tests"
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/CakeDC/process-mq.git"
+        }
+    ]
 }

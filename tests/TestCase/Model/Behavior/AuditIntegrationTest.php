@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace AuditStash\Test\Model\Behavior;
 
@@ -7,28 +8,26 @@ use AuditStash\Event\AuditDeleteEvent;
 use AuditStash\Event\AuditUpdateEvent;
 use AuditStash\Model\Behavior\AuditLogBehavior;
 use AuditStash\PersisterInterface;
-use Cake\Datasource\ModelAwareTrait;
-use Cake\Event\Event;
-use Cake\ORM\Entity;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\TestSuite\TestCase;
 
 class DebugPersister implements PersisterInterface
 {
-    public function logEvents(array $events)
+    public function logEvents(array $events): void
     {
     }
 }
 
 class AuditIntegrationTest extends TestCase
 {
-    use ModelAwareTrait;
+    use LocatorAwareTrait;
 
     /**
      * Fixtures to use.
      *
      * @var array
      */
-    public $fixtures = [
+    public array $fixtures = [
         'core.Articles',
         'core.Comments',
         'core.Authors',
@@ -43,7 +42,7 @@ class AuditIntegrationTest extends TestCase
      */
     public function setUp(): void
     {
-        $this->table = $this->loadModel('Articles');
+        $this->table = $this->fetchTable('Articles');
         $this->table->hasMany('Comments');
         $this->table->belongsToMany('Tags');
         $this->table->belongsTo('Authors');

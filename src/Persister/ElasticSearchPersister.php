@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace AuditStash\Persister;
 
@@ -151,7 +152,7 @@ class ElasticSearchPersister implements PersisterInterface
      *
      * If connection is not defined, create a new one.
      *
-     * @return Elastica\Client
+     * @return \Elastica\Client
      */
     public function getConnection()
     {
@@ -167,8 +168,8 @@ class ElasticSearchPersister implements PersisterInterface
      * If no arguments are provided, it returns the current connection.
      *
      * @deprecated Use getConnection()/setConnection() instead
-     * @param Elastica\Client $connection The conneciton to elastic search
-     * @return Elastica\Client
+     * @param \Elastica\Client $connection The conneciton to elastic search
+     * @return \Elastica\Client
      */
     public function connection(Client $connection = null)
     {

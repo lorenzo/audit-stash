@@ -1,27 +1,26 @@
 <?php
+declare(strict_types=1);
 
-namespace AuditStash\Shell;
+namespace AuditStash\Command;
 
+use Cake\Command\Command;
+use Cake\Console\Arguments;
+use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
-use Cake\Console\Shell;
 use Cake\Datasource\ConnectionManager;
 use Cake\Utility\Inflector;
+use Elastica\Mapping;
 use Elastica\Request;
-use Elastica\Type\Mapping as ElasticaMapping;
 
 /**
  * Exposes a shell command to create the required Elastic Search mappings.
  *
- * @deprecated Remove
  */
-class ElasticMappingShell extends Shell
+class ElasticMappingCommand extends Command
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getOptionParser(): ConsoleOptionParser
+    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        return parent::getOptionParser()
+        return parent::buildOptionParser($parser)
             ->setDescription('Creates type mappings in elastic search for the tables you want tracked with audit logging')
             ->addArgument('table', [
                 'short' => 't',
@@ -40,16 +39,9 @@ class ElasticMappingShell extends Shell
             ]);
     }
 
-    /**
-     * Creates the elastic search mapping for the provided table, or just prints it out
-     * to the screen if the `dry-run` option is provided.
-     *
-     * @param string $table The table name to inspect and create a mapping for
-     * @return bool
-     */
-    public function main($table)
+    public function execute(Arguments $args, ConsoleIo $io)
     {
-        $table = $this->loadModel($table);
+        $table = $this->fetchTable($args->getArgument('table'));
         $schema = $table->getSchema();
         $mapping = [
             '@timestamp' => ['type' => 'date', 'format' => 'basic_t_time_no_millis||dateOptionalTime||basic_date_time||ordinal_date_time_no_millis||yyyy-MM-dd HH:mm:ss'],
@@ -95,22 +87,24 @@ class ElasticMappingShell extends Shell
         $client = ConnectionManager::get('auditlog_elastic');
         $index = $client->getIndex(sprintf($indexName, '-' . gmdate('Y.m.d')));
         $type = $index->getType($typeName);
-        $elasticMapping = new ElasticaMapping();
+        $elasticMapping = new Mapping();
         $elasticMapping->setType($type);
         $elasticMapping->setProperties($mapping);
 
-        if ($this->params['dry-run']) {
-            $this->out(json_encode($elasticMapping->toArray(), JSON_PRETTY_PRINT));
+        if ($args->getOption('dry-run')) {
+            $io->out(json_encode($elasticMapping->toArray(), JSON_PRETTY_PRINT));
+
             return true;
         }
 
-        if ($this->params['use-templates']) {
+        if ($args->getOption('use-templates')) {
             $template = [
                 'template' => sprintf($indexName, '*'),
                 'mappings' => $elasticMapping->toArray()
             ];
             $response = $client->request('_template/template_' . $type->getName(), Request::PUT, $template);
-            $this->out('<success>Successfully created the mapping template</success>');
+            $io->out('Successfully created the mapping template');
+
             return $response->isOk();
         }
 
@@ -119,7 +113,8 @@ class ElasticMappingShell extends Shell
         }
 
         $elasticMapping->send();
-        $this->out('<success>Successfully created the mapping</success>');
+        $io->success('Successfully created the mapping');
+
         return true;
     }
 
@@ -134,31 +129,28 @@ class ElasticMappingShell extends Shell
     {
         $baseType = $schema->baseColumnType($column);
         switch ($baseType) {
-        case 'uuid':
-            return ['type' => 'text', 'index' => false, 'null_value' => '_null_'];
-        case 'integer':
-            return ['type' => 'integer', 'null_value' => pow(-2,31)];
-        case 'date':
-            return ['type' => 'date', 'format' => 'dateOptionalTime||basic_date||yyy-MM-dd', 'null_value' => '0001-01-01'];
-        case 'datetime':
-        case 'timestamp':
-            return ['type' => 'date', 'format' => 'basic_t_time_no_millis||dateOptionalTime||basic_date_time||ordinal_date_time_no_millis||yyyy-MM-dd HH:mm:ss||basic_date', 'null_value' => '0001-01-01 00:00:00'];
-        case 'float':
-        case 'decimal':
-            return ['type' => 'float', 'null_value' => pow(-2,31)];
-        case 'float':
-        case 'decimal':
-            return ['type' => 'float', 'null_value' => pow(-2,31)];
-        case 'boolean':
-            return ['type' => 'boolean'];
-        default:
-            return [
-                'type' => 'text',
-                'fields' => [
-                    $column => ['type' => 'text'],
-                    'raw' => ['type' => 'text', 'index' => false]
-                ]
-            ];
+            case 'uuid':
+                return ['type' => 'text', 'index' => false, 'null_value' => '_null_'];
+            case 'integer':
+                return ['type' => 'integer', 'null_value' => pow(-2,31)];
+            case 'date':
+                return ['type' => 'date', 'format' => 'dateOptionalTime||basic_date||yyy-MM-dd', 'null_value' => '0001-01-01'];
+            case 'datetime':
+            case 'timestamp':
+                return ['type' => 'date', 'format' => 'basic_t_time_no_millis||dateOptionalTime||basic_date_time||ordinal_date_time_no_millis||yyyy-MM-dd HH:mm:ss||basic_date', 'null_value' => '0001-01-01 00:00:00'];
+            case 'float':
+            case 'decimal':
+                return ['type' => 'float', 'null_value' => pow(-2,31)];
+            case 'boolean':
+                return ['type' => 'boolean'];
+            default:
+                return [
+                    'type' => 'text',
+                    'fields' => [
+                        $column => ['type' => 'text'],
+                        'raw' => ['type' => 'text', 'index' => false]
+                    ]
+                ];
         }
     }
 }

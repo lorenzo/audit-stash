@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace AuditStash\Event;
 
@@ -12,7 +13,7 @@ class AuditUpdateEvent extends BaseEvent
      *
      * @return string
      */
-    public function getEventType()
+    public function getEventType(): string
     {
         return 'update';
     }

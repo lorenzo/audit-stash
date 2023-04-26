@@ -1,8 +1,9 @@
 <?php
+declare(strict_types=1);
+
 namespace AuditStash\Action;
 
 use Cake\ElasticSearch\IndexRegistry;
-use Cake\Event\Event;
 use Crud\Action\ViewAction;
 use Crud\Event\Subject;
 
