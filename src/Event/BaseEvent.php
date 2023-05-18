@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace AuditStash\Event;
 
@@ -19,26 +20,31 @@ abstract class BaseEvent implements EventInterface
      *
      * @var array
      */
-    protected $changed;
+    protected array $changed;
 
     /**
      * The array of original properties before they got changed.
      *
      * @var array
      */
-    protected $original;
+    protected array $original;
 
     /**
-     * Construnctor.
+     * Constructor.
      *
-     * @param string $transationId The global transaction id
+     * @param string $transactionId
      * @param mixed $id The entities primary key
      * @param string $source The name of the source (table)
      * @param array $changed The array of changes that got detected for the entity
      * @param array $original The original values the entity had before it got changed
      */
-    public function __construct($transactionId, $id, $source, $changed, $original)
-    {
+    public function __construct(
+        string $transactionId,
+        mixed $id,
+        string $source,
+        array $changed,
+        array $original
+    ) {
         $this->transactionId = $transactionId;
         $this->id = $id;
         $this->source = $source;
@@ -52,7 +58,7 @@ abstract class BaseEvent implements EventInterface
      *
      * @return array
      */
-    public function getOriginal()
+    public function getOriginal(): array
     {
         return $this->original;
     }
@@ -62,7 +68,7 @@ abstract class BaseEvent implements EventInterface
      *
      * @return array
      */
-    public function getChanged()
+    public function getChanged(): array
     {
         return $this->changed;
     }
@@ -72,7 +78,7 @@ abstract class BaseEvent implements EventInterface
      *
      * @return string
      */
-    abstract public function getEventType();
+    abstract public function getEventType(): string;
 
     /**
      * Returns the array to be used for encoding this object as json.

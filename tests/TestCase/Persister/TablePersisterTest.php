@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace AuditStash\Test\Persister;
 
@@ -11,6 +12,7 @@ use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class AuditLogsTable extends Table
 {
@@ -638,7 +640,7 @@ class TablePersisterTest extends TestCase
         $this->TablePersister->logEvents([$event]);
     }
 
-    public function getMockForModel($alias, array $methods = [], array $options = [])
+    public function getMockForModel($alias, array $methods = [], array $options = []): Table|MockObject
     {
 	    return parent::getMockForModel($alias, $methods, $options + [
 		    'className' => AuditLogsTable::class

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace AuditStash;
 
@@ -14,13 +15,14 @@ use ReflectionObject;
 class EventFactory
 {
     /**
-     * Converts an array of data as comming from elastic search and
+     * Converts an array of data as coming from elastic search and
      * converts it into an AuditStash\EventInterface object.
      *
      * @param array $data The array data from elastic search
-     * @return AuditStash\EventInterface
+     * @return \AuditStash\EventInterface
+     * @throws \ReflectionException
      */
-    public function create(array $data)
+    public function create(array $data): EventInterface
     {
         $map = [
             'create' => AuditCreateEvent::class,

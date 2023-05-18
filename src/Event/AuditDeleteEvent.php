@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace AuditStash\Event;
 
@@ -16,15 +17,19 @@ class AuditDeleteEvent implements EventInterface
     }
 
     /**
-     * Construnctor.
+     * Constructor.
      *
-     * @param string $transationId The global transaction id
+     * @param string $transactionId
      * @param mixed $id The primary key record that got deleted
      * @param string $source The name of the source (table) where the record was deleted
-     * @param string $parentSource The name of the source (table) that triggered this change
+     * @param string|null $parentSource The name of the source (table) that triggered this change
      */
-    public function __construct($transactionId, $id, $source, $parentSource = null)
-    {
+    public function __construct(
+        string $transactionId,
+        mixed $id,
+        string $source,
+        ?string $parentSource = null
+    ) {
         $this->transactionId = $transactionId;
         $this->id = $id;
         $this->source = $source;
@@ -37,7 +42,7 @@ class AuditDeleteEvent implements EventInterface
      *
      * @return string
      */
-    public function getEventType()
+    public function getEventType(): string
     {
         return 'delete';
     }

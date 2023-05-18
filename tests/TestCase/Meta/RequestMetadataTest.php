@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace AuditStash\Test\Persister;
 
@@ -10,7 +11,6 @@ use Cake\TestSuite\TestCase;
 
 class RequestMetadataTest extends TestCase
 {
-
     use EventDispatcherTrait;
 
     /**

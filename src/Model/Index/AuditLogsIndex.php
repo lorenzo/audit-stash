@@ -1,8 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace AuditStash\Model\Index;
 
 use Cake\ElasticSearch\Index;
+use Cake\ElasticSearch\Query;
 use Elastica\Aggregation\Terms as TermsAggregation;
 
 /**
@@ -16,7 +18,7 @@ class AuditLogsIndex extends Index
      *
      * @return string
      */
-    public static function defaultConnectionName()
+    public static function defaultConnectionName(): string
     {
         return 'auditlog_elastic';
     }
@@ -24,15 +26,16 @@ class AuditLogsIndex extends Index
     /**
      * Returns a query setup for getting the 'type' aggregation.
      *
-     * @param Cake\ElasticSearch\Query $query The Query Object
-     * @return Cake\ElasticSearch\Query
+     * @param \Cake\ElasticSearch\Query $query The Query Object
+     * @return \Cake\ElasticSearch\Query
      */
-    public function findTypes($query)
+    public function findTypes(Query $query): Query
     {
         $facet = new TermsAggregation('type');
         $facet->setField('_type');
         $facet->setSize(200);
         $query->aggregate($facet);
+
         return $query->limit(1);
     }
 }

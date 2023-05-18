@@ -12,6 +12,8 @@
 #################################
 /nbproject
 .idea
+/auth.json
+/.ddev
 
 # OS generated files #
 ######################

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace AuditStash\Persister;
 
@@ -7,6 +8,7 @@ use AuditStash\EventInterface;
 use Cake\Database\Type;
 use Cake\Database\Type\DateTimeType;
 use Cake\Utility\Hash;
+use DateTime;
 
 trait ExtractionTrait
 {
@@ -16,8 +18,9 @@ trait ExtractionTrait
      * @param \AuditStash\EventInterface $event The event object from which to extract the fields.
      * @param bool $serialize Whether to serialize fields that are expected to hold array data.
      * @return array
+     * @throws \Exception
      */
-    protected function extractBasicFields(EventInterface $event, $serialize = true)
+    protected function extractBasicFields(EventInterface $event, bool $serialize = true): array
     {
         $fields = [
             'transaction' => $event->getTransactionId(),
@@ -26,11 +29,11 @@ trait ExtractionTrait
             'parent_source' => null,
             'original' => null,
             'changed' => null,
-            'created' => new \DateTime($event->getTimestamp())
+            'created' => new DateTime($event->getTimestamp())
         ];
 
         if (Type::getMap('datetime') !== DateTimeType::class) {
-            $fields['created'] = (new \DateTime($event->getTimestamp()))->format('Y-m-d H:i:s');
+            $fields['created'] = (new DateTime($event->getTimestamp()))->format('Y-m-d H:i:s');
         }
 
         if (method_exists($event, 'getParentSourceName')) {
@@ -52,7 +55,7 @@ trait ExtractionTrait
      * @param string $strategy The strategy to use for extracting the primary key.
      * @return array
      */
-    protected function extractPrimaryKeyFields(EventInterface $event, $strategy = 'automatic')
+    protected function extractPrimaryKeyFields(EventInterface $event, string $strategy = 'automatic'): array
     {
         $primaryKeyFields = [];
 
@@ -95,13 +98,17 @@ trait ExtractionTrait
      * Extracts the metadata fields from the audit event object.
      *
      * @param \AuditStash\EventInterface $event The event object from which to extract the metadata fields.
-     * @param array|bool $fields Which/whether meta data fields should be extracted.
+     * @param bool|array $fields Which/whether meta data fields should be extracted.
      * @param bool $unsetExtracted Whether the fields extracted from the meta data should be unset.
      * @param bool $serialize Whether to serialize fields that are expected to hold array data.
      * @return array
      */
-    protected function extractMetaFields(EventInterface $event, $fields, $unsetExtracted = true, $serialize = true)
-    {
+    protected function extractMetaFields(
+        EventInterface $event,
+        bool|array $fields,
+        bool $unsetExtracted = true,
+        bool $serialize = true
+    ): array {
         $extracted = [
             'meta' => $event->getMetaInfo()
         ];
@@ -165,12 +172,8 @@ trait ExtractionTrait
      * @param mixed $value The value to convert to JSON.
      * @return string|null
      */
-    protected function serialize($value)
+    protected function serialize(mixed $value): ?string
     {
-        if ($value === null) {
-            return $value;
-        }
-
-        return json_encode($value);
+        return $value === null ? null : json_encode($value);
     }
 }

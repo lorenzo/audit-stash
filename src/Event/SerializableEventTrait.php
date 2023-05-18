@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace AuditStash\Event;
 
@@ -12,13 +13,13 @@ trait SerializableEventTrait
      *
      * @return string
      */
-    public function serialize()
+    public function serialize(): string
     {
         return serialize(get_object_vars($this));
     }
 
     /**
-     * @inheritDoc
+     *
      */
     public function __serialize(): array
     {
@@ -31,7 +32,7 @@ trait SerializableEventTrait
      * @param string $data serialized string
      * @return void
      */
-    public function unserialize($data)
+    public function unserialize(string $data): void
     {
         $vars = unserialize($data);
         foreach ($vars as $var => $value) {

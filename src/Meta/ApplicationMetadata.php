@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace AuditStash\Meta;
 
@@ -16,7 +17,7 @@ class ApplicationMetadata implements EventListenerInterface
      *
      * @var array
      */
-    protected $data;
+    protected array $data;
 
     /**
      * Constructor.
@@ -24,7 +25,7 @@ class ApplicationMetadata implements EventListenerInterface
      * @param array $data The extra application data to be copied to
      * each audit log event.
      */
-    public function __construct($name, $data = [])
+    public function __construct(string $name, array $data = [])
     {
         $this->data = ['app_name' => $name] + $data;
     }
@@ -43,11 +44,11 @@ class ApplicationMetadata implements EventListenerInterface
      * Enriches all of the passed audit logs to add the request
      * info metadata.
      *
-     * @param Event The AuditStash.beforeLog event
+     * @param \Cake\Event\Event $event The AuditStash.beforeLog event
      * @param array $logs The audit log event objects
      * @return void
      */
-    public function beforeLog(Event $event, array $logs)
+    public function beforeLog(Event $event, array $logs): void
     {
         foreach ($logs as $log) {
             $log->setMetaInfo($log->getMetaInfo() + $this->data);
