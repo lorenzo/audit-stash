@@ -4,7 +4,7 @@
     "type": "cakephp-plugin",
     "license": "MIT",
     "require": {
-        "php": ">=7.2",
+        "php": "^7.2|^8.0",
         "cakephp/orm": "^4.0"
     },
     "require-dev": {
@@ -25,8 +25,21 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "AuditStash\\Test\\": "tests",
+            "AuditStash\\Test\\": "tests/TestCase",
             "Cake\\Test\\": "./vendor/cakephp/cakephp/tests"
+        }
+    },
+    "scripts": {
+        "analyze": [
+            "@test",
+            "@phpstan"
+        ],
+        "phpstan": "phpstan analyse src/",
+        "test": "phpunit --colors=always"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
         }
     }
 }
