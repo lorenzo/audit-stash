@@ -37,10 +37,5 @@
         ],
         "phpstan": "phpstan analyse src/",
         "test": "phpunit --colors=always"
-    },
-    "config": {
-        "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
-        }
     }
 }
