@@ -31,11 +31,6 @@
         }
     },
     "scripts": {
-        "analyze": [
-            "@test",
-            "@phpstan"
-        ],
-        "phpstan": "phpstan analyse src/",
         "test": "phpunit --colors=always"
     }
 }
