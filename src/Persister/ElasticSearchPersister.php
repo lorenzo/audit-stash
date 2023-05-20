@@ -6,6 +6,7 @@ use AuditStash\Exception;
 use AuditStash\PersisterInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\ElasticSearch\Datasource\Connection;
+use Elastica\Client;
 use Elastica\Document;
 
 /**
@@ -16,7 +17,7 @@ class ElasticSearchPersister implements PersisterInterface
     /**
      * The client or connection to Elasticsearch.
      *
-     * @var Cake\ElasticSearch\Datasource\Connection
+     * @var \Cake\ElasticSearch\Datasource\Connection
      */
     protected $connection;
 
@@ -73,7 +74,7 @@ class ElasticSearchPersister implements PersisterInterface
     }
 
     /**
-     * Persists all of the audit log event objects that are provided.
+     * Persists all the audit log event objects that are provided.
      *
      * @param array $auditLogs An array of EventInterface objects
      * @return void
@@ -124,7 +125,7 @@ class ElasticSearchPersister implements PersisterInterface
      * id in elastic search. Only enable this feature if you know that your transactions are
      * only comprised of a single event log per commit.
      *
-     * @param bool $use Whether or not to copy the transactionId as the document id
+     * @param bool $use Whether to copy the transactionId as the document id
      * @return void
      */
     public function reuseTransactionId($use = true)
@@ -135,7 +136,7 @@ class ElasticSearchPersister implements PersisterInterface
     /**
      * Sets the client connection to elastic search.
      *
-     * @param Elastica\Client $connection The conneciton to elastic search
+     * @param \Cake\ElasticSearch\Datasource\Connection $connection The connection to elastic search
      * @return $this
      */
     public function setConnection(Connection $connection)
@@ -150,7 +151,7 @@ class ElasticSearchPersister implements PersisterInterface
      *
      * If connection is not defined, create a new one.
      *
-     * @return Elastica\Client
+     * @return \Cake\ElasticSearch\Datasource\Connection
      */
     public function getConnection()
     {
@@ -165,12 +166,13 @@ class ElasticSearchPersister implements PersisterInterface
      * Sets the client connection to elastic search when passed.
      * If no arguments are provided, it returns the current connection.
      *
+     * @param Client|null $connection The connection to elastic search
+     * @return Client
      * @deprecated Use getConnection()/setConnection() instead
-     * @param Elastica\Client $connection The conneciton to elastic search
-     * @return Elastica\Client
      */
     public function connection(Client $connection = null)
     {
+        deprecationWarning('Use getConnection()/setConnection() instead');
         if ($connection !== null) {
             return $this->setConnection($connection);
         }
