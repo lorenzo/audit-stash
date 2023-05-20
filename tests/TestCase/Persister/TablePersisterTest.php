@@ -161,7 +161,7 @@ class TablePersisterTest extends TestCase
             'parent_source' => null,
             'original' => '[]',
             'changed' => '[]',
-            'created' => new \DateTime($event->getTimestamp()),
+            'created' => date_timezone_set(new \DateTime($event->getTimestamp()), new \DateTimeZone('America/New_York')),
             'primary_key' => 1,
             'meta' => '{"baz":{"bar":"foo"}}',
             'foo' => 'bar',
