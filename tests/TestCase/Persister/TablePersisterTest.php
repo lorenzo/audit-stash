@@ -305,7 +305,6 @@ class TablePersisterTest extends TestCase
 
     public function testErrorLogging()
     {
-        date_default_timezone_set('UTC');
         $event = new AuditCreateEvent('62ba2e1e-1524-4d4e-bb34-9bf0e03b6a96', 1, 'source', [], []);
 
         /* @var $TablePersister TablePersister|\PHPUnit_Framework_MockObject_MockObject */
@@ -321,7 +320,7 @@ class TablePersisterTest extends TestCase
             'parent_source' => null,
             'original' => '[]',
             'changed' => '[]',
-            'created' => new \DateTime($event->getTimestamp()),
+            'created' => new \DateTime($event->getTimestamp(), 'America/New_York'),
             'primary_key' => 1,
             'meta' => '[]'
         ]);
