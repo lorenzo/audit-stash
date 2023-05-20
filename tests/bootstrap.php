@@ -22,5 +22,7 @@ require $root . '/vendor/cakephp/cakephp/tests/bootstrap.php';
 
 use Cake\Datasource\ConnectionManager;
 
+date_default_timezone_set('UTC');
+
 // Connection for audit storage
 ConnectionManager::setConfig('test_elastic', ['url' => getenv('elastic_dsn')]);
