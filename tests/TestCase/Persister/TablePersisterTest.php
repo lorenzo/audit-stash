@@ -53,7 +53,7 @@ class TablePersisterTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-
+        date_default_timezone_set('America/New_York');
         $this->TablePersister = new TablePersister();
 
         TableRegistry::getTableLocator()->setConfig('AuditLogs', [
