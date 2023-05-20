@@ -26,6 +26,11 @@ jobs:
       - name: PHP Version
         run: php -v
 
+      - name: Set timezone
+        uses: szenius/set-timezone@v1.2
+        with:
+          timezoneLinux: "America/New_York"
+
       - name: Install dependencies
         if: steps.composer-cache.outputs.cache-hit != 'true'
         run: |
@@ -61,6 +66,11 @@ jobs:
       - name: PHP Version
         run: php -v
 
+      - name: Set timezone
+        uses: szenius/set-timezone@v1.2
+        with:
+          timezoneLinux: "America/New_York"
+
       - name: CakePHP ${{matrix.version}} Compatability
         run: |
           composer self-update
@@ -88,6 +98,11 @@ jobs:
 
       - name: PHP Version
         run: php -v
+
+      - name: Set timezone
+        uses: szenius/set-timezone@v1.2
+        with:
+          timezoneLinux: "America/New_York"
 
       - name: CakePHP ${{matrix.version}} Compatability
         run: |
