@@ -3,14 +3,9 @@
 namespace AuditStash\Test\Persister;
 
 use AuditStash\Event\AuditCreateEvent;
-use AuditStash\Event\AuditDeleteEvent;
-use AuditStash\Event\AuditUpdateEvent;
 use AuditStash\Persister\ElasticSearchPersister;
 use Cake\ElasticSearch\Datasource\Connection;
-use Cake\ElasticSearch\IndexRegistry;
-use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
-use DateTime;
 use Elastica\Bulk\ResponseSet;
 use Elastica\Client;
 use Elastica\Response;
