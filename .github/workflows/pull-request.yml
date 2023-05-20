@@ -23,13 +23,21 @@ jobs:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, intl, xdebug
 
+      - name: Configure sysctl limits
+        run: |
+          sudo swapoff -a
+          sudo sysctl -w vm.swappiness=1
+          sudo sysctl -w fs.file-max=262144
+          sudo sysctl -w vm.max_map_count=262144
+
+      - name: Runs Elasticsearch
+        uses: elastic/elastic-github-actions/elasticsearch@master
+        with:
+          stack-version: 6.2.4
+          security-enabled: false
+
       - name: PHP Version
         run: php -v
-
-      - name: Set timezone
-        uses: szenius/set-timezone@v1.2
-        with:
-          timezoneLinux: "America/New_York"
 
       - name: Install dependencies
         if: steps.composer-cache.outputs.cache-hit != 'true'
@@ -66,10 +74,18 @@ jobs:
       - name: PHP Version
         run: php -v
 
-      - name: Set timezone
-        uses: szenius/set-timezone@v1.2
+      - name: Configure sysctl limits
+        run: |
+          sudo swapoff -a
+          sudo sysctl -w vm.swappiness=1
+          sudo sysctl -w fs.file-max=262144
+          sudo sysctl -w vm.max_map_count=262144
+
+      - name: Runs Elasticsearch
+        uses: elastic/elastic-github-actions/elasticsearch@master
         with:
-          timezoneLinux: "America/New_York"
+          stack-version: 6.2.4
+          security-enabled: false
 
       - name: CakePHP ${{matrix.version}} Compatability
         run: |
@@ -99,10 +115,18 @@ jobs:
       - name: PHP Version
         run: php -v
 
-      - name: Set timezone
-        uses: szenius/set-timezone@v1.2
+      - name: Configure sysctl limits
+        run: |
+          sudo swapoff -a
+          sudo sysctl -w vm.swappiness=1
+          sudo sysctl -w fs.file-max=262144
+          sudo sysctl -w vm.max_map_count=262144
+
+      - name: Runs Elasticsearch
+        uses: elastic/elastic-github-actions/elasticsearch@master
         with:
-          timezoneLinux: "America/New_York"
+          stack-version: 6.2.4
+          security-enabled: false
 
       - name: CakePHP ${{matrix.version}} Compatability
         run: |
