@@ -14,7 +14,7 @@
     <testsuites>
         <testsuite name="AuditStash Test Suite">
             <directory>./tests/TestCase</directory>
-            <exclude>./tests/TestCase/Persister/ElasticSearchPersisterTest.php</exclude>
+            <exclude>./tests/TestCase/Persister/ElasticSearchPersisterIntegrationTest.php</exclude>
         </testsuite>
     </testsuites>
 

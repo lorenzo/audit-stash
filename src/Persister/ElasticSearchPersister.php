@@ -10,7 +10,7 @@ use Elastica\Client;
 use Elastica\Document;
 
 /**
- * Implementes audit logs events persisting using Elasticsearch.
+ * Implements audit logs events persisting using Elasticsearch.
  */
 class ElasticSearchPersister implements PersisterInterface
 {
@@ -50,7 +50,9 @@ class ElasticSearchPersister implements PersisterInterface
      * - index: The Elasticsearch index to store documents
      * - type: The Elasticsearch mapping type of documents
      *
+     * @param array $options
      * @return void
+     * @throws Exception
      */
     public function __construct($options = [])
     {
@@ -81,9 +83,10 @@ class ElasticSearchPersister implements PersisterInterface
      */
     public function logEvents(array $auditLogs)
     {
-        $client = $this->getConnection();
         $documents = $this->transformToDocuments($auditLogs);
 
+        $connection = $this->getConnection();
+        $client = $connection->getDriver();
         $client->addDocuments($documents);
     }
 
@@ -166,8 +169,8 @@ class ElasticSearchPersister implements PersisterInterface
      * Sets the client connection to elastic search when passed.
      * If no arguments are provided, it returns the current connection.
      *
-     * @param Client|null $connection The connection to elastic search
-     * @return Client
+     * @param \Elastica\Client|null $connection The connection to elastic search
+     * @return \Elastica\Client
      * @deprecated Use getConnection()/setConnection() instead
      */
     public function connection(Client $connection = null)
