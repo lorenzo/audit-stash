@@ -31,7 +31,7 @@ jobs:
           sudo sysctl -w vm.max_map_count=262144
 
       - name: Runs Elasticsearch
-        uses: elastic/elastic-github-actions/elasticsearch@master
+        uses: elastic/elastic-github-actions/elasticsearch@24006c82ed2f0f1355fce96135f883acf1b1a889
         with:
           stack-version: 6.2.4
           security-enabled: false
@@ -82,7 +82,7 @@ jobs:
           sudo sysctl -w vm.max_map_count=262144
 
       - name: Runs Elasticsearch
-        uses: elastic/elastic-github-actions/elasticsearch@master
+        uses: elastic/elastic-github-actions/elasticsearch@24006c82ed2f0f1355fce96135f883acf1b1a889
         with:
           stack-version: 6.2.4
           security-enabled: false
@@ -107,7 +107,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: elastic/elastic-github-actions/elasticsearch@24006c82ed2f0f1355fce96135f883acf1b1a889
         with:
           php-version: '7.4'
           extensions: mbstring, intl
@@ -123,7 +123,7 @@ jobs:
           sudo sysctl -w vm.max_map_count=262144
 
       - name: Runs Elasticsearch
-        uses: elastic/elastic-github-actions/elasticsearch@master
+        uses: elastic/elastic-github-actions/elasticsearch@24006c82ed2f0f1355fce96135f883acf1b1a889
         with:
           stack-version: 6.2.4
           security-enabled: false
