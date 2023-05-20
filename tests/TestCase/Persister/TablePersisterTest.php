@@ -320,7 +320,7 @@ class TablePersisterTest extends TestCase
             'parent_source' => null,
             'original' => '[]',
             'changed' => '[]',
-            'created' => new \DateTime($event->getTimestamp(), 'America/New_York'),
+            'created' => new \DateTime($event->getTimestamp(), new \DateTimeZone('America/New_York')),
             'primary_key' => 1,
             'meta' => '[]'
         ]);
