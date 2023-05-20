@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        version: ['~4.0.0', '~4.1.0', '~4.2.0', '~4.3.0', '~4.4.0']
+        version: ['~4.0.0', '~4.1.0', '~4.2.0', '~4.3.0']
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -53,6 +53,32 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '7.2'
+          extensions: mbstring, intl
+
+      - name: PHP Version
+        run: php -v
+
+      - name: CakePHP ${{matrix.version}} Compatability
+        run: |
+          composer self-update
+          rm -rf composer.lock
+          composer require cakephp/cakephp:${{matrix.version}} --no-update
+          composer install --prefer-dist --no-progress
+          composer test
+
+  compatibility_cakephp4:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: ['~4.4.0']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
           extensions: mbstring, intl
 
       - name: PHP Version
