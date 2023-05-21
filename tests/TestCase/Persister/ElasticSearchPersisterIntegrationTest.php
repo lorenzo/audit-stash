@@ -9,6 +9,7 @@ use AuditStash\Persister\ElasticSearchPersister;
 use Cake\Datasource\ConnectionManager;
 use Cake\ElasticSearch\IndexRegistry;
 use Cake\I18n\Time;
+use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use DateTime;
 
@@ -42,7 +43,7 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
             'published' => 'Y'
         ];
 
-        $events[] = new AuditCreateEvent('1234', 50, 'articles', $data, $data);
+        $events[] = new AuditCreateEvent('1234', 50, 'articles', $data, $data, new Entity());
         $persister->logEvents($events);
         $client->getIndex('article')->refresh();
 
@@ -96,7 +97,7 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
             'published' => 'Y'
         ];
 
-        $events[] = new AuditUpdateEvent('1234', 50, 'articles', $changed, $original);
+        $events[] = new AuditUpdateEvent('1234', 50, 'articles', $changed, $original, new Entity());
         $events[0]->setParentSourceName('authors');
         $persister->logEvents($events);
         $client->getIndex('article')->refresh();
@@ -173,7 +174,7 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
             'id' => 3,
             'tag' => 'cakephp'
         ];
-        $events[] = new AuditCreateEvent('1234', 4, 'tags', $data, $data);
+        $events[] = new AuditCreateEvent('1234', 4, 'tags', $data, $data, new Entity());
 
         $original = [
             'title' => 'Old article title',
@@ -183,7 +184,7 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
             'title' => 'A new article',
             'published' => 'Y'
         ];
-        $events[] = new AuditUpdateEvent('1234', 2, 'authors', $changed, $original);
+        $events[] = new AuditUpdateEvent('1234', 2, 'authors', $changed, $original, new Entity());
         $events[] = new AuditDeleteEvent('1234', 50, 'articles');
         $events[] = new AuditDeleteEvent('1234', 51, 'articles');
 
@@ -217,7 +218,7 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
             'published_date' => new Time('2015-04-13 20:20:21')
         ];
 
-        $events[] = new AuditUpdateEvent('1234', 50, 'articles', $changed, $original);
+        $events[] = new AuditUpdateEvent('1234', 50, 'articles', $changed, $original, new Entity());
         $persister->logEvents($events);
         $client->getIndex('article')->refresh();
 
