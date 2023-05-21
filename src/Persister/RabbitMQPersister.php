@@ -13,7 +13,7 @@ class RabbitMQPersister implements PersisterInterface
     /**
      * The client or connection to RabbitMQ.
      *
-     * @var ProcessMQ\RabbitMQConnection;
+     * @var \ProcessMQ\Connection\RabbitMQConnection
      */
     protected $connection;
 
@@ -27,6 +27,7 @@ class RabbitMQPersister implements PersisterInterface
     /**
      * Sets the options for this persister. The available options are:
      *
+     * @param array $options 
      * - connection: The connection name for rabbitmq as configured in ConnectionManager
      * - delivery_mode: The delivery_mode to use for each message (default: 2 for persisting messages in disk)
      * - exchange: The exchange name where to publish the messages
@@ -46,9 +47,9 @@ class RabbitMQPersister implements PersisterInterface
     }
 
     /**
-     * Persists all of the audit log event objects that are provided.
+     * Persists all the audit log event objects that are provided.
      *
-     * @param array $auditLogs An array of EventInterface objects
+     * @param \AuditStash\EventInterface[] $auditLogs An array of EventInterface objects
      * @return void
      */
     public function logEvents(array $auditLogs)
@@ -65,8 +66,8 @@ class RabbitMQPersister implements PersisterInterface
      * Sets the client connection to elastic search when passed.
      * If no arguments are provided, it returns the current connection.
      *
-     * @param ProcessMQ\RabbitMQConnection|null $connection The conneciton to elastic search
-     * @return ProcessMQ\RabbitMQConnection
+     * @param \ProcessMQ\Connection\RabbitMQConnection|null $connection The conneciton to elastic search
+     * @return \ProcessMQ\Connection\RabbitMQConnection
      */
     public function connection($connection = null)
     {
