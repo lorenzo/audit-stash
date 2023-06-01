@@ -12,7 +12,7 @@ jobs:
         operating-system: [ ubuntu-20.04 ]
         php-versions: ['7.2', '7.3', '7.4', '8.0', '8.1', '8.2']
 
-    name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
+    name: PHP ${{ matrix.php-versions }} Test 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -116,7 +116,7 @@ jobs:
           --health-timeout 5s
           --health-retries 10
 
-    name: CakePHP ${{ matrix.version }} Test
+    name: Elastic Search Integration Test
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -130,7 +130,7 @@ jobs:
       - name: PHP Version
         run: php -v
 
-      - name: CakePHP ${{matrix.version}} Compatability
+      - name: Test
         env:
           elastic_dsn: Cake\ElasticSearch\Datasource\Connection://127.0.0.1:${{ job.services.elasticsearch.ports['9200'] }}?driver=Cake\ElasticSearch\Datasource\Connection
         run: |
