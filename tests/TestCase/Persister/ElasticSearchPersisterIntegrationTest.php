@@ -1,6 +1,6 @@
 <?php
 
-namespace AuditStash\Test\Persister;
+namespace AuditStash\Test\TestCase\Persister;
 
 use AuditStash\Event\AuditCreateEvent;
 use AuditStash\Event\AuditDeleteEvent;
@@ -35,6 +35,7 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
     public function testLogSingleCreateEvent()
     {
         $client = ConnectionManager::get('test_elastic');
+
         $persister = new ElasticSearchPersister(['connection' => $client, 'index' => 'article', 'type' => 'article']);
         $data = [
             'title' => 'A new article',

@@ -12,6 +12,20 @@ jobs:
         operating-system: [ ubuntu-20.04 ]
         php-versions: ['7.2', '7.3', '7.4', '8.0', '8.1', '8.2']
 
+    services:
+      elasticsearch:
+        image: elasticsearch:7.11.1
+        ports:
+          - 9200/tcp
+        env:
+          discovery.type: single-node
+          ES_JAVA_OPTS: -Xms500m -Xmx500m
+        options: >-
+          --health-cmd "curl http://127.0.0.1:9200/_cluster/health"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
     name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
     steps:
       - name: Checkout
@@ -22,19 +36,6 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, intl, xdebug
-
-      - name: Configure sysctl limits
-        run: |
-          sudo swapoff -a
-          sudo sysctl -w vm.swappiness=1
-          sudo sysctl -w fs.file-max=262144
-          sudo sysctl -w vm.max_map_count=262144
-
-      - name: Runs Elasticsearch
-        uses: elastic/elastic-github-actions/elasticsearch@24006c82ed2f0f1355fce96135f883acf1b1a889
-        with:
-          stack-version: 6.2.4
-          security-enabled: false
 
       - name: PHP Version
         run: php -v
@@ -49,7 +50,7 @@ jobs:
       - name: Test Suite
         run: |
           composer test
-          echo ${{ matrix.php-versions }}
+          vendor/bin/phpunit tests/TestCase/Persister/ElasticSearchPersisterIntegrationTest.php
 
   #
   # CakePHP version compatability
@@ -59,6 +60,20 @@ jobs:
     strategy:
       matrix:
         version: ['~4.0.0', '~4.1.0', '~4.2.0', '~4.3.0']
+
+    services:
+      elasticsearch:
+        image: elasticsearch:7.11.1
+        ports:
+          - 9200/tcp
+        env:
+          discovery.type: single-node
+          ES_JAVA_OPTS: -Xms500m -Xmx500m
+        options: >-
+          --health-cmd "curl http://127.0.0.1:9200/_cluster/health"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
 
     name: CakePHP ${{ matrix.version }} Test
     steps:
@@ -74,19 +89,6 @@ jobs:
       - name: PHP Version
         run: php -v
 
-      - name: Configure sysctl limits
-        run: |
-          sudo swapoff -a
-          sudo sysctl -w vm.swappiness=1
-          sudo sysctl -w fs.file-max=262144
-          sudo sysctl -w vm.max_map_count=262144
-
-      - name: Runs Elasticsearch
-        uses: elastic/elastic-github-actions/elasticsearch@24006c82ed2f0f1355fce96135f883acf1b1a889
-        with:
-          stack-version: 6.2.4
-          security-enabled: false
-
       - name: CakePHP ${{matrix.version}} Compatability
         run: |
           composer self-update
@@ -94,12 +96,27 @@ jobs:
           composer require cakephp/cakephp:${{matrix.version}} --no-update
           composer install --prefer-dist --no-progress
           composer test
+          vendor/bin/phpunit tests/TestCase/Persister/ElasticSearchPersisterIntegrationTest.php
 
   compatibility_cakephp4:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         version: ['~4.4.0']
+
+    services:
+      elasticsearch:
+        image: elasticsearch:7.11.1
+        ports:
+          - 9200/tcp
+        env:
+          discovery.type: single-node
+          ES_JAVA_OPTS: -Xms500m -Xmx500m
+        options: >-
+          --health-cmd "curl http://127.0.0.1:9200/_cluster/health"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
 
     name: CakePHP ${{ matrix.version }} Test
     steps:
@@ -115,19 +132,6 @@ jobs:
       - name: PHP Version
         run: php -v
 
-      - name: Configure sysctl limits
-        run: |
-          sudo swapoff -a
-          sudo sysctl -w vm.swappiness=1
-          sudo sysctl -w fs.file-max=262144
-          sudo sysctl -w vm.max_map_count=262144
-
-      - name: Runs Elasticsearch
-        uses: elastic/elastic-github-actions/elasticsearch@24006c82ed2f0f1355fce96135f883acf1b1a889
-        with:
-          stack-version: 6.2.4
-          security-enabled: false
-
       - name: CakePHP ${{matrix.version}} Compatability
         run: |
           composer self-update
@@ -135,3 +139,4 @@ jobs:
           composer require cakephp/cakephp:${{matrix.version}} --no-update
           composer install --prefer-dist --no-progress
           composer test
+          vendor/bin/phpunit tests/TestCase/Persister/ElasticSearchPersisterIntegrationTest.php
