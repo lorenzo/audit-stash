@@ -12,20 +12,6 @@ jobs:
         operating-system: [ ubuntu-20.04 ]
         php-versions: ['7.2', '7.3', '7.4', '8.0', '8.1', '8.2']
 
-    services:
-      elasticsearch:
-        image: elasticsearch:7.11.1
-        ports:
-          - 9200/tcp
-        env:
-          discovery.type: single-node
-          ES_JAVA_OPTS: -Xms500m -Xmx500m
-        options: >-
-          --health-cmd "curl http://127.0.0.1:9200/_cluster/health"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
-
     name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
     steps:
       - name: Checkout
@@ -50,7 +36,6 @@ jobs:
       - name: Test Suite
         run: |
           composer test
-          vendor/bin/phpunit tests/TestCase/Persister/ElasticSearchPersisterIntegrationTest.php
 
   #
   # CakePHP version compatability
@@ -60,20 +45,6 @@ jobs:
     strategy:
       matrix:
         version: ['~4.0.0', '~4.1.0', '~4.2.0', '~4.3.0']
-
-    services:
-      elasticsearch:
-        image: elasticsearch:7.11.1
-        ports:
-          - 9200/tcp
-        env:
-          discovery.type: single-node
-          ES_JAVA_OPTS: -Xms500m -Xmx500m
-        options: >-
-          --health-cmd "curl http://127.0.0.1:9200/_cluster/health"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
 
     name: CakePHP ${{ matrix.version }} Test
     steps:
@@ -96,9 +67,37 @@ jobs:
           composer require cakephp/cakephp:${{matrix.version}} --no-update
           composer install --prefer-dist --no-progress
           composer test
-          vendor/bin/phpunit tests/TestCase/Persister/ElasticSearchPersisterIntegrationTest.php
 
   compatibility_cakephp4:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: ['~4.4.0']
+
+    name: CakePHP ${{ matrix.version }} Test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          extensions: mbstring, intl
+
+      - name: PHP Version
+        run: php -v
+
+      - name: CakePHP ${{matrix.version}} Compatability
+        run: |
+          composer self-update
+          rm -rf composer.lock
+          composer require cakephp/cakephp:${{matrix.version}} --no-update
+          composer install --prefer-dist --no-progress
+          composer test
+          vendor/bin/phpunit tests/TestCase/Persister/ElasticSearchPersisterIntegrationTest.php
+
+  elastic_integration_test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -133,10 +132,11 @@ jobs:
         run: php -v
 
       - name: CakePHP ${{matrix.version}} Compatability
+        env:
+          elastic_dsn: Cake\ElasticSearch\Datasource\Connection://127.0.0.1:${{ job.services.elasticsearch.ports['9200'] }}?driver=Cake\ElasticSearch\Datasource\Connection
         run: |
           composer self-update
           rm -rf composer.lock
           composer require cakephp/cakephp:${{matrix.version}} --no-update
           composer install --prefer-dist --no-progress
-          composer test
           vendor/bin/phpunit tests/TestCase/Persister/ElasticSearchPersisterIntegrationTest.php
