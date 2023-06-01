@@ -94,6 +94,7 @@ jobs:
           composer require cakephp/cakephp:${{matrix.version}} --no-update
           composer install --prefer-dist --no-progress
           composer test
+          vendor/bin/phpunit tests/TestCase/Persister/ElasticSearchPersisterIntegrationTest.php
 
   compatibility_cakephp4:
     runs-on: ubuntu-latest
