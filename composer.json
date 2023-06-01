@@ -26,7 +26,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "AuditStash\\Test\\": "tests/TestCase",
+            "AuditStash\\Test\\": "tests/",
             "Cake\\Test\\": "./vendor/cakephp/cakephp/tests"
         }
     },
