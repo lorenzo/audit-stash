@@ -78,7 +78,7 @@ class ElasticSearchPersister implements PersisterInterface
     /**
      * Persists all the audit log event objects that are provided.
      *
-     * @param array $auditLogs An array of EventInterface objects
+     * @param \AuditStash\EventInterface[] $auditLogs An array of EventInterface objects
      * @return void
      */
     public function logEvents(array $auditLogs)
@@ -93,7 +93,7 @@ class ElasticSearchPersister implements PersisterInterface
     /**
      * Transforms the EventInterface objects to Elastica Documents.
      *
-     * @param array $auditLogs An array of EventInterface objects.
+     * @param \AuditStash\EventInterface[] $auditLogs An array of EventInterface objects.
      * @return array
      */
     protected function transformToDocuments($auditLogs)

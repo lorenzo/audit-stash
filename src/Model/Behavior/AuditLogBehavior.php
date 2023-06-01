@@ -196,8 +196,8 @@ class AuditLogBehavior extends Behavior
      * Sets the persister object to use for logging all audit events.
      * If called with no arguments, it will return the currently configured persister.
      *
-     * @param PersisterInterface $persister The persister object to use
-     * @return PersisterInterface The configured persister
+     * @param \AuditStash\PersisterInterface $persister The persister object to use
+     * @return \AuditStash\PersisterInterface The configured persister
      */
     public function persister(PersisterInterface $persister = null)
     {

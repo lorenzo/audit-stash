@@ -47,6 +47,7 @@ trait SerializableEventTrait
      *
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     protected function basicSerialize()
     {
         return [
