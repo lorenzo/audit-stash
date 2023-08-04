@@ -169,8 +169,9 @@ class TablePersister implements PersisterInterface
      *
      * @param \AuditStash\EventInterface[] $auditLogs List of EventInterface objects to persist
      * @return void
+     * @throws \Exception
      */
-    public function logEvents(array $auditLogs)
+    public function logEvents(array $auditLogs): void
     {
         $PersisterTable = $this->getTable();
 

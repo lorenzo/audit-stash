@@ -51,9 +51,9 @@ trait SerializableEventTrait
     /**
      * Returns an array with the basic variables that should be json serialized.
      *
-     * @return mixed
+     * @return array
      */
-    protected function basicSerialize(): mixed
+    protected function basicSerialize(): array
     {
         return [
             'type' => $this->getEventType(),
