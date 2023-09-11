@@ -1,6 +1,6 @@
 <?php
 
-namespace AuditStash\Test\Persister;
+namespace AuditStash\Test\TestCase\Persister;
 
 use AuditStash\Event\AuditDeleteEvent;
 use AuditStash\Meta\RequestMetadata;

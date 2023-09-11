@@ -29,9 +29,9 @@ abstract class BaseEvent implements EventInterface
     protected $original;
 
     /**
-     * Construnctor.
+     * Constructor.
      *
-     * @param string $transationId The global transaction id
+     * @param string $transactionId The global transaction id
      * @param mixed $id The entities primary key
      * @param string $source The name of the source (table)
      * @param array $changed The array of changes that got detected for the entity
@@ -77,9 +77,10 @@ abstract class BaseEvent implements EventInterface
     /**
      * Returns the array to be used for encoding this object as json.
      *
-     * @return array
+     * @return mixed
      */
-    public function jsonSerialize(): mixed
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize()
     {
         return $this->basicSerialize() + [
             'original' => $this->original,
