@@ -18,11 +18,14 @@ trait SerializableEventTrait
     }
 
     /**
-     * @inheritDoc
+     * Takes the string representation of this object so it can be reconstructed.
+     *
+     * @param string $data serialized string
+     * @return void
      */
-    public function __serialize(): array
+    public function unserialize($data)
     {
-        return $this->serialize();
+        $this->__unserialize($data);
     }
 
     /**
@@ -31,7 +34,7 @@ trait SerializableEventTrait
      * @param string $data serialized string
      * @return void
      */
-    public function unserialize($data)
+    public function __unserialize($data)
     {
         $vars = unserialize($data);
         foreach ($vars as $var => $value) {
@@ -40,19 +43,12 @@ trait SerializableEventTrait
     }
 
     /**
-     * @inheritDoc
-     */
-    public function __unserialize(array $data): void
-    {
-        $this->unserialize($data);
-    }
-
-    /**
      * Returns an array with the basic variables that should be json serialized.
      *
      * @return mixed
      */
-    protected function basicSerialize(): mixed
+    #[\ReturnTypeWillChange]
+    protected function basicSerialize()
     {
         return [
             'type' => $this->getEventType(),

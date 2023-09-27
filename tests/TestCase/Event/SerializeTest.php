@@ -1,6 +1,6 @@
 <?php
 
-namespace AuditStash\Test\Event;
+namespace AuditStash\Test\TestCase\Event;
 
 use AuditStash\Event\AuditCreateEvent;
 use AuditStash\Event\AuditDeleteEvent;

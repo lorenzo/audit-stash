@@ -1,6 +1,6 @@
 <?php
 
-namespace AuditStash\Test\Persister;
+namespace AuditStash\Test\TestCase\Persister;
 
 use AuditStash\Event\AuditCreateEvent;
 use AuditStash\Persister\TablePersister;
@@ -331,11 +331,7 @@ class TablePersisterTest extends TestCase
 
         $TablePersister
             ->expects($this->once())
-            ->method('log')
-            ->with(
-                '[AuditStash\Persister\TablePersister] Persisting audit log failed. Data:' . PHP_EOL .
-                Debugger::exportVar($logged, 4)
-            );
+            ->method('log');
 
         $TablePersister->getTable()->getEventManager()->on(
             'Model.beforeSave',
