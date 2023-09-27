@@ -142,7 +142,7 @@ class AuditLogBehavior extends Behavior
     /**
      * Persists all audit log events stored in the `_eventQueue` key inside $options.
      *
-     * @param \Cake\Event\Event The Model event that is enclosed inside a transaction
+     * @param \Cake\Event\Event $event The Model event that is enclosed inside a transaction
      * @param \Cake\Datasource\EntityInterface $entity The entity that is to be saved or deleted
      * @param ArrayObject $options Options array containing the `_auditQueue` key
      * @return void
@@ -171,7 +171,7 @@ class AuditLogBehavior extends Behavior
     /**
      * Persists all audit log events stored in the `_eventQueue` key inside $options.
      *
-     * @param \Cake\Event\Event The Model event that is enclosed inside a transaction
+     * @param \Cake\Event\Event $event The Model event that is enclosed inside a transaction
      * @param \Cake\Datasource\EntityInterface $entity The entity that is to be saved or deleted
      * @param ArrayObject $options Options array containing the `_auditQueue` key
      * @return void

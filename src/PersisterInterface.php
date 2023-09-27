@@ -12,7 +12,7 @@ interface PersisterInterface
     /**
      * Persists each of the passed EventInterface objects.
      *
-     * @param array $auditLogs List of EventInterface objects to persist
+     * @param \AuditStash\EventInterface[] $auditLogs List of EventInterface objects to persist
      * @return void
      */
     public function logEvents(array $auditLogs): void;

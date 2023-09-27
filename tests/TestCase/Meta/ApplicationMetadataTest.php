@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace AuditStash\Test\Meta;
+namespace AuditStash\Test\TestCase\Meta;
 
 use AuditStash\Event\AuditDeleteEvent;
 use AuditStash\Meta\ApplicationMetadata;

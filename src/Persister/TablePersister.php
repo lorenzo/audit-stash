@@ -173,7 +173,7 @@ class TablePersister implements PersisterInterface
      */
     public function logEvents(array $auditLogs): void
     {
-        $PersisterTable = $this->getTable();
+        $persisterTable = $this->getTable();
 
         $serializeFields = $this->getConfig('serializeFields');
         $primaryKeyExtractionStrategy = $this->getConfig('primaryKeyExtractionStrategy');
@@ -188,9 +188,9 @@ class TablePersister implements PersisterInterface
                 $log, $extractMetaFields, $unsetExtractedMetaFields, $serializeFields
             );
 
-            $persisterEntity = $PersisterTable->newEntity($fields);
+            $persisterEntity = $persisterTable->newEntity($fields);
 
-            if (!$PersisterTable->save($persisterEntity) &&
+            if (!$persisterTable->save($persisterEntity) &&
                 $logErrors
             ) {
                 $this->log($this->toErrorLog($persisterEntity));

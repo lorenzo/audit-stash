@@ -7,10 +7,11 @@ use AuditStash\Exception;
 use AuditStash\PersisterInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\ElasticSearch\Datasource\Connection;
+use Elastica\Client;
 use Elastica\Document;
 
 /**
- * Implementes audit logs events persisting using Elasticsearch.
+ * Implements audit logs events persisting using Elasticsearch.
  */
 class ElasticSearchPersister implements PersisterInterface
 {
@@ -50,6 +51,7 @@ class ElasticSearchPersister implements PersisterInterface
      * - index: The Elasticsearch index to store documents
      * - type: The Elasticsearch mapping type of documents
      *
+     * @param array $options
      * @return void
      * @throws \AuditStash\Exception
      */
@@ -75,23 +77,24 @@ class ElasticSearchPersister implements PersisterInterface
     }
 
     /**
-     * Persists all of the audit log event objects that are provided.
+     * Persists all the audit log event objects that are provided.
      *
-     * @param array $auditLogs An array of EventInterface objects
+     * @param \AuditStash\EventInterface[] $auditLogs An array of EventInterface objects
      * @return void
      */
     public function logEvents(array $auditLogs): void
     {
-        $client = $this->getConnection();
         $documents = $this->transformToDocuments($auditLogs);
 
+        $connection = $this->getConnection();
+        $client = $connection->getDriver();
         $client->addDocuments($documents);
     }
 
     /**
      * Transforms the EventInterface objects to Elastica Documents.
      *
-     * @param array $auditLogs An array of EventInterface objects.
+     * @param \AuditStash\EventInterface[] $auditLogs An array of EventInterface objects.
      * @return array
      */
     protected function transformToDocuments(array $auditLogs): array
@@ -137,7 +140,7 @@ class ElasticSearchPersister implements PersisterInterface
     /**
      * Sets the client connection to elastic search.
      *
-     * @param \Cake\ElasticSearch\Datasource\Connection $connection The conneciton to elastic search
+     * @param \Cake\ElasticSearch\Datasource\Connection $connection The connection to elastic search
      * @return $this
      */
     public function setConnection(Connection $connection): static
@@ -152,7 +155,7 @@ class ElasticSearchPersister implements PersisterInterface
      *
      * If connection is not defined, create a new one.
      *
-     * @return \Elastica\Client
+     * @return \Cake\ElasticSearch\Datasource\Connection
      */
     public function getConnection()
     {
@@ -167,12 +170,13 @@ class ElasticSearchPersister implements PersisterInterface
      * Sets the client connection to elastic search when passed.
      * If no arguments are provided, it returns the current connection.
      *
-     * @deprecated Use getConnection()/setConnection() instead
-     * @param \Elastica\Client $connection The conneciton to elastic search
+     * @param \Elastica\Client|null $connection The connection to elastic search
      * @return \Elastica\Client
+     * @deprecated Use getConnection()/setConnection() instead
      */
     public function connection(Client $connection = null)
     {
+        deprecationWarning('Use getConnection()/setConnection() instead');
         if ($connection !== null) {
             return $this->setConnection($connection);
         }

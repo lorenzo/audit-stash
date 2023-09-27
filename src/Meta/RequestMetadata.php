@@ -52,8 +52,7 @@ class RequestMetadata implements EventListenerInterface
     }
 
     /**
-     * Enriches all of the passed audit logs to add the request
-     * info metadata.
+     * Enriches all the passed audit logs to add the request info metadata.
      *
      * @param \Cake\Event\Event $event The AuditStash.beforeLog event
      * @param array $logs The audit log event objects

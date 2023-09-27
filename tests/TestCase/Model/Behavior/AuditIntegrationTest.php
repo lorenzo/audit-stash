@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace AuditStash\Test\Model\Behavior;
+namespace AuditStash\Test\TestCase\Model\Behavior;
 
 use AuditStash\Event\AuditCreateEvent;
 use AuditStash\Event\AuditDeleteEvent;

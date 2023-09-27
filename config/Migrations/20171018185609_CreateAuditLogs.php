@@ -7,7 +7,7 @@ class CreateAuditLogs extends AbstractMigration
 {
     public $autoId = false;
 
-    public function up()
+    public function up(): void
     {
         $this->table('audit_logs')
             ->addColumn('id', 'integer', [
@@ -97,7 +97,7 @@ class CreateAuditLogs extends AbstractMigration
             ->create();
     }
 
-    public function down()
+    public function down(): void
     {
         $this->dropTable('audit_logs');
     }

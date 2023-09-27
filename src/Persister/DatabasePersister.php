@@ -23,12 +23,13 @@ class DatabasePersister implements PersisterInterface
     /**
      * Persists all the audit log event objects that are provided
      *
-     * @param array $auditLogs An array of EventInterface objects
+     * @param \AuditStash\EventInterface[] $auditLogs An array of EventInterface objects
      * @return void
      * @throws \Exception
      */
     public function logEvents(array $auditLogs): void
     {
+        deprecationWarning('Use \AuditStash\Persister\TablePersister instead');
         foreach ($auditLogs as $log) {
             $eventType = $log->getEventType();
             $primaryKey = $log->getId();

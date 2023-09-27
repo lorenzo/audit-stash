@@ -19,7 +19,7 @@ class AuditDeleteEvent implements EventInterface
     /**
      * Constructor.
      *
-     * @param string $transactionId
+     * @param string $transactionId The global transaction id
      * @param mixed $id The primary key record that got deleted
      * @param string $source The name of the source (table) where the record was deleted
      * @param string|null $parentSource The name of the source (table) that triggered this change
