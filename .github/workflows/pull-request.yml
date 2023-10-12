@@ -5,14 +5,12 @@ on:
 
 jobs:
   build:
+    name: PHP ${{ matrix.php-versions }} Test
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         operating-system: [ ubuntu-20.04 ]
         php-versions: ['7.2', '7.3', '7.4', '8.0', '8.1', '8.2']
-
-    name: PHP ${{ matrix.php-versions }} Test 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -41,12 +39,11 @@ jobs:
   # CakePHP version compatability
   #
   compatibility:
+    name: CakePHP ${{ matrix.version }} Test
     runs-on: ubuntu-latest
     strategy:
       matrix:
         version: ['~4.0.0', '~4.1.0', '~4.2.0', '~4.3.0']
-
-    name: CakePHP ${{ matrix.version }} Test
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -69,12 +66,11 @@ jobs:
           composer test
 
   compatibility_cakephp4:
+    name: CakePHP 4.4 Test
     runs-on: ubuntu-latest
     strategy:
       matrix:
         version: ['~4.4.0']
-
-    name: CakePHP ${{ matrix.version }} Test
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -97,6 +93,7 @@ jobs:
           composer test
 
   elastic_integration_test:
+    name: Elastic Search Integration Test
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -115,8 +112,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 10
-
-    name: Elastic Search Integration Test
     steps:
       - name: Checkout
         uses: actions/checkout@v2
