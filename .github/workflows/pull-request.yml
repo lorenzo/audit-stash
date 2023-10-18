@@ -72,7 +72,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        version: ['~4.4.0']
+        version: ['~4.4.0', '~4.5.0']
 
     name: CakePHP ${{ matrix.version }} Test
     steps:
@@ -100,7 +100,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        version: ['~4.4.0']
+        version: ['^4.2']
 
     services:
       elasticsearch:
