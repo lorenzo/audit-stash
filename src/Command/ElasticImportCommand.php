@@ -26,27 +26,27 @@ class ElasticImportCommand extends Command
             ->addOption('from', [
                 'short' => 'f',
                 'help' => 'The date from which to start importing audit logs',
-                'default' => 'now'
+                'default' => 'now',
             ])
             ->addOption('until', [
                 'short' => 'u',
                 'help' => 'The date in which to stop importing audit logs',
-                'default' => 'now'
+                'default' => 'now',
             ])->addOption('models', [
                 'short' => 'm',
-                'help' => 'A comma separated list of model names to import'
+                'help' => 'A comma separated list of model names to import',
             ])
             ->addOption('exclude-models', [
                 'short' => 'e',
-                'help' => 'A comma separated list of model names to skip importing'
+                'help' => 'A comma separated list of model names to skip importing',
             ])
             ->addOption('type-map', [
                 'short' => 't',
-                'help' => 'A comma separated list of model:type pairs (for example ParentCategory:categories)'
+                'help' => 'A comma separated list of model:type pairs (for example ParentCategory:categories)',
             ])
             ->addOption('extra-meta', [
                 'short' => 'a',
-                'help' => 'A comma separated list of key:value pairs to store in meta (for example app_name:frontend)'
+                'help' => 'A comma separated list of key:value pairs to store in meta (for example app_name:frontend)',
             ]);
     }
 
@@ -59,7 +59,7 @@ class ElasticImportCommand extends Command
         $meta = [];
 
         $featureList = function ($element) {
-            list($k, $v) = explode(':', $element);
+            [$k, $v] = explode(':', $element);
             yield $k => $v;
         };
 
@@ -103,6 +103,7 @@ class ElasticImportCommand extends Command
                 if (!empty($this->params['models'])) {
                     $exp->in('Audits.model', explode(',', $this->params['models']));
                 }
+
                 return $exp;
             })
             ->matching('AuditDeltas')
@@ -181,6 +182,7 @@ class ElasticImportCommand extends Command
         if (is_string($value) && str_starts_with($value, '0000-00-00')) {
             return '';
         }
+
         return $value;
     }
 
@@ -237,7 +239,7 @@ class ElasticImportCommand extends Command
                 'ip' => $audit['source_ip'],
                 'url' => $audit['source_url'],
                 'user' => $audit['source_id'],
-            ]
+            ],
         ];
 
         $index = sprintf($index, \DateTime::createFromFormat('Y-m-d H:i:s', $audit['created'])->format('-Y.m.d'));
@@ -256,6 +258,7 @@ class ElasticImportCommand extends Command
     {
         if (empty($documents)) {
             $this->log('No more documents to index', 'info');
+
             return;
         }
         $this->log(sprintf('Indexing %d documents', count($documents)), 'info');

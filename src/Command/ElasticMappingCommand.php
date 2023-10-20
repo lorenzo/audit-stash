@@ -26,17 +26,17 @@ class ElasticMappingCommand extends Command
             ->addArgument('table', [
                 'short' => 't',
                 'help' => 'The name of the database table to inspect and create a mapping for',
-                'required' => true
+                'required' => true,
             ])
             ->addOption('use-templates', [
                 'short' => 'u',
                 'help' => 'Creates mapping templates instead of creating the mapping directly',
-                'boolean' => true
+                'boolean' => true,
             ])
             ->addOption('dry-run', [
                 'short' => 'd',
                 'help' => 'Do not create the mapping, just output it to the screen',
-                'boolean' => true
+                'boolean' => true,
             ]);
     }
 
@@ -132,7 +132,7 @@ class ElasticMappingCommand extends Command
         if ($args->getOption('use-templates')) {
             $template = [
                 'template' => sprintf($indexName, '*'),
-                'mappings' => $elasticMapping->toArray()
+                'mappings' => $elasticMapping->toArray(),
             ];
             $response = $client->request('_template/template_' . $type, Request::PUT, $template);
             $io->out('Successfully created the mapping template');
@@ -160,6 +160,7 @@ class ElasticMappingCommand extends Command
     protected function mapType(TableSchema $schema, string $column): array
     {
         $baseType = $schema->baseColumnType($column);
+
         return match ($baseType) {
             'uuid' => [
                 'type' => 'text',

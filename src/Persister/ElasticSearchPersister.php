@@ -54,7 +54,7 @@ class ElasticSearchPersister implements PersisterInterface
      * @return void
      * @throws \AuditStash\Exception
      */
-    public function __construct($options = [])
+    public function __construct(array $options = [])
     {
         if (isset($options['connection'])) {
             $this->setConnection($options['connection']);
@@ -78,7 +78,7 @@ class ElasticSearchPersister implements PersisterInterface
     /**
      * Persists all the audit log event objects that are provided.
      *
-     * @param \AuditStash\EventInterface[] $auditLogs An array of EventInterface objects
+     * @param array<\AuditStash\EventInterface> $auditLogs An array of EventInterface objects
      * @return void
      */
     public function logEvents(array $auditLogs): void
@@ -93,7 +93,7 @@ class ElasticSearchPersister implements PersisterInterface
     /**
      * Transforms the EventInterface objects to Elastica Documents.
      *
-     * @param \AuditStash\EventInterface[] $auditLogs An array of EventInterface objects.
+     * @param array<\AuditStash\EventInterface> $auditLogs An array of EventInterface objects.
      * @return array
      */
     protected function transformToDocuments(array $auditLogs): array
@@ -114,7 +114,7 @@ class ElasticSearchPersister implements PersisterInterface
                 'parent_source' => $log->getParentSourceName(),
                 'original' => $eventType === 'delete' ? null : $log->getOriginal(),
                 'changed' => $eventType === 'delete' ? null : $log->getChanged(),
-                'meta' => $log->getMetaInfo()
+                'meta' => $log->getMetaInfo(),
             ];
             $id = $this->useTransactionId ? $log->getTransactionId() : '';
             $documents[] = new Document($id, $data, $type, $index);
@@ -156,7 +156,7 @@ class ElasticSearchPersister implements PersisterInterface
      *
      * @return \Cake\ElasticSearch\Datasource\Connection
      */
-    public function getConnection()
+    public function getConnection(): Connection
     {
         if ($this->connection === null) {
             $this->connection = ConnectionManager::get('auditlog_elastic');
@@ -171,7 +171,7 @@ class ElasticSearchPersister implements PersisterInterface
      * @param string $index Name of the Elasticsearch index
      * @return $this
      */
-    public function setIndex($index)
+    public function setIndex(string $index)
     {
         $this->index = $index;
 
@@ -183,7 +183,7 @@ class ElasticSearchPersister implements PersisterInterface
      *
      * @return string Name of the Elasticsearch index
      */
-    public function getIndex()
+    public function getIndex(): string
     {
         return sprintf($this->index, '-' . gmdate('Y.m.d'));
     }
@@ -194,7 +194,7 @@ class ElasticSearchPersister implements PersisterInterface
      * @param string $type Name of the Elasticsearch mapping type
      * @return $this
      */
-    public function setType($type)
+    public function setType(string $type)
     {
         $this->type = $type;
 
@@ -206,7 +206,7 @@ class ElasticSearchPersister implements PersisterInterface
      *
      * @return string Name of the Elasticsearch mapping type
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }

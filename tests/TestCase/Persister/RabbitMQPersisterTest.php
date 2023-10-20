@@ -29,7 +29,7 @@ class RabbitMQPersisterTest extends TestCase
             'title' => 'A new article',
             'body' => 'article body',
             'author_id' => 1,
-            'published' => 'Y'
+            'published' => 'Y',
         ];
 
         $events[] = new AuditCreateEvent('1234', 50, 'articles', $data, $data);
@@ -60,7 +60,7 @@ class RabbitMQPersisterTest extends TestCase
             'title' => 'A new article',
             'body' => 'article body',
             'author_id' => 1,
-            'published' => 'Y'
+            'published' => 'Y',
         ];
 
         $events[] = new AuditCreateEvent('1234', 50, 'articles', $data, $data);

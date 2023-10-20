@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace AuditStash\Test\TestCase\Persister;
 
@@ -39,7 +40,7 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
             'title' => 'A new article',
             'body' => 'article body',
             'author_id' => 1,
-            'published' => 'Y'
+            'published' => 'Y',
         ];
 
         $events[] = new AuditCreateEvent('1234', 50, 'articles', $data, $data);
@@ -64,15 +65,15 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
                 'title' => 'A new article',
                 'body' => 'article body',
                 'author_id' => 1,
-                'published' => 'Y'
+                'published' => 'Y',
             ],
             'changed' => [
                 'title' => 'A new article',
                 'body' => 'article body',
                 'author_id' => 1,
-                'published' => 'Y'
+                'published' => 'Y',
             ],
-            'meta' => []
+            'meta' => [],
         ];
         unset($articles[0]['id'], $articles[0]['@timestamp']);
         $this->assertEquals($expected, $articles[0]->toArray());
@@ -89,11 +90,11 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
         $persister = new ElasticSearchPersister(['connection' => $client, 'index' => 'article', 'type' => 'article']);
         $original = [
             'title' => 'Old article title',
-            'published' => 'N'
+            'published' => 'N',
         ];
         $changed = [
             'title' => 'A new article',
-            'published' => 'Y'
+            'published' => 'Y',
         ];
 
         $events[] = new AuditUpdateEvent('1234', 50, 'articles', $changed, $original);
@@ -116,7 +117,7 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
             'parent_source' => 'authors',
             'original' => $original,
             'changed' => $changed,
-            'meta' => []
+            'meta' => [],
         ];
         unset($articles[0]['id'], $articles[0]['@timestamp']);
         $this->assertEquals($expected, $articles[0]->toArray());
@@ -152,7 +153,7 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
             'parent_source' => 'authors',
             'original' => null,
             'changed' => null,
-            'meta' => []
+            'meta' => [],
         ];
         unset($articles[0]['id'], $articles[0]['@timestamp']);
         $this->assertEquals($expected, $articles[0]->toArray());
@@ -171,17 +172,17 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
 
         $data = [
             'id' => 3,
-            'tag' => 'cakephp'
+            'tag' => 'cakephp',
         ];
         $events[] = new AuditCreateEvent('1234', 4, 'tags', $data, $data);
 
         $original = [
             'title' => 'Old article title',
-            'published' => 'N'
+            'published' => 'N',
         ];
         $changed = [
             'title' => 'A new article',
-            'published' => 'Y'
+            'published' => 'Y',
         ];
         $events[] = new AuditUpdateEvent('1234', 2, 'authors', $changed, $original);
         $events[] = new AuditDeleteEvent('1234', 50, 'articles');
@@ -210,11 +211,11 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
         $persister = new ElasticSearchPersister(['connection' => $client, 'index' => 'article', 'type' => 'article']);
         $original = [
             'title' => 'Old article title',
-            'published_date' => new Time('2015-04-12 20:20:21')
+            'published_date' => new Time('2015-04-12 20:20:21'),
         ];
         $changed = [
             'title' => 'A new article',
-            'published_date' => new Time('2015-04-13 20:20:21')
+            'published_date' => new Time('2015-04-13 20:20:21'),
         ];
 
         $events[] = new AuditUpdateEvent('1234', 50, 'articles', $changed, $original);
@@ -237,13 +238,13 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
             'parent_source' => null,
             'original' => [
                 'title' => 'Old article title',
-                'published_date' => '2015-04-12T20:20:21+00:00'
+                'published_date' => '2015-04-12T20:20:21+00:00',
             ],
             'changed' => [
                 'title' => 'A new article',
-                'published_date' => '2015-04-13T20:20:21+00:00'
+                'published_date' => '2015-04-13T20:20:21+00:00',
             ],
-            'meta' => []
+            'meta' => [],
         ];
         unset($articles[0]['id'], $articles[0]['@timestamp']);
         $this->assertEquals($expected, $articles[0]->toArray());

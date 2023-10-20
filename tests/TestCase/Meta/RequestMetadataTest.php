@@ -32,7 +32,7 @@ class RequestMetadataTest extends TestCase
         $expected = [
             'ip' => '12345',
             'url' => '/things?a=b',
-            'user' => 'jose'
+            'user' => 'jose',
         ];
         $this->assertEquals($expected, $logs[0]->getMetaInfo());
     }

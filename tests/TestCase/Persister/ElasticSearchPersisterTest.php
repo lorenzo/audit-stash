@@ -31,13 +31,13 @@ class ElasticSearchPersisterTest extends TestCase
             ->willReturn($clientMock);
 
         $persister = new ElasticSearchPersister([
-            'connection' => $connectionMock, 'index' => 'article', 'type' => 'article'
+            'connection' => $connectionMock, 'index' => 'article', 'type' => 'article',
         ]);
         $data = [
             'title' => 'A new article',
             'body' => 'article body',
             'author_id' => 1,
-            'published' => 'Y'
+            'published' => 'Y',
         ];
 
         $events[] = new AuditCreateEvent('1234', 50, 'articles', $data, $data);

@@ -7,6 +7,7 @@ use AuditStash\PersisterInterface;
 use Cake\Core\InstanceConfigTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Table;
+use InvalidArgumentException;
 
 /**
  * A persister that uses the ORM API to persist audit logs.
@@ -23,28 +24,28 @@ class TablePersister implements PersisterInterface
      *
      * @var string
      */
-    const STRATEGY_AUTOMATIC = 'automatic';
+    public const STRATEGY_AUTOMATIC = 'automatic';
 
     /**
      * Strategy that extracts data as separate fields/properties.
      *
      * @var string
      */
-    const STRATEGY_PROPERTIES = 'properties';
+    public const STRATEGY_PROPERTIES = 'properties';
 
     /**
      * Strategy that extracts data as is.
      *
      * @var string
      */
-    const STRATEGY_RAW = 'raw';
+    public const STRATEGY_RAW = 'raw';
 
     /**
      * Strategy that extracts data serialized in JSON format.
      *
      * @var string
      */
-    const STRATEGY_SERIALIZED = 'serialized';
+    public const STRATEGY_SERIALIZED = 'serialized';
 
     /**
      * The default configuration.
@@ -111,7 +112,7 @@ class TablePersister implements PersisterInterface
      *
      * @var array
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'extractMetaFields' => false,
         'logErrors' => true,
         'primaryKeyExtractionStrategy' => self::STRATEGY_AUTOMATIC,
@@ -125,14 +126,14 @@ class TablePersister implements PersisterInterface
      *
      * @var \Cake\ORM\Table
      */
-    protected $_table;
+    protected Table $_table;
 
     /**
      * Returns the table to use for persisting logs.
      *
      * @return \Cake\ORM\Table
      */
-    public function getTable()
+    public function getTable(): Table
     {
         if ($this->_table === null) {
             $this->setTable($this->getConfig('table'));
@@ -144,17 +145,17 @@ class TablePersister implements PersisterInterface
     /**
      * Sets the table to use for persisting logs.
      *
-     * @param string|\Cake\ORM\Table $table Either a string denoting a table alias, or a table object.
+     * @param \Cake\ORM\Table|string $table Either a string denoting a table alias, or a table object.
      * @return $this
      */
-    public function setTable($table)
+    public function setTable(string|Table $table)
     {
         if (is_string($table)) {
             $table = $this->getTableLocator()->get($table);
         }
 
         if (!($table instanceof Table)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'The `$table` argument must be either a table alias, or an instance of `\Cake\ORM\Table`.'
             );
         }
@@ -167,7 +168,7 @@ class TablePersister implements PersisterInterface
     /**
      * Persists each of the passed EventInterface objects.
      *
-     * @param \AuditStash\EventInterface[] $auditLogs List of EventInterface objects to persist
+     * @param array<\AuditStash\EventInterface> $auditLogs List of EventInterface objects to persist
      * @return void
      * @throws \Exception
      */
@@ -185,12 +186,16 @@ class TablePersister implements PersisterInterface
             $fields = $this->extractBasicFields($log, $serializeFields);
             $fields += $this->extractPrimaryKeyFields($log, $primaryKeyExtractionStrategy);
             $fields += $this->extractMetaFields(
-                $log, $extractMetaFields, $unsetExtractedMetaFields, $serializeFields
+                $log,
+                $extractMetaFields,
+                $unsetExtractedMetaFields,
+                $serializeFields
             );
 
             $persisterEntity = $persisterTable->newEntity($fields);
 
-            if (!$persisterTable->save($persisterEntity) &&
+            if (
+                !$persisterTable->save($persisterEntity) &&
                 $logErrors
             ) {
                 $this->log($this->toErrorLog($persisterEntity));

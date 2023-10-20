@@ -70,6 +70,7 @@ trait BaseEventTrait
         if (is_array($this->id) && count($this->id) === 1) {
             return current($this->id);
         }
+
         return $this->id;
     }
 

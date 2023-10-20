@@ -33,13 +33,13 @@ class ElasticAuditsFixture extends TestFixture
             'properties' => [
                 'id' => ['type' => 'integer'],
                 'name' => ['type' => 'text'],
-            ]
+            ],
         ],
         'changed' => [
             'properties' => [
                 'id' => ['type' => 'integer'],
                 'name' => ['type' => 'text'],
-            ]
+            ],
         ],
     ];
 }

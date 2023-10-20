@@ -32,7 +32,7 @@ trait IndexConfigTrait
                     $indexTemplate,
                     (new DateTime($request->getQuery('at')))
                         ->format('-Y.m.d')
-                )
+                ),
             ]);
         }
     }
@@ -40,7 +40,7 @@ trait IndexConfigTrait
     /**
      * Get index repository
      *
-     * @return Index
+     * @return \Cake\ElasticSearch\Index
      */
     protected function getIndexRepository(): Index
     {

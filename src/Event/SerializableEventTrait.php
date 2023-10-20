@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace AuditStash\Event;
 
+use ReturnTypeWillChange;
+
 /**
  * Exposes basic functions for serializing event classes.
  */
@@ -35,7 +37,7 @@ trait SerializableEventTrait
      * @param string $data serialized string
      * @return void
      */
-    public function __unserialize($data)
+    public function __unserialize(string $data): void
     {
         $vars = unserialize($data);
         foreach ($vars as $var => $value) {
@@ -48,8 +50,8 @@ trait SerializableEventTrait
      *
      * @return mixed
      */
-    #[\ReturnTypeWillChange]
-    protected function basicSerialize()
+    #[ReturnTypeWillChange]
+    protected function basicSerialize(): mixed
     {
         return [
             'type' => $this->getEventType(),
@@ -58,7 +60,7 @@ trait SerializableEventTrait
             'source' => $this->source,
             'parent_source' => $this->parentSource,
             '@timestamp' => $this->timestamp,
-            'meta' => $this->meta
+            'meta' => $this->meta,
         ];
     }
 }

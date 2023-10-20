@@ -13,6 +13,7 @@ use Crud\Action\IndexAction;
 use DateTime;
 use Elastica\Query\BoolQuery;
 use Elastica\Query\QueryString;
+use Exception;
 
 /**
  * A CRUD action class to implement the listing of all audit logs
@@ -70,7 +71,7 @@ class ElasticLogsIndexAction extends IndexAction
 
         try {
             $this->addTimeConstraints($request, $query);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         $subject = $this->_subject(['success' => true, 'query' => $query]);
@@ -119,8 +120,7 @@ class ElasticLogsIndexAction extends IndexAction
                     '@timestamp',
                     $from->format('Y-m-d H:i:s'),
                     $until->format('Y-m-d H:i:s')
-                )
-            );
+                ));
 
             return;
         }

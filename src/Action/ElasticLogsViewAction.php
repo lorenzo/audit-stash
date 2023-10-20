@@ -34,7 +34,7 @@ class ElasticLogsViewAction extends ViewAction
      * @return \AuditStash\Model\Document\AuditLog
      * @throws \Exception
      */
-    protected function _findRecord($id, Subject $subject): AuditLog
+    protected function _findRecord(string $id, Subject $subject): AuditLog
     {
         $repository = $this->_table();
         $this->configIndex($repository, $this->_request());
@@ -47,7 +47,7 @@ class ElasticLogsViewAction extends ViewAction
         $query->where(['_id' => $id]);
         $subject->set([
             'repository' => $repository,
-            'query' => $query
+            'query' => $query,
         ]);
         $this->_trigger('beforeFind', $subject);
         $entity = $query->first();

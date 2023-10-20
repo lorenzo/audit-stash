@@ -34,7 +34,6 @@ class RabbitMQPersister implements PersisterInterface
      * - delivery_mode: The delivery_mode to use for each message (default: 2 for persisting messages in disk)
      * - exchange: The exchange name where to publish the messages
      * - routing: The routing name to use inside the exchange
-     *
      * @return void
      */
     public function __construct(array $options = [])
@@ -43,7 +42,7 @@ class RabbitMQPersister implements PersisterInterface
             'connection' => 'auditlog_rabbit',
             'delivery_mode' => 2,
             'exchange' => 'audits.persist',
-            'routing' => 'store'
+            'routing' => 'store',
         ];
         $this->options = $options;
     }
@@ -51,7 +50,7 @@ class RabbitMQPersister implements PersisterInterface
     /**
      * Persists all the audit log event objects that are provided.
      *
-     * @param \AuditStash\EventInterface[] $auditLogs An array of EventInterface objects
+     * @param array<\AuditStash\EventInterface> $auditLogs An array of EventInterface objects
      * @return void
      * @throws \AMQPChannelException
      * @throws \AMQPConnectionException
@@ -74,7 +73,7 @@ class RabbitMQPersister implements PersisterInterface
      * @param \ProcessMQ\Connection\RabbitMQConnection|null $connection The conneciton to elastic search
      * @return \ProcessMQ\Connection\RabbitMQConnection
      */
-    public function connection(RabbitMQConnection $connection = null): RabbitMQConnection
+    public function connection(?RabbitMQConnection $connection = null): RabbitMQConnection
     {
         if ($connection === null) {
             if ($this->connection === null) {
@@ -82,6 +81,7 @@ class RabbitMQPersister implements PersisterInterface
                 $connection = ConnectionManager::get($this->options['connection']);
                 $this->connection = $connection;
             }
+
             return $this->connection;
         }
 

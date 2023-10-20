@@ -37,7 +37,7 @@ class ElasticArticlesFixture extends TestFixture
                 'body' => ['type' => 'text'],
                 'published' => ['type' => 'text', 'index' => false],
                 'published_date' => ['type' => 'date'],
-            ]
+            ],
         ],
         'changed' => [
             'properties' => [
@@ -47,7 +47,7 @@ class ElasticArticlesFixture extends TestFixture
                 'body' => ['type' => 'text'],
                 'published' => ['type' => 'text', 'index' => false],
                 'published_date' => ['type' => 'date'],
-            ]
+            ],
         ],
     ];
 }

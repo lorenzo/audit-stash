@@ -22,7 +22,7 @@ trait LogTrait
     {
         return sprintf(
             '[%s] Persisting audit log failed. Data:' . PHP_EOL  . '%s',
-            __CLASS__,
+            self::class,
             Debugger::exportVar($entity, $depth)
         );
     }

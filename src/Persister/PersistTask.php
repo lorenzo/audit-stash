@@ -9,7 +9,6 @@ use AuditStash\PersisterInterface;
 
 /**
  * Used to directly persist event logs into the configured persister.
- *
  */
 class PersistTask
 {
@@ -44,10 +43,10 @@ class PersistTask
      * Sets the persister object to use for logging al audit events.
      * If called if no arguments, it will return the ElasitSearchPersister.
      *
-     * @param PersisterInterface|null $persister The persister object to use
-     * @return PersisterInterface|null The configured persister
+     * @param \AuditStash\PersisterInterface|null $persister The persister object to use
+     * @return \AuditStash\PersisterInterface|null The configured persister
      */
-    public function persister(PersisterInterface $persister = null): PersisterInterface|null
+    public function persister(?PersisterInterface $persister = null): ?PersisterInterface
     {
         if ($persister === null && $this->persister === null) {
             $persister = new ElasticSearchPersister();

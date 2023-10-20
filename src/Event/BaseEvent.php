@@ -5,6 +5,7 @@ namespace AuditStash\Event;
 
 use AuditStash\EventInterface;
 use DateTime;
+use ReturnTypeWillChange;
 
 /**
  * Represents a change in the repository where the list of changes can be
@@ -85,12 +86,12 @@ abstract class BaseEvent implements EventInterface
      *
      * @return mixed
      */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    #[ReturnTypeWillChange]
+    public function jsonSerialize(): mixed
     {
         return $this->basicSerialize() + [
             'original' => $this->original,
-            'changed' => $this->changed
+            'changed' => $this->changed,
         ];
     }
 }

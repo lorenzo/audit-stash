@@ -29,7 +29,7 @@ trait ExtractionTrait
             'parent_source' => null,
             'original' => null,
             'changed' => null,
-            'created' => new DateTime($event->getTimestamp())
+            'created' => new DateTime($event->getTimestamp()),
         ];
 
         if (Type::getMap('datetime') !== DateTimeType::class) {
@@ -98,7 +98,7 @@ trait ExtractionTrait
      * Extracts the metadata fields from the audit event object.
      *
      * @param \AuditStash\EventInterface $event The event object from which to extract the metadata fields.
-     * @param bool|array $fields Which/whether meta data fields should be extracted.
+     * @param array|bool $fields Which/whether meta data fields should be extracted.
      * @param bool $unsetExtracted Whether the fields extracted from the meta data should be unset.
      * @param bool $serialize Whether to serialize fields that are expected to hold array data.
      * @return array
@@ -110,14 +110,15 @@ trait ExtractionTrait
         bool $serialize = true
     ): array {
         $extracted = [
-            'meta' => $event->getMetaInfo()
+            'meta' => $event->getMetaInfo(),
         ];
 
         if (!is_array($extracted['meta'])) {
             return $extracted;
         }
 
-        if (!$fields ||
+        if (
+            !$fields ||
             empty($extracted['meta'])
         ) {
             if ($serialize) {

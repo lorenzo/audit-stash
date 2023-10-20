@@ -7,6 +7,9 @@ class CreateAuditLogs extends AbstractMigration
 {
     public bool $autoId = false;
 
+    /**
+     * Up
+     */
     public function up(): void
     {
         $this->table('audit_logs')
@@ -97,6 +100,9 @@ class CreateAuditLogs extends AbstractMigration
             ->create();
     }
 
+    /**
+     * Down
+     */
     public function down(): void
     {
         $this->table('audit_logs')->drop();

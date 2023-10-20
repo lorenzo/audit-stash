@@ -31,7 +31,7 @@ class RequestMetadata implements EventListenerInterface
      * Constructor.
      *
      * @param \Cake\Http\ServerRequest $request The current request
-     * @param int|string|null $user The current user id or username
+     * @param string|int|null $user The current user id or username
      */
     public function __construct(
         Request $request,
@@ -63,7 +63,7 @@ class RequestMetadata implements EventListenerInterface
         $meta = [
             'ip' => $this->request->clientIp(),
             'url' => $this->request->getRequestTarget(),
-            'user' => $this->user
+            'user' => $this->user,
         ];
 
         foreach ($logs as $log) {
