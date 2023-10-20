@@ -5,7 +5,6 @@ namespace AuditStash\Action;
 
 use Cake\Database\Expression\QueryExpression;
 use Cake\ElasticSearch\Index;
-use Cake\ElasticSearch\IndexRegistry;
 use Cake\ElasticSearch\Query;
 use Cake\ElasticSearch\QueryBuilder;
 use Cake\Http\Response;
@@ -91,7 +90,7 @@ class ElasticLogsIndexAction extends IndexAction
      */
     protected function _table(): Index
     {
-        return $this->_controller()->AuditLogs = IndexRegistry::get('AuditStash.AuditLogs');
+        return $this->_controller()->AuditLogs = $this->getIndexRepository();
     }
 
     /**

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace AuditStash\Action;
 
+use Cake\ElasticSearch\Datasource\IndexLocator;
 use Cake\ElasticSearch\Index;
 use Cake\Http\ServerRequest;
 use DateTime;
@@ -34,5 +35,19 @@ trait IndexConfigTrait
                 )
             ]);
         }
+    }
+
+    /**
+     * Get index repository
+     *
+     * @return Index
+     */
+    protected function getIndexRepository(): Index
+    {
+        $indexLocator = new IndexLocator();
+        $repository = $indexLocator->get('AuditStash.AuditLogs');
+        assert($repository instanceof Index);
+
+        return $repository;
     }
 }

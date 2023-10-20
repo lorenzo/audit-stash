@@ -5,7 +5,6 @@ namespace AuditStash\Action;
 
 use AuditStash\Model\Document\AuditLog;
 use Cake\ElasticSearch\Index;
-use Cake\ElasticSearch\IndexRegistry;
 use Crud\Action\ViewAction;
 use Crud\Event\Subject;
 
@@ -24,7 +23,7 @@ class ElasticLogsViewAction extends ViewAction
      */
     protected function _table(): Index
     {
-        return $this->_controller()->AuditLogs = IndexRegistry::get('AuditStash.AuditLogs');
+        return $this->_controller()->AuditLogs = $this->getIndexRepository();
     }
 
     /**

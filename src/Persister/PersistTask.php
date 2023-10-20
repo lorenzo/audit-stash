@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace AuditStash\Persister;
 
 use AuditStash\EventFactory;
+use AuditStash\EventInterface;
 use AuditStash\PersisterInterface;
 
 /**
@@ -15,9 +16,9 @@ class PersistTask
     /**
      * The persister object to use.
      *
-     * @var PersisterInterface
+     * @var PersisterInterface|null`
      */
-    protected $persister;
+    protected ?PersisterInterface $persister;
 
     /**
      * Persists a list of event logs represented in arrays
@@ -25,14 +26,15 @@ class PersistTask
      *
      * @param array $events The events to persist
      * @return void
+     * @throws \ReflectionException
      */
-    public function persist(array $events)
+    public function persist(array $events): void
     {
         $factory = new EventFactory();
         $events = array_map(
-            function ($event) use ($factory) {
-                return is_array($event) ? $factory->create($event) : $event;
-            },
+            fn(EventInterface|array $event): EventInterface => is_array($event) ?
+                $factory->create($event) :
+                $event,
             $events
         );
         $this->persister()->logEvents($events);
@@ -42,10 +44,10 @@ class PersistTask
      * Sets the persister object to use for logging al audit events.
      * If called if no arguments, it will return the ElasitSearchPersister.
      *
-     * @param PersisterInterface $persister The persister object to use
-     * @return PersisterInterface The configured persister
+     * @param PersisterInterface|null $persister The persister object to use
+     * @return PersisterInterface|null The configured persister
      */
-    public function persister(PersisterInterface $persister = null)
+    public function persister(PersisterInterface $persister = null): PersisterInterface|null
     {
         if ($persister === null && $this->persister === null) {
             $persister = new ElasticSearchPersister();

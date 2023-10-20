@@ -5,14 +5,17 @@
     "license": "MIT",
     "require": {
         "php": ">=8.1",
-        "cakephp/cakephp": "^5.0.0",
+        "cakephp/orm": "^5.0.0",
         "ext-json": "*"
     },
     "require-dev": {
+        "cakephp/cakephp": "^5.0.0",
         "phpunit/phpunit": "^10.1.0",
+        "cakephp/cakephp-codesniffer": "^5.0",
         "cakephp/migrations": "^4.0.0",
         "cakephp/elastic-search": "^4.0.0",
-        "friendsofcake/process-mq": "dev-1.next-cake5"
+        "friendsofcake/process-mq": "dev-1.next-cake5",
+        "friendsofcake/crud": "^7.0.0"
     },
     "suggest": {
         "cakephp/elastic-search": "The default persister engine for audit-stash is elastic search and requires this plugin",
@@ -57,5 +60,10 @@
             "type": "vcs",
             "url": "https://github.com/CakeDC/process-mq.git"
         }
-    ]
+    ],
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
 }
