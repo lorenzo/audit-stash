@@ -31,7 +31,7 @@ class PersistTask
     {
         $factory = new EventFactory();
         $events = array_map(
-            fn(EventInterface|array $event): EventInterface => is_array($event) ?
+            fn (EventInterface|array $event): EventInterface => is_array($event) ?
                 $factory->create($event) :
                 $event,
             $events

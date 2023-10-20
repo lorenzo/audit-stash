@@ -157,7 +157,7 @@ class AuditLogBehavior extends Behavior
         }
 
         $events = collection($options['_auditQueue'])
-            ->map(fn($entity, $pos, $it): mixed => $it->getInfo())
+            ->map(fn ($entity, $pos, $it): mixed => $it->getInfo())
             ->toList();
 
         if (empty($events)) {

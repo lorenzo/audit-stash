@@ -11,6 +11,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\I18n\DateTime;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
+use DateTime as PhpDateTime;
 use Elastica\Document;
 use SplDoublyLinkedList;
 use SplQueue;
@@ -19,6 +20,9 @@ class ElasticImportCommand extends Command
 {
     use LocatorAwareTrait;
 
+    /**
+     * @inheritDoc
+     */
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         return parent::buildOptionParser($parser)
@@ -50,6 +54,9 @@ class ElasticImportCommand extends Command
             ]);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function execute(Arguments $args, ConsoleIo $io)
     {
         $table = $this->fetchTable('Audits');
@@ -205,12 +212,12 @@ class ElasticImportCommand extends Command
         unset($audit['_matchingData']);
 
         $audit['original'] = collection($changes)
-            ->map(fn($c) => $c['old_value'])
+            ->map(fn ($c) => $c['old_value'])
             ->map([$this, 'habtmFormatter'])
             ->map([$this, 'allBallsRemover'])
             ->toArray();
         $audit['changed'] = collection($changes)
-            ->map(fn($c) => $c['new_value'])
+            ->map(fn ($c) => $c['new_value'])
             ->map([$this, 'habtmFormatter'])
             ->map([$this, 'allBallsRemover'])
             ->toArray();
@@ -242,7 +249,7 @@ class ElasticImportCommand extends Command
             ],
         ];
 
-        $index = sprintf($index, \DateTime::createFromFormat('Y-m-d H:i:s', $audit['created'])->format('-Y.m.d'));
+        $index = sprintf($index, PhpDateTime::createFromFormat('Y-m-d H:i:s', $audit['created'])->format('-Y.m.d'));
         $type = $map[$audit['model']] ?? Inflector::tableize($audit['model']);
 
         return new Document($audit['id'], $data, $type, $index);

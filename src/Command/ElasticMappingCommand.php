@@ -19,10 +19,15 @@ use Elastica\Request;
  */
 class ElasticMappingCommand extends Command
 {
+    /**
+     * @inheritDoc
+     */
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         return parent::buildOptionParser($parser)
-            ->setDescription('Creates type mappings in elastic search for the tables you want tracked with audit logging')
+            ->setDescription(
+                'Creates type mappings in elastic search for the tables you want tracked with audit logging'
+            )
             ->addArgument('table', [
                 'short' => 't',
                 'help' => 'The name of the database table to inspect and create a mapping for',
@@ -40,6 +45,9 @@ class ElasticMappingCommand extends Command
             ]);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function execute(Arguments $args, ConsoleIo $io)
     {
         $table = $this->fetchTable($args->getArgument('table'));
@@ -47,7 +55,8 @@ class ElasticMappingCommand extends Command
         $mapping = [
             '@timestamp' => [
                 'type' => 'date',
-                'format' => 'basic_t_time_no_millis||dateOptionalTime||basic_date_time||ordinal_date_time_no_millis||yyyy-MM-dd HH:mm:ss',
+                'format' => 'basic_t_time_no_millis||dateOptionalTime||basic_date_time||' .
+                    'ordinal_date_time_no_millis||yyyy-MM-dd HH:mm:ss',
             ],
             'transaction' => [
                 'type' => 'text',
@@ -179,7 +188,8 @@ class ElasticMappingCommand extends Command
             'datetime',
             'timestamp' => [
                 'type' => 'date',
-                'format' => 'basic_t_time_no_millis||dateOptionalTime||basic_date_time||ordinal_date_time_no_millis||yyyy-MM-dd HH:mm:ss||basic_date',
+                'format' => 'basic_t_time_no_millis||dateOptionalTime||basic_date_time||' .
+                    'ordinal_date_time_no_millis||yyyy-MM-dd HH:mm:ss||basic_date',
                 'null_value' => '0001-01-01 00:00:00',
             ],
             'float',

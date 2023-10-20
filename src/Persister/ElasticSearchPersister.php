@@ -142,7 +142,7 @@ class ElasticSearchPersister implements PersisterInterface
      * @param \Cake\ElasticSearch\Datasource\Connection $connection The connection to elastic search
      * @return $this
      */
-    public function setConnection(Connection $connection): static
+    public function setConnection(Connection $connection)
     {
         $this->connection = $connection;
 

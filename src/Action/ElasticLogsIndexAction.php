@@ -57,7 +57,7 @@ class ElasticLogsIndexAction extends IndexAction
         if ($request->getQuery('changed_fields')) {
             $query->where(function (QueryBuilder $builder) use ($request): BoolQuery {
                 $fields = explode(',', $request->getQuery('changed_fields'));
-                $fields = array_map(fn($f): string => 'changed.' . $f, array_map('trim', $fields));
+                $fields = array_map(fn ($f): string => 'changed.' . $f, array_map('trim', $fields));
                 $fields = array_map([$builder, 'exists'], $fields);
 
                 return $builder->and($fields);
@@ -65,7 +65,7 @@ class ElasticLogsIndexAction extends IndexAction
         }
 
         if ($request->getQuery('query')) {
-            $query->where(fn(QueryBuilder $builder): BoolQuery => $builder
+            $query->where(fn (QueryBuilder $builder): BoolQuery => $builder
                 ->and(new QueryString($request->getQuery('query'))));
         }
 
@@ -115,7 +115,7 @@ class ElasticLogsIndexAction extends IndexAction
         }
 
         if (!empty($from) && !empty($until)) {
-            $query->where(fn(QueryExpression $builder): QueryExpression => $builder
+            $query->where(fn (QueryExpression $builder): QueryExpression => $builder
                 ->between(
                     '@timestamp',
                     $from->format('Y-m-d H:i:s'),
