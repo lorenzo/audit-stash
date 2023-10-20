@@ -5,7 +5,7 @@ use Migrations\AbstractMigration;
 
 class CreateAuditLogs extends AbstractMigration
 {
-    public $autoId = false;
+    public bool $autoId = false;
 
     public function up(): void
     {
@@ -99,6 +99,6 @@ class CreateAuditLogs extends AbstractMigration
 
     public function down(): void
     {
-        $this->dropTable('audit_logs');
+        $this->table('audit_logs')->drop();
     }
 }

@@ -14,8 +14,8 @@ use Elastica\Mapping;
 use Elastica\Request;
 
 /**
- * Exposes a shell command to create the required Elastic Search mappings.
- *
+ * Exposes a shell command to create the required Elastic Search mappings. Creates the elastic search mapping
+ * for the provided table, or just prints it out to the screen if the `dry-run` option is provided. *
  */
 class ElasticMappingCommand extends Command
 {

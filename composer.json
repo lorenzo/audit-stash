@@ -5,14 +5,14 @@
     "license": "MIT",
     "require": {
         "php": ">=8.1",
-        "cakephp/cakephp": "5.x-dev",
-        "cakephp/elastic-search": "4.x-dev",
-        "friendsofcake/process-mq": "dev-1.next-cake5",
+        "cakephp/cakephp": "^5.0.0",
         "ext-json": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^10.1.0",
-        "cakephp/migrations": "4.x-dev"
+        "cakephp/migrations": "^4.0.0",
+        "cakephp/elastic-search": "^4.0.0",
+        "friendsofcake/process-mq": "dev-1.next-cake5"
     },
     "suggest": {
         "cakephp/elastic-search": "The default persister engine for audit-stash is elastic search and requires this plugin",
@@ -33,7 +33,24 @@
         }
     },
     "scripts": {
-        "test": "phpunit --colors=always"
+        "check": [
+            "@cs-check",
+            "@test"
+        ],
+        "cs-check": "phpcs --colors --parallel=16 -p src/ tests/",
+        "cs-fix": "phpcbf --colors --parallel=16 -p src/ tests/",
+        "phpstan": "tools/phpstan analyse",
+        "psalm": "tools/psalm --show-info=false",
+        "stan": [
+            "@phpstan",
+            "@psalm"
+        ],
+        "phpstan-tests": "tools/phpstan analyze -c tests/phpstan.neon",
+        "phpstan-baseline": "tools/phpstan --generate-baseline",
+        "psalm-baseline": "tools/psalm  --set-baseline=psalm-baseline.xml",
+        "stan-setup": "phive install",
+        "test": "phpunit",
+        "coverage-test": "phpunit --stderr --coverage-clover=clover.xml"
     },
     "repositories": [
         {

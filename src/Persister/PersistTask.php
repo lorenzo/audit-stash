@@ -1,20 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace AuditStash\Shell\Task;
+namespace AuditStash\Persister;
 
 use AuditStash\EventFactory;
-use AuditStash\Persister\ElasticSearchPersister;
 use AuditStash\PersisterInterface;
 
 /**
  * Used to directly persist event logs into the configured persister.
  *
- * @deprecated
  */
 class PersistTask
 {
-
     /**
      * The persister object to use.
      *

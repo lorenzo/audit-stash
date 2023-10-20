@@ -60,7 +60,7 @@ class ElasticLogsIndexAction extends IndexAction
                 $fields = array_map(fn($f): string => 'changed.' . $f, array_map('trim', $fields));
                 $fields = array_map([$builder, 'exists'], $fields);
 
-                return call_user_func_array([$builder, 'and'], $fields);
+                return $builder->and($fields);
             });
         }
 

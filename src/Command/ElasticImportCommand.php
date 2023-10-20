@@ -234,10 +234,10 @@ class ElasticImportCommand extends Command
             'original' => $audit['original'],
             'changed' => $audit['changed'],
             'meta' => $meta + [
-                    'ip' => $audit['source_ip'],
-                    'url' => $audit['source_url'],
-                    'user' => $audit['source_id'],
-                ]
+                'ip' => $audit['source_ip'],
+                'url' => $audit['source_url'],
+                'user' => $audit['source_id'],
+            ]
         ];
 
         $index = sprintf($index, \DateTime::createFromFormat('Y-m-d H:i:s', $audit['created'])->format('-Y.m.d'));

@@ -7,7 +7,6 @@ use AuditStash\Exception;
 use AuditStash\PersisterInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\ElasticSearch\Datasource\Connection;
-use Elastica\Client;
 use Elastica\Document;
 
 /**
@@ -164,24 +163,6 @@ class ElasticSearchPersister implements PersisterInterface
         }
 
         return $this->connection;
-    }
-
-    /**
-     * Sets the client connection to elastic search when passed.
-     * If no arguments are provided, it returns the current connection.
-     *
-     * @param \Elastica\Client|null $connection The connection to elastic search
-     * @return \Elastica\Client
-     * @deprecated Use getConnection()/setConnection() instead
-     */
-    public function connection(Client $connection = null)
-    {
-        deprecationWarning('Use getConnection()/setConnection() instead');
-        if ($connection !== null) {
-            return $this->setConnection($connection);
-        }
-
-        return $this->getConnection();
     }
 
     /**

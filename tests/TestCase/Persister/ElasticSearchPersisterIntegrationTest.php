@@ -19,7 +19,7 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
      *
      * @var string
      */
-    public $fixtures = [
+    public array $fixtures = [
         'plugin.AuditStash.ElasticArticles',
         'plugin.AuditStash.ElasticAudits',
         'plugin.AuditStash.ElasticAuthors',
