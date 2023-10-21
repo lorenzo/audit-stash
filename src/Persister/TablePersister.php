@@ -124,9 +124,9 @@ class TablePersister implements PersisterInterface
     /**
      * The table to use for persisting logs.
      *
-     * @var \Cake\ORM\Table
+     * @var \Cake\ORM\Table|null
      */
-    protected Table $_table;
+    protected ?Table $_table;
 
     /**
      * Returns the table to use for persisting logs.

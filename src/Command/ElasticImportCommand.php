@@ -15,6 +15,7 @@ use DateTime as PhpDateTime;
 use Elastica\Document;
 use SplDoublyLinkedList;
 use SplQueue;
+use function Cake\Collection\collection;
 
 class ElasticImportCommand extends Command
 {

@@ -16,6 +16,7 @@ use Cake\ORM\Behavior;
 use Cake\Utility\Inflector;
 use Cake\Utility\Text;
 use SplObjectStorage;
+use function Cake\Collection\collection;
 
 /**
  * This behavior can be used to log all the creations, modifications and deletions
@@ -26,7 +27,7 @@ class AuditLogBehavior extends Behavior
     /**
      * Default configuration.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_defaultConfig = [
         'index' => null,
@@ -38,9 +39,9 @@ class AuditLogBehavior extends Behavior
     /**
      * The persister object.
      *
-     * @var \AuditStash\PersisterInterface
+     * @var \AuditStash\PersisterInterface|null
      */
-    protected PersisterInterface $persister;
+    protected ?PersisterInterface $persister;
 
     /**
      * Returns the list of implemented events.
