@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace AuditStash\Command;
 
+use AuditStash\Model\Index\AuditLogsIndex;
 use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
@@ -115,17 +116,17 @@ class ElasticMappingCommand extends Command
         $typeName = Inflector::singularize(str_replace('%s', '', $indexName));
 
         if ($table->hasBehavior('AuditLog')) {
-            $whitelist = (array)$table->behaviors()->AuditLog->config('whitelist');
-            $blacklist = (array)$table->behaviors()->AuditLog->config('blacklist');
+            $whitelist = (array)$table->behaviors()->AuditLog->getConfig('whitelist');
+            $blacklist = (array)$table->behaviors()->AuditLog->getConfig('blacklist');
             $properties = empty($whitelist) ? $properties : array_intersect_key($properties, array_flip($whitelist));
             $properties = array_diff_key($properties, array_flip($blacklist));
-            $indexName = $table->behaviors()->AuditLog->config('index') ?: $indexName;
-            $typeName = $table->behaviors()->AuditLog->config('type') ?: $typeName;
+            $indexName = $table->behaviors()->AuditLog->getConfig('index') ?: $indexName;
+            $typeName = $table->behaviors()->AuditLog->getConfig('type') ?: $typeName;
         }
 
         $mapping['original']['properties'] = $mapping['changed']['properties'] = $properties;
         /** @var \Cake\ElasticSearch\Datasource\Connection $client */
-        $client = ConnectionManager::get('auditlog_elastic');
+        $client = ConnectionManager::get(AuditLogsIndex::defaultConnectionName());
         $index = $client->getIndex(sprintf($indexName, '-' . gmdate('Y.m.d')));
         $type = $index->getName();
         $elasticMapping = new Mapping();

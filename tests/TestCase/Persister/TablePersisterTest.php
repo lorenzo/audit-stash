@@ -131,18 +131,19 @@ class TablePersisterTest extends TestCase
             'changed' => null,
             'created' => new DateTime($event->getTimestamp()),
             'primary_key' => 1,
-            'meta' => null,
+            'meta' => json_encode([]),
         ]);
         $entity->setSource('AuditLogs');
 
         $AuditLogsTable = $this->getMockForModel('AuditLogs', ['save']);
+
+        $this->TablePersister->setTable($AuditLogsTable);
         $AuditLogsTable
             ->expects($this->once())
             ->method('save')
             ->with($entity)
             ->willReturn($entity);
 
-        $this->TablePersister->setTable($AuditLogsTable);
         $this->TablePersister->logEvents([$event]);
     }
 

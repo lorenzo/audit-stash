@@ -15,39 +15,4 @@ class ElasticArticlesFixture extends TestFixture
      * @var string
      */
     public string $table = 'article';
-
-    /**
-     * The mapping data.
-     *
-     * @var array
-     */
-    public array $schema = [
-        'id' => ['type' => 'integer'],
-        '@timestamp' => ['type' => 'date'],
-        'transaction' => ['type' => 'text', 'index' => false],
-        'type' => ['type' => 'text', 'index' => false],
-        'primary_key' => ['type' => 'integer'],
-        'source' => ['type' => 'text', 'index' => false],
-        'parent_source' => ['type' => 'text', 'index' => false],
-        'original' => [
-            'properties' => [
-                'id' => ['type' => 'integer'],
-                'author_id' => ['type' => 'integer'],
-                'title' => ['type' => 'text'],
-                'body' => ['type' => 'text'],
-                'published' => ['type' => 'text', 'index' => false],
-                'published_date' => ['type' => 'date'],
-            ],
-        ],
-        'changed' => [
-            'properties' => [
-                'id' => ['type' => 'integer'],
-                'author_id' => ['type' => 'integer'],
-                'title' => ['type' => 'text'],
-                'body' => ['type' => 'text'],
-                'published' => ['type' => 'text', 'index' => false],
-                'published_date' => ['type' => 'date'],
-            ],
-        ],
-    ];
 }

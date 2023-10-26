@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace AuditStash\Test\TestCase\Model\Behavior;
 
+use ArrayObject;
 use AuditStash\Event\AuditCreateEvent;
 use AuditStash\Event\AuditUpdateEvent;
 use AuditStash\Model\Behavior\AuditLogBehavior;
@@ -37,11 +38,11 @@ class AuditLogBehaviorTest extends TestCase
 
         $event = new Event('Model.afterSave');
         $queue = new SplObjectStorage();
-        $this->behavior->afterSave($event, $entity, [
+        $this->behavior->afterSave($event, $entity, new ArrayObject([
             '_auditQueue' => $queue,
-            '_auditTransaction' => 1,
+            '_auditTransaction' => '1',
             'associated' => [],
-        ]);
+        ]));
         $result = $queue[$entity];
         $this->assertEquals($result->getOriginal(), $result->getChanged());
         unset($data['something_extra']);
@@ -65,11 +66,11 @@ class AuditLogBehaviorTest extends TestCase
 
         $event = new Event('Model.afterSave');
         $queue = new SplObjectStorage();
-        $this->behavior->afterSave($event, $entity, [
+        $this->behavior->afterSave($event, $entity, new ArrayObject([
             '_auditQueue' => $queue,
-            '_auditTransaction' => 1,
+            '_auditTransaction' => '1',
             'associated' => [],
-        ]);
+        ]));
         $result = $queue[$entity];
         $this->assertEquals(['title' => 'Another Title'], $result->getChanged());
         $this->assertEquals(['title' => 'The Title'], $result->getOriginal());
@@ -92,11 +93,11 @@ class AuditLogBehaviorTest extends TestCase
 
         $event = new Event('Model.afterSave');
         $queue = new SplObjectStorage();
-        $this->behavior->afterSave($event, $entity, [
+        $this->behavior->afterSave($event, $entity, new ArrayObject([
             '_auditQueue' => $queue,
-            '_auditTransaction' => 1,
+            '_auditTransaction' => '1',
             'associated' => [],
-        ]);
+        ]));
         $result = $queue[$entity];
         $this->assertEquals($result->getOriginal(), $result->getChanged());
         unset($data['something_extra'], $data['author_id']);
@@ -117,11 +118,11 @@ class AuditLogBehaviorTest extends TestCase
 
         $event = new Event('Model.afterSave');
         $queue = new SplObjectStorage();
-        $this->behavior->afterSave($event, $entity, [
+        $this->behavior->afterSave($event, $entity, new ArrayObject([
             '_auditQueue' => $queue,
-            '_auditTransaction' => 1,
+            '_auditTransaction' => '1',
             'associated' => [],
-        ]);
+        ]));
 
         $this->assertFalse(isset($queue[$entity]));
     }
@@ -144,11 +145,11 @@ class AuditLogBehaviorTest extends TestCase
         $entity = new Entity($data, ['markNew' => true]);
         $event = new Event('Model.afterSave');
         $queue = new SplObjectStorage();
-        $this->behavior->afterSave($event, $entity, [
+        $this->behavior->afterSave($event, $entity, new ArrayObject([
             '_auditQueue' => $queue,
-            '_auditTransaction' => 1,
+            '_auditTransaction' => '1',
             'associated' => [],
-        ]);
+        ]));
         $result = $queue[$entity];
         unset($data['something_extra'], $data['author_id']);
         $this->assertEquals($data, $result->getChanged());

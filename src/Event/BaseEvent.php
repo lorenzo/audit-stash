@@ -57,9 +57,9 @@ abstract class BaseEvent implements EventInterface
     /**
      * Returns an array with the properties and their values before they got changed.
      *
-     * @return array
+     * @return array|null
      */
-    public function getOriginal(): array
+    public function getOriginal(): ?array
     {
         return $this->original;
     }
@@ -67,9 +67,9 @@ abstract class BaseEvent implements EventInterface
     /**
      * Returns an array with the properties and their values as they were changed.
      *
-     * @return array
+     * @return array|null
      */
-    public function getChanged(): array
+    public function getChanged(): ?array
     {
         return $this->changed;
     }

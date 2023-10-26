@@ -41,7 +41,7 @@ class AuditLogBehavior extends Behavior
      *
      * @var \AuditStash\PersisterInterface|null
      */
-    protected ?PersisterInterface $persister;
+    protected ?PersisterInterface $persister = null;
 
     /**
      * Returns the list of implemented events.

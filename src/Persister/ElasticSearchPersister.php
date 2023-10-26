@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace AuditStash\Persister;
 
 use AuditStash\Exception;
+use AuditStash\Model\Index\AuditLogsIndex;
 use AuditStash\PersisterInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\ElasticSearch\Datasource\Connection;
@@ -19,7 +20,7 @@ class ElasticSearchPersister implements PersisterInterface
      *
      * @var \Cake\ElasticSearch\Datasource\Connection|null
      */
-    protected ?Connection $connection;
+    protected ?Connection $connection = null;
 
     /**
      * Whether to use the transaction ids as document ids.
@@ -162,7 +163,7 @@ class ElasticSearchPersister implements PersisterInterface
             /**
              * @var \Cake\ElasticSearch\Datasource\Connection $connection
              */
-            $connection = ConnectionManager::get('auditlog_elastic');
+            $connection = ConnectionManager::get(AuditLogsIndex::defaultConnectionName());
             $this->connection = $connection;
         }
 

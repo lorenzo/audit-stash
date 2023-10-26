@@ -32,9 +32,9 @@ trait BaseEventTrait
     /**
      * Parent repository name.
      *
-     * @var string
+     * @var string|null
      */
-    protected string $parentSource;
+    protected ?string $parentSource = null;
 
     /**
      * Time of event.
@@ -87,9 +87,9 @@ trait BaseEventTrait
     /**
      * Returns the repository name that triggered this event.
      *
-     * @return string
+     * @return string|null
      */
-    public function getParentSourceName(): string
+    public function getParentSourceName(): ?string
     {
         return $this->parentSource;
     }

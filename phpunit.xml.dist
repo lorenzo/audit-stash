@@ -4,6 +4,8 @@
     <php>
         <ini name="memory_limit" value="-1"/>
         <ini name="apc.enable_cli" value="1"/>
+        <env name="FIXTURE_SCHEMA_METADATA" value="./vendor/cakephp/cakephp/tests/schema.php"/>
+        <env name="FIXTURE_MAPPINGS_METADATA" value="./tests/mappings.php"/>
     </php>
     <!-- Add any additional test suites you want to run here -->
     <testsuites>

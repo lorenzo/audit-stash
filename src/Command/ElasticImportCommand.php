@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace AuditStash\Command;
 
+use AuditStash\Model\Index\AuditLogsIndex;
 use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
@@ -91,7 +92,7 @@ class ElasticImportCommand extends Command
         $queue = new SplQueue();
         $queue->setIteratorMode(SplDoublyLinkedList::IT_MODE_DELETE);
         /** @var \Cake\ElasticSearch\Datasource\Connection $connection */
-        $connection = ConnectionManager::get('auditlog_elastic');
+        $connection = ConnectionManager::get(AuditLogsIndex::defaultConnectionName());
         $index = $connection->getIndex('index');
 
         $eventsFormatter = function ($audit) use ($index, $meta) {
@@ -271,7 +272,7 @@ class ElasticImportCommand extends Command
         }
         $this->log(sprintf('Indexing %d documents', count($documents)), 'info');
         /** @var \Cake\ElasticSearch\Datasource\Connection $connection */
-        $connection = ConnectionManager::get('auditlog_elastic');
+        $connection = ConnectionManager::get(AuditLogsIndex::defaultConnectionName());
         $connection->addDocuments($documents);
     }
 }

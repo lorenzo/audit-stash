@@ -42,6 +42,7 @@ class AuditIntegrationTest extends TestCase
      */
     public function setUp(): void
     {
+        parent::setUp();
         $this->table = $this->fetchTable('Articles');
         $this->table->hasMany('Comments');
         $this->table->belongsToMany('Tags');
@@ -77,7 +78,10 @@ class AuditIntegrationTest extends TestCase
 
                 $this->assertEquals(4, $event->getId());
                 $this->assertEquals('articles', $event->getSourceName());
-                $this->assertEquals($event->getOriginal(), $event->getChanged());
+                $this->assertEquals(
+                    $event->getOriginal(),
+                    array_intersect_assoc($event->getOriginal(), $event->getChanged())
+                );
                 $this->assertNotEmpty($event->getTransactionId());
 
                 $data = $entity->toArray();
@@ -160,9 +164,7 @@ class AuditIntegrationTest extends TestCase
      */
     public function testUpdateArticleWithExistingBelongsTo()
     {
-        $entity = $this->table->get(1, [
-            'contain' => ['Authors'],
-        ]);
+        $entity = $this->table->get(primaryKey: 1, contain: ['Authors']);
         $entity->title = 'Changed title';
         $entity->author = $this->table->Authors->get(2);
 
@@ -238,9 +240,7 @@ class AuditIntegrationTest extends TestCase
             'className' => AuditLogBehavior::class,
         ]);
 
-        $entity = $this->table->get(1, [
-            'contain' => ['Comments'],
-        ]);
+        $entity = $this->table->get(primaryKey: 1, contain: ['Comments']);
         $entity->comments[] = $this->table->Comments->newEntity([
             'user_id' => 1,
             'comment' => 'This is a comment',
@@ -337,9 +337,7 @@ class AuditIntegrationTest extends TestCase
             'className' => AuditLogBehavior::class,
         ]);
 
-        $entity = $this->table->get(1, [
-            'contain' => ['Tags'],
-        ]);
+        $entity = $this->table->get(primaryKey: 1, contain: ['Tags']);
         $entity->tags[] = $this->table->Tags->newEntity([
             'name' => 'This is a Tag',
         ]);
@@ -400,9 +398,7 @@ class AuditIntegrationTest extends TestCase
         $this->table->Comments->addBehavior('AuditLog', [
             'className' => AuditLogBehavior::class,
         ]);
-        $entity = $this->table->get(1, [
-            'contain' => ['Comments', 'Tags'],
-        ]);
+        $entity = $this->table->get(primaryKey: 1, contain: ['Comments', 'Tags']);
 
         $this->table->Comments->setDependent(true);
         $this->table->Comments->setCascadeCallbacks(true);

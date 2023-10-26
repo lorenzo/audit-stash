@@ -38,8 +38,7 @@ class RabbitMQPersisterTest extends TestCase
 
         $client->expects($this->once())
             ->method('send')
-            ->with('audits.persist', 'store', $events, ['delivery_mode' => 2]);
-
+            ->with('audits.persist', $events, ['delivery_mode' => 2]);
         $persister->logEvents($events);
     }
 
@@ -70,8 +69,7 @@ class RabbitMQPersisterTest extends TestCase
 
         $client->expects($this->once())
             ->method('send')
-            ->with('bar', 'foo', $events, ['delivery_mode' => 1]);
-
+            ->with('bar', $events, ['delivery_mode' => 1]);
         $persister->logEvents($events);
     }
 }

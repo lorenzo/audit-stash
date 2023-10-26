@@ -42,6 +42,7 @@ class ElasticSearchPersisterTest extends TestCase
         ];
 
         $events[] = new AuditCreateEvent('1234', 50, 'articles', $data, $data);
-        $this->assertNull($persister->logEvents($events));
+        $clientMock->expects($this->once())->method('addDocuments');
+        $persister->logEvents($events);
     }
 }
