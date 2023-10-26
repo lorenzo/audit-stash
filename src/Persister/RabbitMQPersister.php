@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace AuditStash\Persister;
 
+use AuditStash\Connection\RabbitMqConnection;
 use AuditStash\PersisterInterface;
 use Cake\Datasource\ConnectionManager;
-use ProcessMQ\Connection\RabbitMQConnection;
 
 /**
  * Implements audit logs events persisting using RabbitMQ.
@@ -15,9 +15,9 @@ class RabbitMQPersister implements PersisterInterface
     /**
      * The client or connection to RabbitMQ.
      *
-     * @var \ProcessMQ\Connection\RabbitMQConnection|null;
+     * @var \AuditStash\Connection\RabbitMqConnection|null;
      */
-    protected ?RabbitMQConnection $connection;
+    protected ?RabbitMqConnection $connection;
 
     /**
      * The options set for this persister.
@@ -52,15 +52,11 @@ class RabbitMQPersister implements PersisterInterface
      *
      * @param array<\AuditStash\EventInterface> $auditLogs An array of EventInterface objects
      * @return void
-     * @throws \AMQPChannelException
-     * @throws \AMQPConnectionException
-     * @throws \AMQPExchangeException
      */
     public function logEvents(array $auditLogs): void
     {
         $this->connection()->send(
             $this->options['exchange'],
-            $this->options['routing'],
             $auditLogs,
             ['delivery_mode' => $this->options['delivery_mode']]
         );
@@ -70,14 +66,14 @@ class RabbitMQPersister implements PersisterInterface
      * Sets the client connection to elastic search when passed.
      * If no arguments are provided, it returns the current connection.
      *
-     * @param \ProcessMQ\Connection\RabbitMQConnection|null $connection The conneciton to elastic search
-     * @return \ProcessMQ\Connection\RabbitMQConnection
+     * @param RabbitMqConnection|null $connection The conneciton to elastic search
+     * @return RabbitMqConnection
      */
-    public function connection(?RabbitMQConnection $connection = null): RabbitMQConnection
+    public function connection(?RabbitMqConnection $connection = null): RabbitMqConnection
     {
         if ($connection === null) {
             if ($this->connection === null) {
-                /** @var \ProcessMQ\Connection\RabbitMQConnection $connection */
+                /** @var \AuditStash\Connection\RabbitMqConnection $connection */
                 $connection = ConnectionManager::get($this->options['connection']);
                 $this->connection = $connection;
             }
@@ -85,6 +81,8 @@ class RabbitMQPersister implements PersisterInterface
             return $this->connection;
         }
 
-        return $this->connection = $connection;
+        $this->connection = $connection;
+
+        return $this->connection;
     }
 }

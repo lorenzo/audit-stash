@@ -14,16 +14,14 @@
         "cakephp/cakephp-codesniffer": "^5.0",
         "cakephp/migrations": "^4.0.0",
         "cakephp/elastic-search": "^4.0.0",
-        "friendsofcake/process-mq": "dev-1.next-cake5",
-        "friendsofcake/crud": "^7.0.0"
+        "friendsofcake/crud": "^7.0.0",
+        "php-amqplib/php-amqplib": "^3.6"
     },
     "suggest": {
         "cakephp/elastic-search": "The default persister engine for audit-stash is elastic search and requires this plugin",
         "friendsofcake/crud": "audit-stash provide Crud Action classes for displaying audit logs",
-        "friendsofcake/process-mq": "Use this package if you prefer sending the audit events to RabbitMQ"
+        "php-amqplib/php-amqplib": "Use this package if you prefer sending the audit events to RabbitMQ"
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "AuditStash\\": "src"
@@ -55,12 +53,6 @@
         "test": "phpunit",
         "coverage-test": "phpunit --stderr --coverage-clover=clover.xml"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/CakeDC/process-mq.git"
-        }
-    ],
     "config": {
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true

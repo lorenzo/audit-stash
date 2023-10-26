@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace AuditStash\Test\TestCase\Persister;
 
+use AuditStash\Connection\RabbitMqConnection;
 use AuditStash\Event\AuditCreateEvent;
 use AuditStash\Event\AuditDeleteEvent;
 use AuditStash\Persister\RabbitMQPersister;
 use Cake\TestSuite\TestCase;
-use ProcessMQ\Connection\RabbitMQConnection;
 
 class RabbitMQPersisterTest extends TestCase
 {
@@ -18,9 +18,9 @@ class RabbitMQPersisterTest extends TestCase
      */
     public function testLogDefaults()
     {
-        $client = $this->getMockBuilder(RabbitMQConnection::class)
+        $client = $this->getMockBuilder(RabbitMqConnection::class)
             ->disableOriginalConstructor()
-            ->setMethods(['send'])
+            ->onlyMethods(['send'])
             ->getMock();
 
         $persister = new RabbitMQPersister();
@@ -49,9 +49,9 @@ class RabbitMQPersisterTest extends TestCase
      */
     public function testLogOverrideDefaults()
     {
-        $client = $this->getMockBuilder(RabbitMQConnection::class)
+        $client = $this->getMockBuilder(RabbitMqConnection::class)
             ->disableOriginalConstructor()
-            ->setMethods(['send'])
+            ->onlyMethods(['send'])
             ->getMock();
 
         $persister = new RabbitMQPersister(['delivery_mode' => 1, 'routing' => 'foo', 'exchange' => 'bar']);
