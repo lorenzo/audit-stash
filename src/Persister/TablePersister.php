@@ -145,10 +145,10 @@ class TablePersister implements PersisterInterface
     /**
      * Sets the table to use for persisting logs.
      *
-     * @param \Cake\ORM\Table|string $table Either a string denoting a table alias, or a table object.
+     * @param \Cake\ORM\Table|null|string $table Either a string denoting a table alias, or a table object.
      * @return $this
      */
-    public function setTable(string|Table $table)
+    public function setTable(string|null|Table $table)
     {
         if (is_string($table)) {
             $table = $this->getTableLocator()->get($table);

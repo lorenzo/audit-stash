@@ -19,16 +19,16 @@ abstract class BaseEvent implements EventInterface
     /**
      * The array of changed properties for the entity.
      *
-     * @var array
+     * @var array|null
      */
-    protected array $changed;
+    protected ?array $changed;
 
     /**
      * The array of original properties before they got changed.
      *
-     * @var array
+     * @var array|null
      */
-    protected array $original;
+    protected ?array $original;
 
     /**
      * Constructor.
@@ -36,15 +36,15 @@ abstract class BaseEvent implements EventInterface
      * @param string $transactionId The global transaction id
      * @param mixed $id The entities primary key
      * @param string $source The name of the source (table)
-     * @param array $changed The array of changes that got detected for the entity
-     * @param array $original The original values the entity had before it got changed
+     * @param array|null $changed The array of changes that got detected for the entity
+     * @param array|null $original The original values the entity had before it got changed
      */
     public function __construct(
         string $transactionId,
         mixed $id,
         string $source,
-        array $changed,
-        array $original
+        ?array $changed,
+        ?array $original
     ) {
         $this->transactionId = $transactionId;
         $this->id = $id;

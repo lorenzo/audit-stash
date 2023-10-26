@@ -17,6 +17,7 @@ class ElasticSearchPersisterTest extends TestCase
      * Tests that create events are correctly stored.
      *
      * @return void
+     * @throws \PHPUnit\Framework\MockObject\Exception|\AuditStash\Exception
      */
     public function testLogEvents()
     {

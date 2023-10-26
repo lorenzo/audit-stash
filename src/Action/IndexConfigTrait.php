@@ -40,12 +40,13 @@ trait IndexConfigTrait
     /**
      * Get index repository
      *
+     * @param string $alias
      * @return \Cake\ElasticSearch\Index
      */
-    protected function getIndexRepository(): Index
+    protected function getIndexRepository(string $alias): Index
     {
         $indexLocator = new IndexLocator();
-        $repository = $indexLocator->get('AuditStash.AuditLogs');
+        $repository = $indexLocator->get($alias);
         assert($repository instanceof Index);
 
         return $repository;

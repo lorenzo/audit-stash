@@ -15,6 +15,7 @@ class RabbitMQPersisterTest extends TestCase
      * Tests that using the defaults calls the right methods.
      *
      * @return void
+     * @throws \JsonException
      */
     public function testLogDefaults()
     {
@@ -46,6 +47,7 @@ class RabbitMQPersisterTest extends TestCase
      * Tests overriding defaults.
      *
      * @return void
+     * @throws \JsonException
      */
     public function testLogOverrideDefaults()
     {
