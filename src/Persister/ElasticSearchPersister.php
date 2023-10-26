@@ -17,9 +17,9 @@ class ElasticSearchPersister implements PersisterInterface
     /**
      * The client or connection to Elasticsearch.
      *
-     * @var \Cake\ElasticSearch\Datasource\Connection
+     * @var \Cake\ElasticSearch\Datasource\Connection|null
      */
-    protected Connection $connection;
+    protected ?Connection $connection;
 
     /**
      * Whether to use the transaction ids as document ids.
@@ -159,7 +159,11 @@ class ElasticSearchPersister implements PersisterInterface
     public function getConnection(): Connection
     {
         if ($this->connection === null) {
-            $this->connection = ConnectionManager::get('auditlog_elastic');
+            /**
+             * @var \Cake\ElasticSearch\Datasource\Connection $connection
+             */
+            $connection = ConnectionManager::get('auditlog_elastic');
+            $this->connection = $connection;
         }
 
         return $this->connection;

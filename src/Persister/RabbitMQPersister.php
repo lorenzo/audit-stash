@@ -52,6 +52,7 @@ class RabbitMQPersister implements PersisterInterface
      *
      * @param array<\AuditStash\EventInterface> $auditLogs An array of EventInterface objects
      * @return void
+     * @throws \JsonException
      */
     public function logEvents(array $auditLogs): void
     {
@@ -66,8 +67,8 @@ class RabbitMQPersister implements PersisterInterface
      * Sets the client connection to elastic search when passed.
      * If no arguments are provided, it returns the current connection.
      *
-     * @param RabbitMqConnection|null $connection The conneciton to elastic search
-     * @return RabbitMqConnection
+     * @param \AuditStash\Connection\RabbitMqConnection|null $connection The conneciton to elastic search
+     * @return \AuditStash\Connection\RabbitMqConnection
      */
     public function connection(?RabbitMqConnection $connection = null): RabbitMqConnection
     {

@@ -39,16 +39,16 @@ class RabbitMqConnection implements ConnectionInterface
         'heartbeat' => 0,
         'channel_rpc_timeout' => 0.0,
         'ssl_protocol' => null,
-        'config' => null
+        'config' => null,
     ];
 
     /**
-     * @var AMQPStreamConnection
+     * @var \PhpAmqpLib\Connection\AMQPStreamConnection
      */
     protected AMQPStreamConnection $client;
 
     /**
-     * @var CacheInterface|null
+     * @var \Psr\SimpleCache\CacheInterface|null
      */
     protected ?CacheInterface $cacher;
 
@@ -58,7 +58,6 @@ class RabbitMqConnection implements ConnectionInterface
      * ### Available options:
      *
      * @see \PhpAmqpLib\Connection\AMQPStreamConnection::__construct()
-     *
      * @param array<string, mixed> $config Configuration array.
      * @throws \Exception
      */
@@ -146,13 +145,20 @@ class RabbitMqConnection implements ConnectionInterface
 
     /**
      * Send message
+     *
+     * @throws \JsonException
      */
-    public function send(string $topic, array $data, array $options = []): void
-    {
+    public function send(
+        string $topic,
+        array $data,
+        array $options = []
+    ): void {
         $AMQPChannel = $this->client->channel();
         $AMQPChannel->exchange_declare($topic, AMQPExchangeType::FANOUT);
+        $body = json_encode($data, JSON_THROW_ON_ERROR);
+
         $AMQPMessage = new AMQPMessage(
-            json_encode($data),
+            $body,
             [
                 'content-type' => 'application/json',
                 'delivery_mode' => $options['delivery_mode'] ?? AMQPMessage::DELIVERY_MODE_PERSISTENT,
