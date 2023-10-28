@@ -14,13 +14,11 @@
         "cakephp/cakephp-codesniffer": "^5.0",
         "cakephp/migrations": "^4.0.0",
         "cakephp/elastic-search": "^4.0.0",
-        "friendsofcake/crud": "^7.0.0",
-        "php-amqplib/php-amqplib": "^3.6"
+        "friendsofcake/crud": "^7.0.0"
     },
     "suggest": {
         "cakephp/elastic-search": "The default persister engine for audit-stash is elastic search and requires this plugin",
-        "friendsofcake/crud": "audit-stash provide Crud Action classes for displaying audit logs",
-        "php-amqplib/php-amqplib": "Use this package if you prefer sending the audit events to RabbitMQ"
+        "friendsofcake/crud": "audit-stash provide Crud Action classes for displaying audit logs"
     },
     "autoload": {
         "psr-4": {
