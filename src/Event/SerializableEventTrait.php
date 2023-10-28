@@ -26,7 +26,7 @@ trait SerializableEventTrait
      * @param string $data serialized string
      * @return void
      */
-    public function unserialize($data): void
+    public function unserialize(string $data): void
     {
         $this->__unserialize($data);
     }
