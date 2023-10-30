@@ -107,20 +107,6 @@ class ArticlesTable extends Table
 }
 ```
 
-When using the `Elasticsearch` persister, it is recommended that you tell Elasticsearch about the schema of your table. You can do this
-automatically by executing the following command:
-
-```
-bin/cake elastic_mapping Articles
-```
-
-If you are using one index per day, save yourself some time and add the `--use-templates` option. This will create a schema template so
-any new index will inherit this configuration:
-
-```
-bin/cake elastic_mapping Articles --use-templates
-```
-
 Remember to execute the command line each time you change the schema of your table!
 
 ### Configuring The Behavior
