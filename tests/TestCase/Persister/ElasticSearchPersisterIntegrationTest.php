@@ -9,9 +9,8 @@ use AuditStash\Event\AuditDeleteEvent;
 use AuditStash\Event\AuditUpdateEvent;
 use AuditStash\Persister\ElasticSearchPersister;
 use Cake\Datasource\ConnectionManager;
-use Cake\I18n\Time;
+use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
-use DateTime;
 
 class ElasticSearchPersisterIntegrationTest extends TestCase
 {
@@ -20,7 +19,7 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
     /**
      * Fixtures to be loaded.
      *
-     * @var string
+     * @var array<string>
      */
     public array $fixtures = [
         'plugin.AuditStash.ElasticArticles',
@@ -237,11 +236,11 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
         $persister = new ElasticSearchPersister(['connection' => $client, 'index' => 'article', 'type' => 'article']);
         $original = [
             'title' => 'Old article title',
-            'published_date' => new Time('2015-04-12 20:20:21'),
+            'published_date' => new DateTime('2015-04-12 20:20:21'),
         ];
         $changed = [
             'title' => 'A new article',
-            'published_date' => new Time('2015-04-13 20:20:21'),
+            'published_date' => new DateTime('2015-04-13 20:20:21'),
         ];
 
         $events[] = new AuditUpdateEvent('1234', 50, 'articles', $changed, $original);

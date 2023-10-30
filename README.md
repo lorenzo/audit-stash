@@ -290,6 +290,8 @@ create the file `src/Model/Audit/AuditTrail.php` with the following:
 
 ```php
 <?php
+declare(strict_types=1);
+
 namespace App\Model\Audit;
 
 use Cake\Utility\Text;
@@ -321,13 +323,14 @@ Anywhere you wish to use `Connection::transactional()`, you will need to first i
 ```php
 use App\Model\Audit\AuditTrail;
 use Cake\Event\Event;
+use \ArrayObject
 ```
 
 Your transaction should then look similar to this example of a BookmarksController:
 
 ```php
 $trail = new AuditTrail();
-$success = $this->Bookmarks->connection()->transactional(function () use ($trail): void {
+$success = $this->Bookmarks->connection()->transactional(function () use ($trail) {
     $bookmark = $this->Bookmarks->newEntity();
     $bookmark1->save($data1, $trail->toSaveOptions());
     $bookmark2 = $this->Bookmarks->newEntity();
@@ -339,7 +342,11 @@ $success = $this->Bookmarks->connection()->transactional(function () use ($trail
 
 if ($success) {
     $event = new Event('Model.afterCommit', $this->Bookmarks);
-    $table->behaviors()->get('AuditLog')->afterCommit($event, $result, $auditTrail->toSaveOptions());
+    $this->Bookmarks->->behaviors()->get('AuditLog')->afterCommit(
+        $event,
+        $result,
+        new ArrayObject($auditTrail->toSaveOptions())
+    );
 }
 ```
 
