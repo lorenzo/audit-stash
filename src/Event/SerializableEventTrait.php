@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace AuditStash\Event;
 
-use ReturnTypeWillChange;
-
 /**
  * Exposes basic functions for serializing event classes.
  */
@@ -17,7 +15,9 @@ trait SerializableEventTrait
      */
     public function serialize(): string
     {
-        return serialize($this->__serialize());
+        return serialize(
+            $this->__serialize()
+        );
     }
 
     /**
@@ -28,7 +28,9 @@ trait SerializableEventTrait
      */
     public function unserialize(string $data): void
     {
-        $this->__unserialize($data);
+        $this->__unserialize(
+            unserialize($data)
+        );
     }
 
     /**
@@ -44,13 +46,12 @@ trait SerializableEventTrait
     /**
      * Takes the string representation of this object so it can be reconstructed.
      *
-     * @param string $data serialized string
+     * @param array $data serialized string
      * @return void
      */
-    public function __unserialize($data): void
+    public function __unserialize(array $data): void
     {
-        $vars = $data;
-        foreach ($vars as $var => $value) {
+        foreach ($data as $var => $value) {
             $this->{$var} = $value;
         }
     }
@@ -58,10 +59,9 @@ trait SerializableEventTrait
     /**
      * Returns an array with the basic variables that should be json serialized.
      *
-     * @return mixed
+     * @return array
      */
-    #[ReturnTypeWillChange]
-    protected function basicSerialize(): mixed
+    protected function basicSerialize(): array
     {
         return [
             'type' => $this->getEventType(),
