@@ -1,25 +1,27 @@
 <?php
+declare(strict_types=1);
 
 namespace AuditStash\Test\TestCase\Persister;
 
+use AuditStash\Action\IndexConfigTrait;
 use AuditStash\Event\AuditCreateEvent;
 use AuditStash\Event\AuditDeleteEvent;
 use AuditStash\Event\AuditUpdateEvent;
 use AuditStash\Persister\ElasticSearchPersister;
 use Cake\Datasource\ConnectionManager;
-use Cake\ElasticSearch\IndexRegistry;
-use Cake\I18n\Time;
+use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
-use DateTime;
 
 class ElasticSearchPersisterIntegrationTest extends TestCase
 {
+    use IndexConfigTrait;
+
     /**
      * Fixtures to be loaded.
      *
-     * @var string
+     * @var array<string>
      */
-    public $fixtures = [
+    public array $fixtures = [
         'plugin.AuditStash.ElasticArticles',
         'plugin.AuditStash.ElasticAudits',
         'plugin.AuditStash.ElasticAuthors',
@@ -30,23 +32,28 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
      * Tests that create events are correctly stored.
      *
      * @return void
+     * @throws \AuditStash\Exception
+     * @throws \Exception
      */
     public function testLogSingleCreateEvent()
     {
+        /**
+         * @var \Cake\ElasticSearch\Datasource\Connection $client
+         */
         $client = ConnectionManager::get('test_elastic');
         $persister = new ElasticSearchPersister(['connection' => $client, 'index' => 'article', 'type' => 'article']);
         $data = [
             'title' => 'A new article',
             'body' => 'article body',
             'author_id' => 1,
-            'published' => 'Y'
+            'published' => 'Y',
         ];
 
         $events[] = new AuditCreateEvent('1234', 50, 'articles', $data, $data);
         $persister->logEvents($events);
         $client->getIndex('article')->refresh();
 
-        $articles = IndexRegistry::get('Article')->find()->toArray();
+        $articles = $this->getIndexRepository('Article')->find()->toArray();
         $this->assertCount(1, $articles);
 
         $this->assertEquals(
@@ -64,15 +71,15 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
                 'title' => 'A new article',
                 'body' => 'article body',
                 'author_id' => 1,
-                'published' => 'Y'
+                'published' => 'Y',
             ],
             'changed' => [
                 'title' => 'A new article',
                 'body' => 'article body',
                 'author_id' => 1,
-                'published' => 'Y'
+                'published' => 'Y',
             ],
-            'meta' => []
+            'meta' => [],
         ];
         unset($articles[0]['id'], $articles[0]['@timestamp']);
         $this->assertEquals($expected, $articles[0]->toArray());
@@ -82,18 +89,23 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
      * Tests that update events are correctly stored.
      *
      * @return void
+     * @throws \AuditStash\Exception
+     * @throws \Exception
      */
     public function testLogSingleUpdateEvent()
     {
+        /**
+         * @var \Cake\ElasticSearch\Datasource\Connection $client
+         */
         $client = ConnectionManager::get('test_elastic');
         $persister = new ElasticSearchPersister(['connection' => $client, 'index' => 'article', 'type' => 'article']);
         $original = [
             'title' => 'Old article title',
-            'published' => 'N'
+            'published' => 'N',
         ];
         $changed = [
             'title' => 'A new article',
-            'published' => 'Y'
+            'published' => 'Y',
         ];
 
         $events[] = new AuditUpdateEvent('1234', 50, 'articles', $changed, $original);
@@ -101,7 +113,7 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
         $persister->logEvents($events);
         $client->getIndex('article')->refresh();
 
-        $articles = IndexRegistry::get('Article')->find()->toArray();
+        $articles = $this->getIndexRepository('Article')->find()->toArray();
         $this->assertCount(1, $articles);
 
         $this->assertEquals(
@@ -116,7 +128,7 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
             'parent_source' => 'authors',
             'original' => $original,
             'changed' => $changed,
-            'meta' => []
+            'meta' => [],
         ];
         unset($articles[0]['id'], $articles[0]['@timestamp']);
         $this->assertEquals($expected, $articles[0]->toArray());
@@ -126,9 +138,14 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
      * Tests that delete events are correctly stored.
      *
      * @return void
+     * @throws \AuditStash\Exception
+     * @throws \Exception
      */
     public function testLogSingleDeleteEvent()
     {
+        /**
+         * @var \Cake\ElasticSearch\Datasource\Connection $client
+         */
         $client = ConnectionManager::get('test_elastic');
         $persister = new ElasticSearchPersister(['connection' => $client, 'index' => 'article', 'type' => 'article']);
 
@@ -136,7 +153,7 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
         $persister->logEvents($events);
         $client->getIndex('article')->refresh();
 
-        $articles = IndexRegistry::get('Article')->find()->toArray();
+        $articles = $this->getIndexRepository('Article')->find()->toArray();
         $this->assertCount(1, $articles);
 
         $this->assertEquals(
@@ -152,7 +169,7 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
             'parent_source' => 'authors',
             'original' => null,
             'changed' => null,
-            'meta' => []
+            'meta' => [],
         ];
         unset($articles[0]['id'], $articles[0]['@timestamp']);
         $this->assertEquals($expected, $articles[0]->toArray());
@@ -163,25 +180,29 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
      * althought your source name.
      *
      * @return void
+     * @throws \Exception
      */
     public function testLogMultipleEvents()
     {
+        /**
+         * @var \Cake\ElasticSearch\Datasource\Connection $client
+         */
         $client = ConnectionManager::get('test_elastic');
         $persister = new ElasticSearchPersister(['connection' => $client, 'index' => 'audit', 'type' => 'audit']);
 
         $data = [
             'id' => 3,
-            'tag' => 'cakephp'
+            'tag' => 'cakephp',
         ];
         $events[] = new AuditCreateEvent('1234', 4, 'tags', $data, $data);
 
         $original = [
             'title' => 'Old article title',
-            'published' => 'N'
+            'published' => 'N',
         ];
         $changed = [
             'title' => 'A new article',
-            'published' => 'Y'
+            'published' => 'Y',
         ];
         $events[] = new AuditUpdateEvent('1234', 2, 'authors', $changed, $original);
         $events[] = new AuditDeleteEvent('1234', 50, 'articles');
@@ -190,7 +211,7 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
         $persister->logEvents($events);
         $client->getIndex('audit')->refresh();
 
-        $audits = IndexRegistry::get('Audit')->find()->all();
+        $audits = $this->getIndexRepository('Audit')->find()->all();
         $this->assertCount(4, $audits);
         $audit = $audits->first();
         $this->assertEquals(
@@ -203,25 +224,30 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
      * Tests that Time objects are correctly serialized.
      *
      * @return void
+     * @throws \AuditStash\Exception
+     * @throws \Exception
      */
     public function testPersistingTimeObjects()
     {
+        /**
+         * @var \Cake\ElasticSearch\Datasource\Connection $client
+         */
         $client = ConnectionManager::get('test_elastic');
         $persister = new ElasticSearchPersister(['connection' => $client, 'index' => 'article', 'type' => 'article']);
         $original = [
             'title' => 'Old article title',
-            'published_date' => new Time('2015-04-12 20:20:21')
+            'published_date' => new DateTime('2015-04-12 20:20:21'),
         ];
         $changed = [
             'title' => 'A new article',
-            'published_date' => new Time('2015-04-13 20:20:21')
+            'published_date' => new DateTime('2015-04-13 20:20:21'),
         ];
 
         $events[] = new AuditUpdateEvent('1234', 50, 'articles', $changed, $original);
         $persister->logEvents($events);
         $client->getIndex('article')->refresh();
 
-        $articles = IndexRegistry::get('Article')->find()->toArray();
+        $articles = $this->getIndexRepository('Article')->find()->toArray();
         $this->assertCount(1, $articles);
 
         $this->assertEquals(
@@ -237,13 +263,13 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
             'parent_source' => null,
             'original' => [
                 'title' => 'Old article title',
-                'published_date' => '2015-04-12T20:20:21+00:00'
+                'published_date' => '2015-04-12T20:20:21+00:00',
             ],
             'changed' => [
                 'title' => 'A new article',
-                'published_date' => '2015-04-13T20:20:21+00:00'
+                'published_date' => '2015-04-13T20:20:21+00:00',
             ],
-            'meta' => []
+            'meta' => [],
         ];
         unset($articles[0]['id'], $articles[0]['@timestamp']);
         $this->assertEquals($expected, $articles[0]->toArray());
@@ -253,9 +279,13 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
      * Tests that metadata is correctly stored.
      *
      * @return void
+     * @throws \AuditStash\Exception
      */
     public function testLogEventWithMetadata()
     {
+        /**
+         * @var \Cake\ElasticSearch\Datasource\Connection $client
+         */
         $client = ConnectionManager::get('test_elastic');
         $persister = new ElasticSearchPersister(['connection' => $client, 'index' => 'article', 'type' => 'article']);
 
@@ -264,7 +294,7 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
         $persister->logEvents($events);
         $client->getIndex('article')->refresh();
 
-        $articles = IndexRegistry::get('Article')->find()->toArray();
+        $articles = $this->getIndexRepository('Article')->find()->toArray();
         $this->assertCount(1, $articles);
         $this->assertEquals(['a' => 'b', 'c' => 'd'], $articles[0]->meta);
     }

@@ -1,7 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace AuditStash\Action;
 
+use Cake\ElasticSearch\Datasource\IndexLocator;
+use Cake\ElasticSearch\Index;
+use Cake\Http\ServerRequest;
 use DateTime;
 
 trait IndexConfigTrait
@@ -10,18 +14,41 @@ trait IndexConfigTrait
      * Configures the index to use in elastic search by completing the placeholders with the current date
      * if needed.
      *
-     * @param Cake\ElasticSearch\Index $repository
-     * @param Cake\Http\Request
+     * @param \Cake\ElasticSearch\Index $repository
+     * @param \Cake\Http\ServerRequest $request
      * @return void
+     * @throws \Exception
      */
-    protected function _configIndex($repository, $request)
+    protected function configIndex(Index $repository, ServerRequest $request): void
     {
-        $client = $repository->connection();
+        /** @var \Elastica\Connection $client */
+        $client = $repository->getConnection();
         $indexTemplate = $repository->getName();
         $client->setConfig(['index' => sprintf($indexTemplate, '*')]);
 
-        if ($request->query('at')) {
-            $client->setConfig(['index' => sprintf($indexTemplate, (new DateTime($request->query('at')))->format('-Y.m.d'))]);
+        if ($request->getQuery('at')) {
+            $client->setConfig([
+                'index' => sprintf(
+                    $indexTemplate,
+                    (new DateTime($request->getQuery('at')))
+                        ->format('-Y.m.d')
+                ),
+            ]);
         }
+    }
+
+    /**
+     * Get index repository
+     *
+     * @param string $alias
+     * @return \Cake\ElasticSearch\Index
+     */
+    protected function getIndexRepository(string $alias): Index
+    {
+        $indexLocator = new IndexLocator();
+        $repository = $indexLocator->get($alias);
+        assert($repository instanceof Index);
+
+        return $repository;
     }
 }

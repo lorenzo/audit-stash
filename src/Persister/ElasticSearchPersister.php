@@ -1,12 +1,13 @@
 <?php
+declare(strict_types=1);
 
 namespace AuditStash\Persister;
 
 use AuditStash\Exception;
+use AuditStash\Model\Index\AuditLogsIndex;
 use AuditStash\PersisterInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\ElasticSearch\Datasource\Connection;
-use Elastica\Client;
 use Elastica\Document;
 
 /**
@@ -17,30 +18,30 @@ class ElasticSearchPersister implements PersisterInterface
     /**
      * The client or connection to Elasticsearch.
      *
-     * @var \Cake\ElasticSearch\Datasource\Connection
+     * @var \Cake\ElasticSearch\Datasource\Connection|null
      */
-    protected $connection;
+    protected ?Connection $connection = null;
 
     /**
      * Whether to use the transaction ids as document ids.
      *
      * @var bool
      */
-    protected $useTransactionId = false;
+    protected bool $useTransactionId = false;
 
     /**
      * Elasticsearch index to store documents
      *
      * @var string
      */
-    protected $index;
+    protected mixed $index;
 
     /**
      * Elasticsearch mapping type of documents
      *
      * @var string
      */
-    protected $type;
+    protected mixed $type;
 
     /**
      * Sets the options for this persister. The available options are:
@@ -52,9 +53,9 @@ class ElasticSearchPersister implements PersisterInterface
      *
      * @param array $options
      * @return void
-     * @throws Exception
+     * @throws \AuditStash\Exception
      */
-    public function __construct($options = [])
+    public function __construct(array $options = [])
     {
         if (isset($options['connection'])) {
             $this->setConnection($options['connection']);
@@ -78,10 +79,10 @@ class ElasticSearchPersister implements PersisterInterface
     /**
      * Persists all the audit log event objects that are provided.
      *
-     * @param \AuditStash\EventInterface[] $auditLogs An array of EventInterface objects
+     * @param array<\AuditStash\EventInterface> $auditLogs An array of EventInterface objects
      * @return void
      */
-    public function logEvents(array $auditLogs)
+    public function logEvents(array $auditLogs): void
     {
         $documents = $this->transformToDocuments($auditLogs);
 
@@ -93,10 +94,10 @@ class ElasticSearchPersister implements PersisterInterface
     /**
      * Transforms the EventInterface objects to Elastica Documents.
      *
-     * @param \AuditStash\EventInterface[] $auditLogs An array of EventInterface objects.
+     * @param array<\AuditStash\EventInterface> $auditLogs An array of EventInterface objects.
      * @return array
      */
-    protected function transformToDocuments($auditLogs)
+    protected function transformToDocuments(array $auditLogs): array
     {
         $index = $this->getIndex();
         $type = $this->getType();
@@ -114,7 +115,7 @@ class ElasticSearchPersister implements PersisterInterface
                 'parent_source' => $log->getParentSourceName(),
                 'original' => $eventType === 'delete' ? null : $log->getOriginal(),
                 'changed' => $eventType === 'delete' ? null : $log->getChanged(),
-                'meta' => $log->getMetaInfo()
+                'meta' => $log->getMetaInfo(),
             ];
             $id = $this->useTransactionId ? $log->getTransactionId() : '';
             $documents[] = new Document($id, $data, $type, $index);
@@ -131,7 +132,7 @@ class ElasticSearchPersister implements PersisterInterface
      * @param bool $use Whether to copy the transactionId as the document id
      * @return void
      */
-    public function reuseTransactionId($use = true)
+    public function reuseTransactionId(bool $use = true): void
     {
         $this->useTransactionId = $use;
     }
@@ -156,31 +157,17 @@ class ElasticSearchPersister implements PersisterInterface
      *
      * @return \Cake\ElasticSearch\Datasource\Connection
      */
-    public function getConnection()
+    public function getConnection(): Connection
     {
         if ($this->connection === null) {
-            $this->connection = ConnectionManager::get('auditlog_elastic');
+            /**
+             * @var \Cake\ElasticSearch\Datasource\Connection $connection
+             */
+            $connection = ConnectionManager::get(AuditLogsIndex::defaultConnectionName());
+            $this->connection = $connection;
         }
 
         return $this->connection;
-    }
-
-    /**
-     * Sets the client connection to elastic search when passed.
-     * If no arguments are provided, it returns the current connection.
-     *
-     * @param \Elastica\Client|null $connection The connection to elastic search
-     * @return \Elastica\Client
-     * @deprecated Use getConnection()/setConnection() instead
-     */
-    public function connection(Client $connection = null)
-    {
-        deprecationWarning('Use getConnection()/setConnection() instead');
-        if ($connection !== null) {
-            return $this->setConnection($connection);
-        }
-
-        return $this->getConnection();
     }
 
     /**
@@ -189,7 +176,7 @@ class ElasticSearchPersister implements PersisterInterface
      * @param string $index Name of the Elasticsearch index
      * @return $this
      */
-    public function setIndex($index)
+    public function setIndex(string $index)
     {
         $this->index = $index;
 
@@ -201,7 +188,7 @@ class ElasticSearchPersister implements PersisterInterface
      *
      * @return string Name of the Elasticsearch index
      */
-    public function getIndex()
+    public function getIndex(): string
     {
         return sprintf($this->index, '-' . gmdate('Y.m.d'));
     }
@@ -212,7 +199,7 @@ class ElasticSearchPersister implements PersisterInterface
      * @param string $type Name of the Elasticsearch mapping type
      * @return $this
      */
-    public function setType($type)
+    public function setType(string $type)
     {
         $this->type = $type;
 
@@ -224,7 +211,7 @@ class ElasticSearchPersister implements PersisterInterface
      *
      * @return string Name of the Elasticsearch mapping type
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }

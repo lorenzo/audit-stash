@@ -1,24 +1,23 @@
 <?php
+declare(strict_types=1);
 
-namespace AuditStash\Shell\Task;
+namespace AuditStash\Persister;
 
 use AuditStash\EventFactory;
-use AuditStash\Persister\ElasticSearchPersister;
+use AuditStash\EventInterface;
 use AuditStash\PersisterInterface;
-use Cake\Console\Shell;
 
 /**
  * Used to directly persist event logs into the configured persister.
  */
-class PersistTask extends Shell
+class PersistTask
 {
-
     /**
      * The persister object to use.
      *
-     * @var PersisterInterface
+     * @var PersisterInterface|null`
      */
-    protected $persister;
+    protected ?PersisterInterface $persister;
 
     /**
      * Persists a list of event logs represented in arrays
@@ -26,14 +25,15 @@ class PersistTask extends Shell
      *
      * @param array $events The events to persist
      * @return void
+     * @throws \ReflectionException
      */
-    public function persist(array $events)
+    public function persist(array $events): void
     {
         $factory = new EventFactory();
         $events = array_map(
-            function ($event) use ($factory) {
-                return is_array($event) ? $factory->create($event) : $event;
-            },
+            fn (EventInterface|array $event): EventInterface => is_array($event) ?
+                $factory->create($event) :
+                $event,
             $events
         );
         $this->persister()->logEvents($events);
@@ -43,10 +43,10 @@ class PersistTask extends Shell
      * Sets the persister object to use for logging al audit events.
      * If called if no arguments, it will return the ElasitSearchPersister.
      *
-     * @param PersisterInterface $persister The persister object to use
-     * @return PersisterInterface The configured persister
+     * @param \AuditStash\PersisterInterface|null $persister The persister object to use
+     * @return \AuditStash\PersisterInterface|null The configured persister
      */
-    public function persister(PersisterInterface $persister = null)
+    public function persister(?PersisterInterface $persister = null): ?PersisterInterface
     {
         if ($persister === null && $this->persister === null) {
             $persister = new ElasticSearchPersister();

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace AuditStash\Model\Behavior;
 
@@ -15,6 +16,7 @@ use Cake\ORM\Behavior;
 use Cake\Utility\Inflector;
 use Cake\Utility\Text;
 use SplObjectStorage;
+use function Cake\Collection\collection;
 
 /**
  * This behavior can be used to log all the creations, modifications and deletions
@@ -25,21 +27,21 @@ class AuditLogBehavior extends Behavior
     /**
      * Default configuration.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'index' => null,
         'type' => null,
         'blacklist' => ['created', 'modified'],
-        'whitelist' => []
+        'whitelist' => [],
     ];
 
     /**
      * The persister object.
      *
-     * @var PersisterInterface
+     * @var \AuditStash\PersisterInterface|null
      */
-    protected $persister;
+    protected ?PersisterInterface $persister = null;
 
     /**
      * Returns the list of implemented events.
@@ -54,7 +56,7 @@ class AuditLogBehavior extends Behavior
             'Model.afterSave' => 'afterSave',
             'Model.afterDelete' => 'afterDelete',
             'Model.afterSaveCommit' => 'afterCommit',
-            'Model.afterDeleteCommit' => 'afterCommit'
+            'Model.afterDeleteCommit' => 'afterCommit',
         ];
     }
 
@@ -64,11 +66,14 @@ class AuditLogBehavior extends Behavior
      *
      * @param \Cake\Event\Event $event The Model event that is enclosed inside a transaction
      * @param \Cake\Datasource\EntityInterface $entity The entity that is to be saved
-     * @param ArrayObject $options The options to be passed to the save or delete operation
+     * @param \ArrayObject $options The options to be passed to the save or delete operation
      * @return void
      */
-    public function injectTracking(Event $event, EntityInterface $entity, ArrayObject $options)
-    {
+    public function injectTracking(
+        Event $event,
+        EntityInterface $entity,
+        ArrayObject $options
+    ): void {
         if (!isset($options['_auditTransaction'])) {
             $options['_auditTransaction'] = Text::uuid();
         }
@@ -84,11 +89,14 @@ class AuditLogBehavior extends Behavior
      *
      * @param \Cake\Event\Event $event The Model event that is enclosed inside a transaction
      * @param \Cake\Datasource\EntityInterface $entity The entity that is to be saved
-     * @param ArrayObject $options Options array containing the `_auditQueue` key
+     * @param \ArrayObject $options Options array containing the `_auditQueue` key
      * @return void
      */
-    public function afterSave(Event $event, EntityInterface $entity, $options)
-    {
+    public function afterSave(
+        Event $event,
+        EntityInterface $entity,
+        ArrayObject $options
+    ): void {
         if (!isset($options['_auditQueue'])) {
             return;
         }
@@ -137,19 +145,20 @@ class AuditLogBehavior extends Behavior
      *
      * @param \Cake\Event\Event $event The Model event that is enclosed inside a transaction
      * @param \Cake\Datasource\EntityInterface $entity The entity that is to be saved or deleted
-     * @param ArrayObject $options Options array containing the `_auditQueue` key
+     * @param \ArrayObject $options Options array containing the `_auditQueue` key
      * @return void
      */
-    public function afterCommit(Event $event, EntityInterface $entity, $options)
-    {
+    public function afterCommit(
+        Event $event,
+        EntityInterface $entity,
+        ArrayObject $options
+    ): void {
         if (!isset($options['_auditQueue'])) {
             return;
         }
 
         $events = collection($options['_auditQueue'])
-            ->map(function ($entity, $pos, $it) {
-                return $it->getInfo();
-            })
+            ->map(fn ($entity, $pos, $it): mixed => $it->getInfo())
             ->toList();
 
         if (empty($events)) {
@@ -165,11 +174,14 @@ class AuditLogBehavior extends Behavior
      *
      * @param \Cake\Event\Event $event The Model event that is enclosed inside a transaction
      * @param \Cake\Datasource\EntityInterface $entity The entity that is to be saved or deleted
-     * @param ArrayObject $options Options array containing the `_auditQueue` key
+     * @param \ArrayObject $options Options array containing the `_auditQueue` key
      * @return void
      */
-    public function afterDelete(Event $event, EntityInterface $entity, $options)
-    {
+    public function afterDelete(
+        Event $event,
+        EntityInterface $entity,
+        ArrayObject $options
+    ): void {
         if (!isset($options['_auditQueue'])) {
             return;
         }
@@ -184,10 +196,10 @@ class AuditLogBehavior extends Behavior
      * Sets the persister object to use for logging all audit events.
      * If called with no arguments, it will return the currently configured persister.
      *
-     * @param \AuditStash\PersisterInterface $persister The persister object to use
+     * @param \AuditStash\PersisterInterface|null $persister The persister object to use
      * @return \AuditStash\PersisterInterface The configured persister
      */
-    public function persister(PersisterInterface $persister = null)
+    public function persister(?PersisterInterface $persister = null): PersisterInterface
     {
         if ($persister === null && $this->persister === null) {
             $class = Configure::read('AuditStash.persister') ?: ElasticSearchPersister::class;
@@ -210,7 +222,7 @@ class AuditLogBehavior extends Behavior
      * @param array $associated Whitelist of associations to look for
      * @return array List of property names
      */
-    protected function getAssociationProperties($associated)
+    protected function getAssociationProperties(array $associated): array
     {
         $associations = $this->_table->associations();
         $result = [];

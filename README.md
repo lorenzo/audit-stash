@@ -56,13 +56,13 @@ You now need to add the datasource configuration to your `config/app.php` file:
 If you want to use a regular database, respectively an engine that can be used via the CakePHP ORM API, then you can use
 the table persister that ships with this plugin.
 
-To do so you need to configure the `AuditStash.persister` option accordingly. In your `config/app.php` file add the
+To do so you need to configure the `AuditStash.persister` option accordingly. In your `config/app_local.php` file add the
 following configuration:
 
 ```php
 'AuditStash' => [
-    'persister' => 'AuditStash\Persister\TablePersister'
-]
+    'persister' => \AuditStash\Persister\TablePersister::class,
+],
 ```
 
 The plugin will then by default try to store the logs in a table named `audit_logs`, via a table class with the alias
@@ -73,7 +73,7 @@ add a table named `audit_logs` with all the default columns - alternatively crea
 can bake the corresponding table class.
 
 ```
-bin/cake migrations migrate -p AuditStash -t 20171018185609
+bin/cake migrations migrate -p AuditStash
 bin/cake bake model AuditLogs
 ```
 
@@ -81,11 +81,11 @@ bin/cake bake model AuditLogs
 
 The table persister supports various configuration options, please refer to
 [its API documentation](/src/Persister/TablePersister.php) for further information. Generally configuration can be
-applied via its `config()` (or `setConfig()`) method:
+applied via its `setConfig()` method:
 
 ```php
 $this->addBehavior('AuditStash.AuditLog');
-$this->behaviors()->get('AuditLog')->persister()->config([
+$this->behaviors()->get('AuditLog')->persister()->setConfig([
     'extractMetaFields' => [
         'user.id' => 'user_id'
     ]
@@ -99,26 +99,12 @@ Enabling the Audit Log in any of your table classes is as simple as adding a beh
 ```php
 class ArticlesTable extends Table
 {
-    public function initialize(array $config = [])
+    public function initialize(array $config = []): void
     {
         ...
         $this->addBehavior('AuditStash.AuditLog');
     }
 }
-```
-
-When using the `Elasticserch` persister, it is recommended that you tell Elasticsearch about the schema of your table. You can do this
-automatically by executing the following command:
-
-```
-bin/cake elastic_mapping Articles
-```
-
-If you are using one index per day, save yourself some time and add the `--use-templates` option. This will create a schema template so
-any new index will inherit this configuration:
-
-```
-bin/cake elastic_mapping Articles --use-templates
 ```
 
 Remember to execute the command line each time you change the schema of your table!
@@ -130,7 +116,7 @@ The `AuditLog` behavior can be configured to ignore certain fields of your table
 ```php
 class ArticlesTable extends Table
 {
-    public function initialize(array $config = [])
+    public function initialize(array $config = []): void
     {
         ...
         $this->addBehavior('AuditStash.AuditLog', [
@@ -143,7 +129,7 @@ class ArticlesTable extends Table
 If you prefer, you can use a `whitelist` instead. This means that only the fields listed in that array will be tracked by the behavior:
 
 ```php
-public function initialize(array $config = [])
+public function initialize(array $config = []): void
 {
     ...
     $this->addBehavior('AuditStash.AuditLog', [
@@ -164,11 +150,16 @@ use AuditStash\Meta\RequestMetadata;
 
 class AppController extends Controller
 {
-    public function beforeFilter(Event $event)
+    public function beforeFilter(EventInterface $event)
     {
         ...
-        $eventManager = $this->loadModel()->eventManager();
-        $eventManager->on(new RequestMetadata($this->request, $this->Auth->user('id')));
+        $eventManager = $this->fetchTable()->getEventManager();
+        $eventManager->on(
+            new RequestMetadata(
+                request: $this->getRequest(),
+                user: $this->getRequest()->getAttribute('identity')?->getIdentifier()
+            )
+        );
     }
 }
 ```
@@ -185,10 +176,15 @@ use Cake\Event\EventManager;
 
 class AppController extends Controller
 {
-    public function beforeFilter(Event $event)
+    public function beforeFilter(EventInterface $event)
     {
         ...
-        EventManager::instance()->on(new RequestMetadata($this->request, $this->Auth->user('id')));
+        EventManager::instance()->on(
+            new RequestMetadata(
+                request: $this->getRequest(),
+                user: $this->getRequest()->getAttribute('identity')?->getIdentifier()
+            )
+        );
     }
 }
 ```
@@ -216,7 +212,7 @@ EventManager::instance()->on(new ApplicationMetadata('my_blog_app', [
 Implementing your own metadata listeners is as simple as attaching the listener to the `AuditStash.beforeLog` event. For example:
 
 ```php
-EventManager::instance()->on('AuditStash.beforeLog', function ($event, array $logs) {
+EventManager::instance()->on('AuditStash.beforeLog', function (EventInterface $event, array $logs): void {
     foreach ($logs as $log) {
         $log->setMetaInfo($log->getMetaInfo() + ['extra' => 'This is extra data to be stored']);
     }
@@ -233,7 +229,7 @@ use AuditStash\PersisterInterface;
 
 class MyPersister implements PersisterInterface
 {
-    public function logEvents(array $auditLogs)
+    public function logEvents(array $auditLogs): void
     {
         foreach ($auditLogs as $log) {
             $eventType = $log->getEventType();
@@ -274,10 +270,14 @@ The configuration contains the fully namespaced class name of your persister.
 
 ### Working With Transactional Queries
 
-Occasionally, you may want to wrap a number of database changes in a transaction, so that it can be rolled back if one part of the process fails. In order to create audit logs during a transaction, some additional setup is required. First create the file `src/Model/Audit/AuditTrail.php` with the following:
+Occasionally, you may want to wrap a number of database changes in a transaction, so that it can be rolled back if one
+part of the process fails. In order to create audit logs during a transaction, some additional setup is required. First
+create the file `src/Model/Audit/AuditTrail.php` with the following:
 
 ```php
 <?php
+declare(strict_types=1);
+
 namespace App\Model\Audit;
 
 use Cake\Utility\Text;
@@ -285,8 +285,8 @@ use SplObjectStorage;
 
 class AuditTrail
 {
-    protected $_auditQueue;
-    protected $_auditTransaction;
+    protected SplObjectStorage $_auditQueue;
+    protected string $_auditTransaction;
 
     public function __construct()
     {
@@ -294,7 +294,7 @@ class AuditTrail
         $this->_auditTransaction = Text::uuid();
     }
 
-    public function toSaveOptions()
+    public function toSaveOptions(): array
     {
         return [
             '_auditQueue' => $this->_auditQueue,
@@ -309,6 +309,7 @@ Anywhere you wish to use `Connection::transactional()`, you will need to first i
 ```php
 use App\Model\Audit\AuditTrail;
 use Cake\Event\Event;
+use \ArrayObject
 ```
 
 Your transaction should then look similar to this example of a BookmarksController:
@@ -323,14 +324,17 @@ $success = $this->Bookmarks->connection()->transactional(function () use ($trail
     ...
     $bookmarkN = $this->Bookmarks->newEntity();
     $bookmarkN->save($dataN, $trail->toSaveOptions());
-
-    return true;
 });
 
 if ($success) {
     $event = new Event('Model.afterCommit', $this->Bookmarks);
-    $table->behaviors()->get('AuditLog')->afterCommit($event, $result, $auditTrail->toSaveOptions());
+    $this->Bookmarks->->behaviors()->get('AuditLog')->afterCommit(
+        $event,
+        $result,
+        new ArrayObject($auditTrail->toSaveOptions())
+    );
 }
 ```
 
-This will save all audit info for your objects, as well as audits for any associated data. Please note, `$result` must be an instance of an Object. Do not change the text "Model.afterCommit".
+This will save all audit info for your objects, as well as audits for any associated data. Please note, `$result` must
+be an instance of an Object. Do not change the text "Model.afterCommit".

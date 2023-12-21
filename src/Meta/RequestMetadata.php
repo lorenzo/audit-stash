@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace AuditStash\Meta;
 
@@ -15,25 +16,27 @@ class RequestMetadata implements EventListenerInterface
     /**
      * The current request.
      *
-     * @var Request
+     * @var \Cake\Http\ServerRequest
      */
-    protected $request;
+    protected Request $request;
 
     /**
      * The current user name or id.
      *
      * @var mixed
      */
-    protected $user;
+    protected mixed $user;
 
     /**
      * Constructor.
      *
-     * @param Request $request The current request
-     * @param string|int $user The current user id or username
+     * @param \Cake\Http\ServerRequest $request The current request
+     * @param string|int|null $user The current user id or username
      */
-    public function __construct($request, $user = null)
-    {
+    public function __construct(
+        Request $request,
+        int|string|null $user = null
+    ) {
         $this->request = $request;
         $this->user = $user;
     }
@@ -51,16 +54,16 @@ class RequestMetadata implements EventListenerInterface
     /**
      * Enriches all the passed audit logs to add the request info metadata.
      *
-     * @param Event $event The AuditStash.beforeLog event
+     * @param \Cake\Event\Event $event The AuditStash.beforeLog event
      * @param array $logs The audit log event objects
      * @return void
      */
-    public function beforeLog(Event $event, array $logs)
+    public function beforeLog(Event $event, array $logs): void
     {
         $meta = [
             'ip' => $this->request->clientIp(),
             'url' => $this->request->getRequestTarget(),
-            'user' => $this->user
+            'user' => $this->user,
         ];
 
         foreach ($logs as $log) {

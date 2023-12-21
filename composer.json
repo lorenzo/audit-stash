@@ -4,19 +4,20 @@
     "type": "cakephp-plugin",
     "license": "MIT",
     "require": {
-        "php": "^7.2|^8.0",
-        "cakephp/orm": "^4.0",
+        "php": ">=8.1",
+        "cakephp/orm": "^5.0.0",
         "ext-json": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^8.0",
-        "cakephp/cakephp": "^4.0",
-        "cakephp/elastic-search": "^3.0",
-        "friendsofcake/process-mq": "dev-master"
+        "cakephp/cakephp": "^5.0.0",
+        "phpunit/phpunit": "^10.1.0",
+        "cakephp/cakephp-codesniffer": "^5.0",
+        "cakephp/migrations": "^4.0.0",
+        "cakephp/elastic-search": "^4.0.0",
+        "friendsofcake/crud": "^7.0.0"
     },
     "suggest": {
         "cakephp/elastic-search": "The default persister engine for audit-stash is elastic search and requires this plugin",
-        "friendsofcake/process-mq": "Use this package if you prefer sending the audit events to RabbitMQ",
         "friendsofcake/crud": "audit-stash provide Crud Action classes for displaying audit logs"
     },
     "autoload": {
@@ -31,6 +32,28 @@
         }
     },
     "scripts": {
-        "test": "phpunit --colors=always"
+        "check": [
+            "@cs-check",
+            "@test"
+        ],
+        "cs-check": "phpcs --colors --parallel=16 -p src/ tests/",
+        "cs-fix": "phpcbf --colors --parallel=16 -p src/ tests/",
+        "phpstan": "tools/phpstan analyse",
+        "psalm": "tools/psalm --show-info=false",
+        "stan": [
+            "@phpstan",
+            "@psalm"
+        ],
+        "phpstan-tests": "tools/phpstan analyze -c tests/phpstan.neon",
+        "phpstan-baseline": "tools/phpstan --generate-baseline",
+        "psalm-baseline": "tools/psalm  --set-baseline=psalm-baseline.xml",
+        "stan-setup": "phive install",
+        "test": "phpunit",
+        "coverage-test": "phpunit --stderr --coverage-clover=clover.xml"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }

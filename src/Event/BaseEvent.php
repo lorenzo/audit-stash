@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace AuditStash\Event;
 
 use AuditStash\EventInterface;
 use DateTime;
+use ReturnTypeWillChange;
 
 /**
  * Represents a change in the repository where the list of changes can be
@@ -17,16 +19,16 @@ abstract class BaseEvent implements EventInterface
     /**
      * The array of changed properties for the entity.
      *
-     * @var array
+     * @var array|null
      */
-    protected $changed;
+    protected ?array $changed;
 
     /**
      * The array of original properties before they got changed.
      *
-     * @var array
+     * @var array|null
      */
-    protected $original;
+    protected ?array $original;
 
     /**
      * Constructor.
@@ -34,11 +36,16 @@ abstract class BaseEvent implements EventInterface
      * @param string $transactionId The global transaction id
      * @param mixed $id The entities primary key
      * @param string $source The name of the source (table)
-     * @param array $changed The array of changes that got detected for the entity
-     * @param array $original The original values the entity had before it got changed
+     * @param array|null $changed The array of changes that got detected for the entity
+     * @param array|null $original The original values the entity had before it got changed
      */
-    public function __construct($transactionId, $id, $source, $changed, $original)
-    {
+    public function __construct(
+        string $transactionId,
+        mixed $id,
+        string $source,
+        ?array $changed,
+        ?array $original
+    ) {
         $this->transactionId = $transactionId;
         $this->id = $id;
         $this->source = $source;
@@ -50,9 +57,9 @@ abstract class BaseEvent implements EventInterface
     /**
      * Returns an array with the properties and their values before they got changed.
      *
-     * @return array
+     * @return array|null
      */
-    public function getOriginal()
+    public function getOriginal(): ?array
     {
         return $this->original;
     }
@@ -60,9 +67,9 @@ abstract class BaseEvent implements EventInterface
     /**
      * Returns an array with the properties and their values as they were changed.
      *
-     * @return array
+     * @return array|null
      */
-    public function getChanged()
+    public function getChanged(): ?array
     {
         return $this->changed;
     }
@@ -72,19 +79,19 @@ abstract class BaseEvent implements EventInterface
      *
      * @return string
      */
-    abstract public function getEventType();
+    abstract public function getEventType(): string;
 
     /**
      * Returns the array to be used for encoding this object as json.
      *
      * @return mixed
      */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    #[ReturnTypeWillChange]
+    public function jsonSerialize(): mixed
     {
         return $this->basicSerialize() + [
             'original' => $this->original,
-            'changed' => $this->changed
+            'changed' => $this->changed,
         ];
     }
 }

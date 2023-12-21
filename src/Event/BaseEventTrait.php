@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace AuditStash\Event;
 
@@ -12,49 +13,49 @@ trait BaseEventTrait
      *
      * @var string
      */
-    protected $transactionId;
+    protected string $transactionId;
 
     /**
      * Entity primary key.
      *
      * @var mixed
      */
-    protected $id;
+    protected mixed $id;
 
     /**
      * Repository name.
      *
      * @var string
      */
-    protected $source;
+    protected string $source;
 
     /**
      * Parent repository name.
      *
-     * @var string
+     * @var string|null
      */
-    protected $parentSource;
+    protected ?string $parentSource = null;
 
     /**
      * Time of event.
      *
      * @var string
      */
-    protected $timestamp;
+    protected string $timestamp;
 
     /**
      * Extra information to describe the event.
      *
      * @var array
      */
-    protected $meta = [];
+    protected array $meta = [];
 
     /**
      * Returns the global transaction id in which this event is contained.
      *
      * @return string
      */
-    public function getTransactionId()
+    public function getTransactionId(): string
     {
         return $this->transactionId;
     }
@@ -64,11 +65,12 @@ trait BaseEventTrait
      *
      * @return mixed
      */
-    public function getId()
+    public function getId(): mixed
     {
         if (is_array($this->id) && count($this->id) === 1) {
             return current($this->id);
         }
+
         return $this->id;
     }
 
@@ -77,7 +79,7 @@ trait BaseEventTrait
      *
      * @return string
      */
-    public function getSourceName()
+    public function getSourceName(): string
     {
         return $this->source;
     }
@@ -85,9 +87,9 @@ trait BaseEventTrait
     /**
      * Returns the repository name that triggered this event.
      *
-     * @return string
+     * @return string|null
      */
-    public function getParentSourceName()
+    public function getParentSourceName(): ?string
     {
         return $this->parentSource;
     }
@@ -98,7 +100,7 @@ trait BaseEventTrait
      * @param string $source The repository name
      * @return void
      */
-    public function setParentSourceName($source)
+    public function setParentSourceName(string $source): void
     {
         $this->parentSource = $source;
     }
@@ -108,7 +110,7 @@ trait BaseEventTrait
      *
      * @return string
      */
-    public function getTimestamp()
+    public function getTimestamp(): string
     {
         return $this->timestamp;
     }
@@ -118,7 +120,7 @@ trait BaseEventTrait
      *
      * @return array
      */
-    public function getMetaInfo()
+    public function getMetaInfo(): array
     {
         return $this->meta;
     }
@@ -129,7 +131,7 @@ trait BaseEventTrait
      * @param array $meta The meta information to attach to the event
      * @return void
      */
-    public function setMetaInfo($meta)
+    public function setMetaInfo(array $meta): void
     {
         $this->meta = $meta;
     }
