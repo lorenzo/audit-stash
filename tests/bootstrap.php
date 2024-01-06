@@ -26,12 +26,11 @@ Cache::setConfig('_cake_core_', [
     'path' => sys_get_temp_dir(),
 ]);
 
-if (!getenv('DB_URL')) {
-    putenv('DB_URL=Cake\ElasticSearch\Datasource\Connection://elasticsearch:9200?driver=Cake\ElasticSearch\Datasource\Connection');
+if (!getenv('elastic_dsn')) {
+    putenv('elastic_dsn=Cake\ElasticSearch\Datasource\Connection://127.0.0.1:9200?driver=Cake\ElasticSearch\Datasource\Connection');
 }
 
-ConnectionManager::setConfig('elastic', ['url' => getenv('DB_URL')]);
-ConnectionManager::setConfig('test_elastic', ['url' => getenv('DB_URL')]);
+ConnectionManager::setConfig('test_elastic', ['url' => getenv('elastic_dsn')]);
 
 if (!getenv('db_dsn')) {
     putenv('db_dsn=sqlite:///:memory:');
