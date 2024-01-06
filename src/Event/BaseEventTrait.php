@@ -51,6 +51,11 @@ trait BaseEventTrait
     protected array $meta = [];
 
     /**
+     * @var \Cake\Datasource\EntityInterface|null
+     */
+    protected $entity = null;
+
+    /**
      * Returns the global transaction id in which this event is contained.
      *
      * @return string
@@ -134,5 +139,13 @@ trait BaseEventTrait
     public function setMetaInfo(array $meta): void
     {
         $this->meta = $meta;
+    }
+
+    /**
+     * @return \Cake\Datasource\EntityInterface|null
+     */
+    public function getEntity()
+    {
+        return $this->entity;
     }
 }
