@@ -66,11 +66,11 @@ jobs:
           composer test
 
   compatibility_cakephp4:
-    name: CakePHP 4.4 Test
+    name: CakePHP ${{ matrix.version }} Test
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        version: ['~4.4.0']
+        version: ['~4.4.0', '~4.5.0']
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -97,7 +97,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        version: ['~4.4.0']
+        version: ['^4.2']
 
     services:
       elasticsearch:
