@@ -30,17 +30,14 @@ Cache::setConfig('_cake_core_', [
     'path' => sys_get_temp_dir(),
 ]);
 
-if (!getenv('elastic_dsn')) {
-    putenv('elastic_dsn=Cake\ElasticSearch\Datasource\Connection://127.0.0.1:9200?driver=Cake\ElasticSearch\Datasource\Connection');
-}
-
-ConnectionManager::setConfig('test_elastic', ['url' => getenv('elastic_dsn')]);
-
-/*
- * Only load fixtures if there is an active elastic service
+/**
+ * To run with elastic search tests locally:
+ *
+ * elastic_dsn="Cake\ElasticSearch\Datasource\Connection://127.0.0.1:9200?driver=Cake\ElasticSearch\Datasource\Connection" vendor/bin/phpunit
  */
-if (env('FIXTURE_MAPPINGS_METADATA') && file_exists(getenv('elastic_dsn'))) {
-    throw new Exception('does pipeline get here?');
+ConnectionManager::setConfig('test_elastic', ['url' => env('elastic_dsn')]);
+
+if (env('elastic_dsn') && env('FIXTURE_MAPPINGS_METADATA')) {
     $schema = new MappingGenerator(env('FIXTURE_MAPPINGS_METADATA'), 'test_elastic');
     $schema->reload();
     Router::reload();
