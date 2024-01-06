@@ -3,9 +3,9 @@
 namespace AuditStash\Test\TestCase\Persister;
 
 use AuditStash\Event\AuditCreateEvent;
+use AuditStash\Event\BaseEvent;
 use AuditStash\Persister\TablePersister;
 use Cake\Datasource\EntityInterface;
-use Cake\Error\Debugger;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -116,7 +116,7 @@ class TablePersisterTest extends TestCase
 
     public function testSerializeNull()
     {
-        $event = new AuditCreateEvent('62ba2e1e-1524-4d4e-bb34-9bf0e03b6a96', 1, 'source', null, null);
+        $event = self::createAuditEvent();
         $event->setMetaInfo(null);
 
         $entity = new Entity([
@@ -145,7 +145,7 @@ class TablePersisterTest extends TestCase
 
     public function testExtractMetaFields()
     {
-        $event = new AuditCreateEvent('62ba2e1e-1524-4d4e-bb34-9bf0e03b6a96', 1, 'source', [], []);
+        $event = self::createAuditEvent(1, [], []);
         $event->setMetaInfo([
             'foo' => 'bar',
             'baz' => [
@@ -188,7 +188,7 @@ class TablePersisterTest extends TestCase
 
     public function testExtractAllMetaFields()
     {
-        $event = new AuditCreateEvent('62ba2e1e-1524-4d4e-bb34-9bf0e03b6a96', 1, 'source', [], []);
+        $event = self::createAuditEvent(null, [], []);
         $event->setMetaInfo([
             'foo' => 'bar',
             'baz' => [
@@ -231,7 +231,7 @@ class TablePersisterTest extends TestCase
 
     public function testExtractMetaFieldsDoNotUnset()
     {
-        $event = new AuditCreateEvent('62ba2e1e-1524-4d4e-bb34-9bf0e03b6a96', 1, 'source', [], []);
+        $event = self::createAuditEvent(null, [], []);
         $event->setMetaInfo([
             'foo' => 'bar'
         ]);
@@ -269,7 +269,7 @@ class TablePersisterTest extends TestCase
 
     public function testExtractAllMetaFieldsDoNotUnset()
     {
-        $event = new AuditCreateEvent('62ba2e1e-1524-4d4e-bb34-9bf0e03b6a96', 1, 'source', [], []);
+        $event = self::createAuditEvent(null, [], []);
         $event->setMetaInfo([
             'foo' => 'bar'
         ]);
@@ -305,7 +305,7 @@ class TablePersisterTest extends TestCase
 
     public function testErrorLogging()
     {
-        $event = new AuditCreateEvent('62ba2e1e-1524-4d4e-bb34-9bf0e03b6a96', 1, 'source', [], []);
+        $event = self::createAuditEvent(null, [], []);
 
         /* @var $TablePersister TablePersister|\PHPUnit_Framework_MockObject_MockObject */
         $TablePersister = $this
@@ -366,14 +366,13 @@ class TablePersisterTest extends TestCase
             }
         );
 
-        $event = new AuditCreateEvent('62ba2e1e-1524-4d4e-bb34-9bf0e03b6a96', 1, 'source', [], []);
+        $event = self::createAuditEvent(null, [], []);
         $TablePersister->logEvents([$event]);
     }
 
     public function testCompoundPrimaryKeyExtractDefault()
     {
-        $event = new AuditCreateEvent('62ba2e1e-1524-4d4e-bb34-9bf0e03b6a96', [1, 2, 3], 'source', [], []);
-
+        $event = self::createAuditEvent([1, 2, 3], [], []);
         $entity = new Entity([
             'transaction' => '62ba2e1e-1524-4d4e-bb34-9bf0e03b6a96',
             'type' => 'create',
@@ -402,7 +401,7 @@ class TablePersisterTest extends TestCase
 
     public function testPrimaryKeyExtractRaw()
     {
-        $event = new AuditCreateEvent('62ba2e1e-1524-4d4e-bb34-9bf0e03b6a96', 1, 'source', [], []);
+        $event = self::createAuditEvent(null, [], []);
 
         $entity = new Entity([
             'transaction' => '62ba2e1e-1524-4d4e-bb34-9bf0e03b6a96',
@@ -433,7 +432,7 @@ class TablePersisterTest extends TestCase
 
     public function testCompoundPrimaryKeyExtractRaw()
     {
-        $event = new AuditCreateEvent('62ba2e1e-1524-4d4e-bb34-9bf0e03b6a96', [1, 2, 3], 'source', [], []);
+        $event = self::createAuditEvent([1, 2, 3], [], []);
 
         $entity = new Entity([
             'transaction' => '62ba2e1e-1524-4d4e-bb34-9bf0e03b6a96',
@@ -466,7 +465,7 @@ class TablePersisterTest extends TestCase
 
     public function testPrimaryKeyExtractProperties()
     {
-        $event = new AuditCreateEvent('62ba2e1e-1524-4d4e-bb34-9bf0e03b6a96', 1, 'source', [], []);
+        $event = self::createAuditEvent(null, [], []);
 
         $entity = new Entity([
             'transaction' => '62ba2e1e-1524-4d4e-bb34-9bf0e03b6a96',
@@ -497,7 +496,7 @@ class TablePersisterTest extends TestCase
 
     public function testCompoundPrimaryKeyExtractProperties()
     {
-        $event = new AuditCreateEvent('62ba2e1e-1524-4d4e-bb34-9bf0e03b6a96', [1, 2, 3], 'source', [], []);
+        $event = self::createAuditEvent([1, 2, 3], [], []);
 
         $entity = new Entity([
             'transaction' => '62ba2e1e-1524-4d4e-bb34-9bf0e03b6a96',
@@ -530,7 +529,7 @@ class TablePersisterTest extends TestCase
 
     public function testPrimaryKeyExtractSerialized()
     {
-        $event = new AuditCreateEvent('62ba2e1e-1524-4d4e-bb34-9bf0e03b6a96', 'pk', 'source', [], []);
+        $event = self::createAuditEvent('pk', [], []);
 
         $entity = new Entity([
             'transaction' => '62ba2e1e-1524-4d4e-bb34-9bf0e03b6a96',
@@ -563,7 +562,7 @@ class TablePersisterTest extends TestCase
 
     public function testCompoundPrimaryKeyExtractSerialized()
     {
-        $event = new AuditCreateEvent('62ba2e1e-1524-4d4e-bb34-9bf0e03b6a96', [1, 2, 3], 'source', [], []);
+        $event = self::createAuditEvent([1, 2, 3], [], []);
 
         $entity = new Entity([
             'transaction' => '62ba2e1e-1524-4d4e-bb34-9bf0e03b6a96',
@@ -596,7 +595,7 @@ class TablePersisterTest extends TestCase
 
     public function testDoNotSerializeFields()
     {
-        $event = new AuditCreateEvent('62ba2e1e-1524-4d4e-bb34-9bf0e03b6a96', 1, 'source', [], []);
+        $event = self::createAuditEvent(null, [], []);
         $event->setMetaInfo([
             'foo' => 'bar'
         ]);
@@ -639,5 +638,23 @@ class TablePersisterTest extends TestCase
 	    return parent::getMockForModel($alias, $methods, $options + [
 		    'className' => AuditLogsTable::class
 	    ]);
+    }
+
+    /**
+     * @param mixed $id
+     * @param array|null $changed
+     * @param array|null $original
+     * @return BaseEvent
+     */
+    private static function createAuditEvent($id = null, ?array $changed = null, ?array $original = null): BaseEvent
+    {
+        return new AuditCreateEvent(
+            '62ba2e1e-1524-4d4e-bb34-9bf0e03b6a96',
+            $id ?? 1,
+            'source',
+            $changed,
+            $original,
+            new Entity()
+        );
     }
 }

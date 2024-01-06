@@ -14,7 +14,7 @@ use ReflectionObject;
 class EventFactory
 {
     /**
-     * Converts an array of data as comming from elastic search and
+     * Converts an array of data as coming from elastic search and
      * converts it into an AuditStash\EventInterface object.
      *
      * @param array $data The array data from elastic search
@@ -35,7 +35,8 @@ class EventFactory
                 $data['primary_key'],
                 $data['source'],
                 $data['changed'],
-                $data['original']
+                $data['original'],
+                null
             );
         } else {
             $event = new $map[$data['type']](

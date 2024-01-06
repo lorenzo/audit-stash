@@ -123,7 +123,7 @@ class AuditLogBehavior extends Behavior
         $auditEvent = $entity->isNew() ? AuditCreateEvent::class : AuditUpdateEvent::class;
 
         $transaction = $options['_auditTransaction'];
-        $auditEvent = new $auditEvent($transaction, $primary, $this->_table->getTable(), $changed, $original);
+        $auditEvent = new $auditEvent($transaction, $primary, $this->_table->getTable(), $changed, $original, $entity);
 
         if (!empty($options['_sourceTable'])) {
             $auditEvent->setParentSourceName($options['_sourceTable']->getTable());

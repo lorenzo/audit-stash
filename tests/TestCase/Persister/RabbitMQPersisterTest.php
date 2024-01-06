@@ -5,6 +5,7 @@ namespace AuditStash\Test\TestCase\Persister;
 use AuditStash\Event\AuditCreateEvent;
 use AuditStash\Event\AuditDeleteEvent;
 use AuditStash\Persister\RabbitMQPersister;
+use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use ProcessMQ\Connection\RabbitMQConnection;
 
@@ -31,7 +32,7 @@ class RabbitMQPersisterTest extends TestCase
             'published' => 'Y'
         ];
 
-        $events[] = new AuditCreateEvent('1234', 50, 'articles', $data, $data);
+        $events[] = new AuditCreateEvent('1234', 50, 'articles', $data, $data, new Entity());
         $events[] = new AuditDeleteEvent('1234', 2, 'comments', 'articles');
 
         $client->expects($this->once())
@@ -62,7 +63,7 @@ class RabbitMQPersisterTest extends TestCase
             'published' => 'Y'
         ];
 
-        $events[] = new AuditCreateEvent('1234', 50, 'articles', $data, $data);
+        $events[] = new AuditCreateEvent('1234', 50, 'articles', $data, $data, new Entity());
         $events[] = new AuditDeleteEvent('1234', 2, 'comments', 'articles');
 
         $client->expects($this->once())
