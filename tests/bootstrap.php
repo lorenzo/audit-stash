@@ -40,6 +40,7 @@ ConnectionManager::setConfig('test_elastic', ['url' => getenv('elastic_dsn')]);
  * Only load fixtures if there is an active elastic service
  */
 if (env('FIXTURE_MAPPINGS_METADATA') && file_exists(getenv('elastic_dsn'))) {
+    throw new Exception('does pipeline get here?');
     $schema = new MappingGenerator(env('FIXTURE_MAPPINGS_METADATA'), 'test_elastic');
     $schema->reload();
     Router::reload();
