@@ -1,19 +1,6 @@
 <?php
 declare(strict_types=1);
 
-/**
- * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @link      https://cakephp.org CakePHP(tm) Project
- * @since     0.0.1
- * @license   https://www.opensource.org/licenses/mit-license.php MIT License
- */
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 define('CAKE', dirname(__DIR__) . '/vendor/cakephp/cakephp/src/');
@@ -43,14 +30,14 @@ Cache::setConfig('_cake_core_', [
     'path' => sys_get_temp_dir(),
 ]);
 
-if (!getenv('DB_URL')) {
-    putenv('DB_URL=Cake\ElasticSearch\Datasource\Connection://elasticsearch:9200?driver=Cake\ElasticSearch\Datasource\Connection');
-}
+/**
+ * To run with elastic search tests locally:
+ *
+ * elastic_dsn="Cake\ElasticSearch\Datasource\Connection://127.0.0.1:9200?driver=Cake\ElasticSearch\Datasource\Connection" vendor/bin/phpunit
+ */
+ConnectionManager::setConfig('test_elastic', ['url' => env('elastic_dsn')]);
 
-ConnectionManager::setConfig('elastic', ['url' => getenv('DB_URL')]);
-ConnectionManager::setConfig('test_elastic', ['url' => getenv('DB_URL')]);
-
-if (env('FIXTURE_MAPPINGS_METADATA')) {
+if (env('elastic_dsn') && env('FIXTURE_MAPPINGS_METADATA')) {
     $schema = new MappingGenerator(env('FIXTURE_MAPPINGS_METADATA'), 'test_elastic');
     $schema->reload();
     Router::reload();
