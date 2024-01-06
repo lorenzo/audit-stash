@@ -38,7 +38,7 @@ abstract class BaseEvent implements EventInterface
      * @param array $original The original values the entity had before it got changed
      * @param \Cake\Datasource\EntityInterface|null $entity The entity being changed
      */
-    public function __construct($transactionId, $id, $source, $changed, $original, $entity)
+    public function __construct($transactionId, $id, $source, $changed, $original, $entity = null)
     {
         $this->transactionId = $transactionId;
         $this->id = $id;
