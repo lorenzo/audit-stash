@@ -338,3 +338,12 @@ if ($success) {
 
 This will save all audit info for your objects, as well as audits for any associated data. Please note, `$result` must
 be an instance of an Object. Do not change the text "Model.afterCommit".
+
+## Testing
+
+By default, the test suite will not run elastic. If you are an elastic user and wish to test against a local instance
+then you will need to set the environment variable:
+
+```console
+elastic_dsn="Cake\ElasticSearch\Datasource\Connection://127.0.0.1:9200?driver=Cake\ElasticSearch\Datasource\Connection" vendor/bin/phpunit
+```
