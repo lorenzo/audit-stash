@@ -16,10 +16,6 @@ define('LOGS', TMP . 'logs' . DS);
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
-use Cake\Datasource\FactoryLocator;
-use Cake\ElasticSearch\IndexRegistry;
-use Cake\ElasticSearch\TestSuite\Fixture\MappingGenerator;
-use Cake\Routing\Router;
 use Cake\TestSuite\Fixture\SchemaLoader;
 use function Cake\Core\env;
 
@@ -36,16 +32,6 @@ if (!getenv('DB_URL')) {
 
 ConnectionManager::setConfig('elastic', ['url' => getenv('DB_URL')]);
 ConnectionManager::setConfig('test_elastic', ['url' => getenv('DB_URL')]);
-
-if (env('FIXTURE_MAPPINGS_METADATA')) {
-    $schema = new MappingGenerator(env('FIXTURE_MAPPINGS_METADATA'), 'test_elastic');
-    $schema->reload();
-    Router::reload();
-
-    $indexRegistry = new IndexRegistry();
-    FactoryLocator::add('Elastic', $indexRegistry);
-    FactoryLocator::add('ElasticSearch', $indexRegistry);
-}
 
 if (!getenv('db_dsn')) {
     putenv('db_dsn=sqlite:///:memory:');
