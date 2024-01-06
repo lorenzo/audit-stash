@@ -16,6 +16,10 @@ define('LOGS', TMP . 'logs' . DS);
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\FactoryLocator;
+use Cake\ElasticSearch\IndexRegistry;
+use Cake\ElasticSearch\TestSuite\Fixture\MappingGenerator;
+use Cake\Routing\Router;
 use Cake\TestSuite\Fixture\SchemaLoader;
 use function Cake\Core\env;
 
@@ -31,6 +35,19 @@ if (!getenv('elastic_dsn')) {
 }
 
 ConnectionManager::setConfig('test_elastic', ['url' => getenv('elastic_dsn')]);
+
+/*
+ * Only load fixtures if there is an active elastic service
+ */
+if (env('FIXTURE_MAPPINGS_METADATA') && file_exists(getenv('elastic_dsn'))) {
+    $schema = new MappingGenerator(env('FIXTURE_MAPPINGS_METADATA'), 'test_elastic');
+    $schema->reload();
+    Router::reload();
+
+    $indexRegistry = new IndexRegistry();
+    FactoryLocator::add('Elastic', $indexRegistry);
+    FactoryLocator::add('ElasticSearch', $indexRegistry);
+}
 
 if (!getenv('db_dsn')) {
     putenv('db_dsn=sqlite:///:memory:');
