@@ -274,7 +274,21 @@ The configuration contains the fully namespaced class name of your persister.
 
 ### Working With Transactional Queries
 
-Occasionally, you may want to wrap a number of database changes in a transaction, so that it can be rolled back if one part of the process fails. In order to create audit logs during a transaction, some additional setup is required. First create the file `src/Model/Audit/AuditTrail.php` with the following:
+Occasionally, you may want to wrap a number of database changes in a transaction, so that it can be rolled back if one
+part of the process fails. There are two ways to accomplish this. The easiest is to change your save strategy to use
+`afterSave` instead of `afterCommit`. In your applications configuration, such as `config/app.php`:
+
+```php
+'AuditStash' => [
+    'saveType' => 'afterSave',
+]
+```
+
+That's it if you use afterSave. You should read up on the difference between the two as there are drawbacks:
+https://book.cakephp.org/4/en/orm/table-objects.html#aftersave
+
+If you are using the default afterCommit, in order to create audit logs during a transaction, some additional setup is
+required. First create the file `src/Model/Audit/AuditTrail.php` with the following:
 
 ```php
 <?php

@@ -35,6 +35,7 @@ class ElasticSearchPersisterIntegrationTest extends TestCase
     public function testLogSingleCreateEvent()
     {
         $client = ConnectionManager::get('test_elastic');
+
         $persister = new ElasticSearchPersister(['connection' => $client, 'index' => 'article', 'type' => 'article']);
         $data = [
             'title' => 'A new article',
