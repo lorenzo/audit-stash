@@ -1,7 +1,4 @@
 <?php
-/**
- * @copyright Copyright (c) 2024, Canadian Mortgages Inc.
- */
 declare(strict_types=1);
 
 namespace AuditStash\Test;
