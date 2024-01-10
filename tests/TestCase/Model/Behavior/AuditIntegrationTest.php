@@ -9,6 +9,7 @@ use AuditStash\Event\AuditUpdateEvent;
 use AuditStash\Model\Behavior\AuditLogBehavior;
 use AuditStash\PersisterInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 
 class DebugPersister implements PersisterInterface
@@ -34,6 +35,9 @@ class AuditIntegrationTest extends TestCase
         'core.Tags',
         'core.ArticlesTags',
     ];
+
+    private ?Table $table;
+    private mixed $persister;
 
     /**
      * tests setup.

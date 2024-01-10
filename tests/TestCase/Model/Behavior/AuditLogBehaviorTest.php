@@ -15,6 +15,9 @@ use SplObjectStorage;
 
 class AuditLogBehaviorTest extends TestCase
 {
+    private ?Table $table;
+    private ?AuditLogBehavior $behavior;
+
     public function setUp(): void
     {
         parent::setUp();
