@@ -22,7 +22,7 @@ class ApplicationMetadataTest extends TestCase
         $listener = new ApplicationMetadata('my_app', ['extra' => 'thing']);
         $this->getEventManager()->on($listener);
         $logs[] = new AuditDeleteEvent('1234', 1, 'articles');
-        $event = $this->dispatchEvent('AuditStash.beforeLog', ['logs' => $logs]);
+        $this->dispatchEvent('AuditStash.beforeLog', ['logs' => $logs]);
 
         $expected = [
             'app_name' => 'my_app',
