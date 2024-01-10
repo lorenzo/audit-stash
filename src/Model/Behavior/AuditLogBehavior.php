@@ -50,7 +50,7 @@ class AuditLogBehavior extends Behavior
      */
     public function implementedEvents(): array
     {
-        return [
+        $events = [
             'Model.beforeSave' => 'injectTracking',
             'Model.beforeDelete' => 'injectTracking',
             'Model.afterSave' => 'afterSave',
@@ -58,6 +58,13 @@ class AuditLogBehavior extends Behavior
             'Model.afterSaveCommit' => 'afterCommit',
             'Model.afterDeleteCommit' => 'afterCommit',
         ];
+
+        if (Configure::read('AuditStash.saveType') !== 'afterSave') {
+            $events['Model.afterSaveCommit'] = 'afterCommit';
+            $events['Model.afterDeleteCommit'] = 'afterCommit';
+        }
+
+        return $events;
     }
 
     /**
@@ -138,6 +145,10 @@ class AuditLogBehavior extends Behavior
         }
 
         $options['_auditQueue']->attach($entity, $auditEvent);
+
+        if (Configure::read('AuditStash.saveType') === 'afterSave') {
+            $this->afterCommit(new Event(''), $entity, $options);
+        }
     }
 
     /**
@@ -190,6 +201,9 @@ class AuditLogBehavior extends Behavior
         $primary = $entity->extract((array)$this->_table->getPrimaryKey());
         $auditEvent = new AuditDeleteEvent($transaction, $primary, $this->_table->getTable(), $parent);
         $options['_auditQueue']->attach($entity, $auditEvent);
+        if (Configure::read('AuditStash.saveType') === 'afterSave') {
+            $this->afterCommit(new Event(''), $entity, $options);
+        }
     }
 
     /**
