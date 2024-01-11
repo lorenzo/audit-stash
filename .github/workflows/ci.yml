@@ -20,8 +20,6 @@ jobs:
       - name: Install
         run: |
           composer self-update
-          rm -rf composer.lock
-          composer require cakephp/cakephp:${{matrix.version}} --no-update
           composer install --prefer-dist --no-progress
       - name: Test Suite
         run: |
