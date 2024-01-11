@@ -1,0 +1,36 @@
+name: Pull Request
+
+on:
+  push:
+    branches: [master]
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mbstring, intl
+      - name: PHP Version
+        run: php -v
+      - name: Install
+        run: |
+          composer self-update
+          rm -rf composer.lock
+          composer require cakephp/cakephp:${{matrix.version}} --no-update
+          composer install --prefer-dist --no-progress
+      - name: Test Suite
+        run: |
+          composer test
+      - name: Elastic Search Integration Test
+        env:
+          elastic_dsn: Cake\ElasticSearch\Datasource\Connection://127.0.0.1:${{ job.services.elasticsearch.ports['9200'] }}?driver=Cake\ElasticSearch\Datasource\Connection
+        run: |
+          composer self-update
+          rm -rf composer.lock
+          composer require cakephp/cakephp:${{matrix.version}} --no-update
+          composer install --prefer-dist --no-progress
