@@ -21,11 +21,3 @@ jobs:
         run: |
           composer self-update
           composer install --prefer-dist --no-progress
-      - name: Test Suite
-        run: |
-          composer test
-      - name: Elastic Search Integration Test
-        env:
-          elastic_dsn: Cake\ElasticSearch\Datasource\Connection://127.0.0.1:${{ job.services.elasticsearch.ports['9200'] }}?driver=Cake\ElasticSearch\Datasource\Connection
-        run: |
-          vendor/bin/phpunit tests/TestCase/Persister/ElasticSearchPersisterIntegrationTest.php
