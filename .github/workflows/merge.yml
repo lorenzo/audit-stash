@@ -30,7 +30,4 @@ jobs:
         env:
           elastic_dsn: Cake\ElasticSearch\Datasource\Connection://127.0.0.1:${{ job.services.elasticsearch.ports['9200'] }}?driver=Cake\ElasticSearch\Datasource\Connection
         run: |
-          composer self-update
-          rm -rf composer.lock
-          composer require cakephp/cakephp:${{matrix.version}} --no-update
-          composer install --prefer-dist --no-progress
+          vendor/bin/phpunit tests/TestCase/Persister/ElasticSearchPersisterIntegrationTest.php
