@@ -2,22 +2,112 @@ name: Pull Request
 
 on:
   push:
-    branches: [master]
+  pull_request:
 jobs:
   build:
-    name: Build
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        operating-system: [ ubuntu-20.04 ]
+        php-versions: ['8.1', '8.3']
+
+    name: PHP ${{ matrix.php-versions }} Test
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, intl, xdebug
+
+      - name: PHP Version
+        run: php -v
+
+      - name: Install dependencies
+        if: steps.composer-cache.outputs.cache-hit != 'true'
+        run: |
+          composer self-update
+          composer validate
+          composer install --prefer-dist --no-progress
+
+      - name: Test Suite
+        run: |
+          composer check
+
+  #
+  # CakePHP version compatability
+  #
+  compatibility:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: ['~5.0.0']
+
+    name: CakePHP ${{ matrix.version }} Test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
           extensions: mbstring, intl
+
       - name: PHP Version
         run: php -v
-      - name: Install
+
+      - name: CakePHP ${{matrix.version}} Compatability
         run: |
           composer self-update
+          rm -rf composer.lock
+          composer require cakephp/cakephp:${{matrix.version}} --no-update
           composer install --prefer-dist --no-progress
+          composer test
+
+  elastic_integration_test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: ['~5.0.0']
+
+    services:
+      elasticsearch:
+        image: elasticsearch:7.17.6
+        ports:
+          - 9200/tcp
+        env:
+          discovery.type: single-node
+          ES_JAVA_OPTS: -Xms500m -Xmx500m
+        options: >-
+          --health-cmd "curl http://127.0.0.1:9200/_cluster/health"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    name: Elastic Search Integration Test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mbstring, intl
+
+      - name: PHP Version
+        run: php -v
+
+      - name: Test
+        env:
+          elastic_dsn: Cake\ElasticSearch\Datasource\Connection://127.0.0.1:${{ job.services.elasticsearch.ports['9200'] }}?driver=Cake\ElasticSearch\Datasource\Connection
+        run: |
+          composer self-update
+          rm -rf composer.lock
+          composer require cakephp/cakephp:${{matrix.version}} --no-update
+          composer install --prefer-dist --no-progress
+          vendor/bin/phpunit tests/TestCase/Persister/ElasticSearchPersisterIntegrationTest.php
