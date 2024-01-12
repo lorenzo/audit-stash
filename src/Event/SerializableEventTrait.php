@@ -14,7 +14,15 @@ trait SerializableEventTrait
      */
     public function serialize()
     {
-        return serialize(get_object_vars($this));
+        return serialize($this->__serialize());
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    public function __serialize()
+    {
+        return get_object_vars($this);
     }
 
     /**
