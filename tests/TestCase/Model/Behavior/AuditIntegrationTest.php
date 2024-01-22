@@ -7,17 +7,10 @@ use AuditStash\Event\AuditCreateEvent;
 use AuditStash\Event\AuditDeleteEvent;
 use AuditStash\Event\AuditUpdateEvent;
 use AuditStash\Model\Behavior\AuditLogBehavior;
-use AuditStash\PersisterInterface;
+use AuditStash\Test\DebugPersister;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
-
-class DebugPersister implements PersisterInterface
-{
-    public function logEvents(array $events): void
-    {
-    }
-}
 
 class AuditIntegrationTest extends TestCase
 {

@@ -5,6 +5,7 @@ namespace AuditStash\Test\TestCase\Persister;
 
 use AuditStash\Event\AuditCreateEvent;
 use AuditStash\Persister\TablePersister;
+use AuditStash\Test\AuditLogsTable;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
@@ -12,30 +13,6 @@ use Cake\TestSuite\TestCase;
 use DateTime;
 use InvalidArgumentException;
 use PHPUnit\Framework\MockObject\MockObject;
-
-class AuditLogsTable extends Table
-{
-    public function initialize(array $config): void
-    {
-        parent::initialize($config);
-
-        $this->setTable('audit_logs');
-        $this->setPrimaryKey('id');
-
-        $this->setSchema([
-            'id' => 'integer',
-            'transaction' => 'string',
-            'type' => 'string',
-            'primary_key' => 'integer',
-            'source' => 'string',
-            'parent_source' => 'string',
-            'original' => 'string',
-            'changed' => 'string',
-            'meta' => 'string',
-            'created' => 'datetime',
-        ]);
-    }
-}
 
 class TablePersisterTest extends TestCase
 {
