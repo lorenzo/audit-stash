@@ -6,6 +6,7 @@ namespace AuditStash\Test\TestCase\Persister;
 use AuditStash\Event\AuditCreateEvent;
 use AuditStash\Persister\ElasticSearchPersister;
 use Cake\ElasticSearch\Datasource\Connection;
+use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Elastica\Bulk\ResponseSet;
 use Elastica\Client;
@@ -41,7 +42,7 @@ class ElasticSearchPersisterTest extends TestCase
             'published' => 'Y',
         ];
 
-        $events[] = new AuditCreateEvent('1234', 50, 'articles', $data, $data);
+        $events[] = new AuditCreateEvent('1234', 50, 'articles', $data, $data, new Entity());
         $clientMock->expects($this->once())->method('addDocuments');
         $persister->logEvents($events);
     }

@@ -71,6 +71,7 @@ trait SerializableEventTrait
             'parent_source' => $this->parentSource,
             '@timestamp' => $this->timestamp,
             'meta' => $this->meta,
+            'entity' => $this->entity,
         ];
     }
 }

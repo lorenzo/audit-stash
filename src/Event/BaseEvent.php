@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace AuditStash\Event;
 
 use AuditStash\EventInterface;
+use Cake\Datasource\EntityInterface;
 use DateTime;
 use ReturnTypeWillChange;
 
@@ -38,13 +39,15 @@ abstract class BaseEvent implements EventInterface
      * @param string $source The name of the source (table)
      * @param array|null $changed The array of changes that got detected for the entity
      * @param array|null $original The original values the entity had before it got changed
+     * @param \Cake\Datasource\EntityInterface|null $entity The entity being changed
      */
     public function __construct(
         string $transactionId,
         mixed $id,
         string $source,
         ?array $changed,
-        ?array $original
+        ?array $original,
+        ?EntityInterface $entity
     ) {
         $this->transactionId = $transactionId;
         $this->id = $id;
