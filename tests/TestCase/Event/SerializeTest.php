@@ -59,7 +59,14 @@ class SerializeTest extends TestCase
     public function testJsonSerializeCreate()
     {
         $factory = new EventFactory();
-        $event = new AuditCreateEvent('123', 50, 'articles', ['title' => 'foo'], ['title' => 'bar'], new Entity());
+        $event = new AuditCreateEvent(
+            '123',
+            50,
+            'articles',
+            ['title' => 'foo'],
+            null,
+            new Entity()
+        );
         $event->setMetaInfo(['extra' => 'info']);
         $serialized = json_encode($event);
         $result = $factory->create(json_decode($serialized, true));
@@ -74,7 +81,14 @@ class SerializeTest extends TestCase
     public function testJsonSerializeUpdate()
     {
         $factory = new EventFactory();
-        $event = new AuditUpdateEvent('123', 50, 'articles', ['title' => 'foo'], ['title' => 'bar'], new Entity());
+        $event = new AuditUpdateEvent(
+            '123',
+            50,
+            'articles',
+            ['title' => 'foo'],
+            ['title' => 'bar'],
+            new Entity()
+        );
         $event->setMetaInfo(['extra' => 'info']);
         $serialized = json_encode($event);
         $result = $factory->create(json_decode($serialized, true));

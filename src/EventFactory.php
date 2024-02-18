@@ -6,6 +6,7 @@ namespace AuditStash;
 use AuditStash\Event\AuditCreateEvent;
 use AuditStash\Event\AuditDeleteEvent;
 use AuditStash\Event\AuditUpdateEvent;
+use Cake\ORM\Entity;
 use ReflectionObject;
 
 /**
@@ -35,15 +36,16 @@ class EventFactory
                 $data['transaction'],
                 $data['primary_key'],
                 $data['source'],
-                $data['changed'],
-                $data['original'],
-                null
+                array_key_exists('changed', $data) ? $data['changed'] : [],
+                array_key_exists('original', $data) ? $data['original'] : [],
+                new Entity()
             );
         } else {
             $event = new $map[$data['type']](
                 $data['transaction'],
                 $data['primary_key'],
-                $data['source']
+                $data['source'],
+                null
             );
         }
 
