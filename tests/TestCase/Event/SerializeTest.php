@@ -7,7 +7,6 @@ use AuditStash\Event\AuditCreateEvent;
 use AuditStash\Event\AuditDeleteEvent;
 use AuditStash\Event\AuditUpdateEvent;
 use AuditStash\EventFactory;
-use Cake\Datasource\EntityInterface;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 
