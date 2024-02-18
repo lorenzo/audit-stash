@@ -36,7 +36,8 @@ class EventFactory
                 $data['primary_key'],
                 $data['source'],
                 $data['changed'],
-                $data['original']
+                $data['original'],
+                null
             );
         } else {
             $event = new $map[$data['type']](
