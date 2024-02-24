@@ -55,8 +55,6 @@ class AuditLogBehavior extends Behavior
             'Model.beforeDelete' => 'injectTracking',
             'Model.afterSave' => 'afterSave',
             'Model.afterDelete' => 'afterDelete',
-            'Model.afterSaveCommit' => 'afterCommit',
-            'Model.afterDeleteCommit' => 'afterCommit',
         ];
 
         if (Configure::read('AuditStash.saveType') !== 'afterSave') {
