@@ -143,10 +143,7 @@ class AuditLogBehavior extends Behavior
             return;
         }
 
-        $this->redactArray($changed);
-
         $original = $entity->extractOriginal(array_keys($changed));
-        $this->redactArray($original);
 
         $properties = $this->getAssociationProperties(array_keys($options['associated']));
         foreach ($properties as $property) {
@@ -156,6 +153,9 @@ class AuditLogBehavior extends Behavior
         if (!$changed || ($original === $changed && !$entity->isNew())) {
             return;
         }
+
+        $this->redactArray($changed);
+        $this->redactArray($original);
 
         $primary = $entity->extract((array)$this->_table->getPrimaryKey());
         $auditEvent = $entity->isNew() ? AuditCreateEvent::class : AuditUpdateEvent::class;

@@ -207,7 +207,6 @@ class AuditLogBehaviorTest extends TestCase
             'author_id' => 1,
         ];
         $entity = new Entity($data, ['markNew' => false, 'markClean' => true]);
-        $entity->author_id = 50;
         $entity->body = 'The changed body';
 
         $event = new Event('Model.afterSave');
