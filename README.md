@@ -148,6 +148,7 @@ public function initialize(array $config = []): void
         'sensitive' => ['body']
     ]);
 }
+```
 
 ### Storing The Logged In User
 
