@@ -34,6 +34,7 @@ class AuditLogBehavior extends Behavior
         'type' => null,
         'blacklist' => ['created', 'modified'],
         'whitelist' => [],
+        'sensitive' => [],
     ];
 
     /**
@@ -89,6 +90,26 @@ class AuditLogBehavior extends Behavior
     }
 
     /**
+     * Redacts sensitive fields from the array
+     *
+     * @param array<string,mixed> $fields Field
+     * @return void
+     */
+    private function redactArray(array &$fields): void
+    {
+        $sensitive = $this->_config['sensitive'] ?? [];
+        if ($sensitive === []) {
+            return;
+        }
+
+        foreach ($fields as $field => &$value) {
+            if (in_array($field, $sensitive)) {
+                $value = '****';
+            }
+        }
+    }
+
+    /**
      * Calculates the changes done to the entity and stores the audit log event object into the
      * log queue inside the `_auditQueue` key in $options.
      *
@@ -122,7 +143,11 @@ class AuditLogBehavior extends Behavior
             return;
         }
 
+        $this->redactArray($changed);
+
         $original = $entity->extractOriginal(array_keys($changed));
+        $this->redactArray($original);
+
         $properties = $this->getAssociationProperties(array_keys($options['associated']));
         foreach ($properties as $property) {
             unset($changed[$property], $original[$property]);
