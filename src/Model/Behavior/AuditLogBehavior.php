@@ -92,7 +92,7 @@ class AuditLogBehavior extends Behavior
     /**
      * Redacts sensitive fields from the array
      *
-     * @param array<string,mixed> $fields Field
+     * @param array<string, mixed> $fields Field
      * @return void
      */
     private function redactArray(array &$fields): void
@@ -103,7 +103,7 @@ class AuditLogBehavior extends Behavior
         }
 
         foreach ($fields as $field => &$value) {
-            if (in_array($field, $sensitive)) {
+            if (in_array($field, $sensitive, true)) {
                 $value = '****';
             }
         }
