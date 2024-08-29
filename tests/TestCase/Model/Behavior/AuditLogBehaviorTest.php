@@ -192,4 +192,37 @@ class AuditLogBehaviorTest extends TestCase
             [null],
         ];
     }
+
+    public function testSensitiveFields(): void
+    {
+        $behavior = new AuditLogBehavior($this->table, [
+            'whitelist' => ['id', 'title', 'body', 'author_id'],
+            'sensitive' => ['body'],
+        ]);
+
+        $data = [
+            'id' => 13,
+            'title' => 'The Title',
+            'body' => 'The Body',
+            'author_id' => 1,
+        ];
+        $entity = new Entity($data, ['markNew' => false, 'markClean' => true]);
+        $entity->body = 'The changed body';
+
+        $event = new Event('Model.afterSave');
+        $queue = new SplObjectStorage();
+        $behavior->afterSave($event, $entity, new ArrayObject([
+            '_auditQueue' => $queue,
+            '_auditTransaction' => '1',
+            'associated' => [],
+        ]));
+
+        $event = $queue[$entity];
+
+        $this->assertInstanceOf(AuditUpdateEvent::class, $event);
+
+        $changed = $event->getChanged();
+        $this->assertArrayHasKey('body', $changed);
+        $this->assertEquals('****', $changed['body']);
+    }
 }

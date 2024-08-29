@@ -138,6 +138,18 @@ public function initialize(array $config = []): void
 }
 ```
 
+If you have fields that contain sensitive information but still want to track their changes you can use the `sensitive` configuration:
+
+```php
+public function initialize(array $config = []): void
+{
+    ...
+    $this->addBehavior('AuditStash.AuditLog', [
+        'sensitive' => ['body']
+    ]);
+}
+```
+
 ### Storing The Logged In User
 
 It is often useful to store the identifier of the user that is triggering the changes in a certain table. For this purpose, `AuditStash`
