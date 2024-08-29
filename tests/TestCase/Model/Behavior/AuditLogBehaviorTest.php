@@ -195,7 +195,7 @@ class AuditLogBehaviorTest extends TestCase
 
     public function testSensitiveFields(): void
     {
-       $behavior = new AuditLogBehavior($this->table, [
+        $behavior = new AuditLogBehavior($this->table, [
             'whitelist' => ['id', 'title', 'body', 'author_id'],
             'sensitive' => ['body'],
         ]);
@@ -221,7 +221,7 @@ class AuditLogBehaviorTest extends TestCase
         $event = $queue[$entity];
 
         $this->assertInstanceOf(AuditUpdateEvent::class, $event);
-        
+
         $changed = $event->getChanged();
         $this->assertArrayHasKey('body', $changed);
         $this->assertEquals('****', $changed['body']);
