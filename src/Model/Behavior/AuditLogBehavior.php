@@ -7,6 +7,7 @@ use ArrayObject;
 use AuditStash\Event\AuditCreateEvent;
 use AuditStash\Event\AuditDeleteEvent;
 use AuditStash\Event\AuditUpdateEvent;
+use AuditStash\Event\BaseEvent;
 use AuditStash\Persister\ElasticSearchPersister;
 use AuditStash\PersisterInterface;
 use Cake\Core\Configure;
@@ -110,6 +111,34 @@ class AuditLogBehavior extends Behavior
     }
 
     /**
+     * Creates an audit event for the entity change.
+     *
+     * @param string $transactionId Transaction Id
+     * @param \Cake\Datasource\EntityInterface $entity Entity
+     * @param array<string, mixed> $changed Changed fields
+     * @param array<string, mixed> $original Original fields
+     * @return \AuditStash\Event\BaseEvent
+     */
+    protected function createEvent(
+        string $transactionId,
+        EntityInterface $entity,
+        array $changed,
+        array $original
+    ): BaseEvent {
+        $primary = $entity->extract((array)$this->_table->getPrimaryKey());
+        $auditEvent = $entity->isNew() ? AuditCreateEvent::class : AuditUpdateEvent::class;
+
+        return new $auditEvent(
+            $transactionId,
+            $primary,
+            $this->_table->getTable(),
+            $changed,
+            $original,
+            $entity
+        );
+    }
+
+    /**
      * Calculates the changes done to the entity and stores the audit log event object into the
      * log queue inside the `_auditQueue` key in $options.
      *
@@ -157,11 +186,8 @@ class AuditLogBehavior extends Behavior
         $this->redactArray($changed);
         $this->redactArray($original);
 
-        $primary = $entity->extract((array)$this->_table->getPrimaryKey());
-        $auditEvent = $entity->isNew() ? AuditCreateEvent::class : AuditUpdateEvent::class;
-
         $transaction = $options['_auditTransaction'];
-        $auditEvent = new $auditEvent($transaction, $primary, $this->_table->getTable(), $changed, $original, $entity);
+        $auditEvent = $this->createEvent($transaction, $entity, $changed, $original);
 
         if (!empty($options['_sourceTable'])) {
             $auditEvent->setParentSourceName($options['_sourceTable']->getTable());
