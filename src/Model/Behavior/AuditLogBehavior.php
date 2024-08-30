@@ -128,7 +128,7 @@ class AuditLogBehavior extends Behavior
         $primary = $entity->extract((array)$this->_table->getPrimaryKey());
         $auditEvent = $entity->isNew() ? AuditCreateEvent::class : AuditUpdateEvent::class;
 
-        $auditEvent = new $auditEvent(
+        return new $auditEvent(
             $transactionId,
             $primary,
             $this->_table->getTable(),
@@ -136,8 +136,6 @@ class AuditLogBehavior extends Behavior
             $original,
             $entity
         );
-
-        return $auditEvent;
     }
 
     /**
